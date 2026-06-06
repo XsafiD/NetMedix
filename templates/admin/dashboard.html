@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-12">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-medium tracking-tight text-ink">Admin Dashboard</h1>
+      <p class="text-ink-mute text-sm mt-1">Kelola knowledge base sistem pakar</p>
+    </div>
+    <a href="{{ url_for('admin_logout') }}"
+       class="text-sm text-ink-mute hover:text-red-600 transition-colors flex items-center gap-1.5">
+      <i data-lucide="log-out" class="w-4 h-4"></i>
+      Logout
+    </a>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <a href="{{ url_for('admin_problems') }}"
+       class="bg-white p-6 rounded-card border border-hairline hover:border-primary/40 transition-colors group">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-primary-deep"></i>
+        </div>
+        <span class="text-sm font-medium text-ink-mute group-hover:text-ink transition-colors">Masalah Jaringan</span>
+      </div>
+      <div class="text-3xl font-medium text-ink tracking-tight">{{ problems|length }}</div>
+      <div class="text-xs text-ink-faint mt-1">P01–P{{ '%02d' % problems|length }}</div>
+    </a>
+
+    <a href="{{ url_for('admin_symptoms') }}"
+       class="bg-white p-6 rounded-card border border-hairline hover:border-primary/40 transition-colors group">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <i data-lucide="list-checks" class="w-5 h-5 text-primary-deep"></i>
+        </div>
+        <span class="text-sm font-medium text-ink-mute group-hover:text-ink transition-colors">Gejala</span>
+      </div>
+      <div class="text-3xl font-medium text-ink tracking-tight">{{ symptoms|length }}</div>
+      <div class="text-xs text-ink-faint mt-1">G01–G{{ '%02d' % symptoms|length }}</div>
+    </a>
+
+    <a href="{{ url_for('admin_rules') }}"
+       class="bg-white p-6 rounded-card border border-hairline hover:border-primary/40 transition-colors group">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <i data-lucide="git-branch" class="w-5 h-5 text-primary-deep"></i>
+        </div>
+        <span class="text-sm font-medium text-ink-mute group-hover:text-ink transition-colors">Aturan IF-THEN</span>
+      </div>
+      <div class="text-3xl font-medium text-ink tracking-tight">{{ rules|length }}</div>
+      <div class="text-xs text-ink-faint mt-1">R01–R{{ '%02d' % rules|length }}</div>
+    </a>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="bg-white rounded-card border border-hairline p-6">
+    <h2 class="text-lg font-medium text-ink mb-4">Kelola Knowledge Base</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <a href="{{ url_for('admin_problems') }}"
+         class="flex items-center gap-3 px-4 py-3 rounded-btn border border-hairline
+                hover:border-primary/40 hover:bg-canvas-soft transition-colors">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-ink-mute"></i>
+        <div>
+          <div class="text-sm font-medium text-ink">Kelola Masalah</div>
+          <div class="text-xs text-ink-faint">Tambah, edit, hapus</div>
+        </div>
+      </a>
+      <a href="{{ url_for('admin_symptoms') }}"
+         class="flex items-center gap-3 px-4 py-3 rounded-btn border border-hairline
+                hover:border-primary/40 hover:bg-canvas-soft transition-colors">
+        <i data-lucide="list-checks" class="w-5 h-5 text-ink-mute"></i>
+        <div>
+          <div class="text-sm font-medium text-ink">Kelola Gejala</div>
+          <div class="text-xs text-ink-faint">Tambah, edit, hapus</div>
+        </div>
+      </a>
+      <a href="{{ url_for('admin_rules') }}"
+         class="flex items-center gap-3 px-4 py-3 rounded-btn border border-hairline
+                hover:border-primary/40 hover:bg-canvas-soft transition-colors">
+        <i data-lucide="git-branch" class="w-5 h-5 text-ink-mute"></i>
+        <div>
+          <div class="text-sm font-medium text-ink">Kelola Aturan</div>
+          <div class="text-xs text-ink-faint">Tambah, edit, hapus</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,242 @@
+[
+  {
+    "code": "G01",
+    "name": "Tidak ada koneksi sama sekali",
+    "question": "Apakah perangkat Anda tidak bisa terhubung ke jaringan sama sekali?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G02",
+    "name": "Tidak bisa akses internet",
+    "question": "Apakah Anda tidak bisa membuka website atau aplikasi online?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G03",
+    "name": "Bisa ping gateway tapi tidak bisa ping internet",
+    "question": "Apakah ping ke gateway berhasil tapi ping ke 8.8.8.8 gagal?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G04",
+    "name": "Bisa ping IP publik tapi tidak bisa akses domain",
+    "question": "Apakah ping ke 8.8.8.8 berhasil tapi ping ke google.com gagal?",
+    "category": "DNS"
+  },
+  {
+    "code": "G05",
+    "name": "IP address berupa 169.254.x.x",
+    "question": "Apakah IP address perangkat Anda dimulai dengan 169.254?",
+    "category": "DHCP & IP Config"
+  },
+  {
+    "code": "G06",
+    "name": "Muncul pesan IP address conflict",
+    "question": "Apakah muncul notifikasi 'IP address conflict'?",
+    "category": "DHCP & IP Config"
+  },
+  {
+    "code": "G07",
+    "name": "Subnet mask berbeda dari device lain",
+    "question": "Apakah subnet mask perangkat berbeda dari perangkat lain di jaringan?",
+    "category": "DHCP & IP Config"
+  },
+  {
+    "code": "G08",
+    "name": "Tidak ada default gateway",
+    "question": "Apakah default gateway kosong atau 0.0.0.0?",
+    "category": "DHCP & IP Config"
+  },
+  {
+    "code": "G09",
+    "name": "Tidak bisa connect ke WiFi",
+    "question": "Apakah perangkat gagal terhubung ke jaringan WiFi?",
+    "category": "WiFi"
+  },
+  {
+    "code": "G10",
+    "name": "SSID WiFi tidak muncul",
+    "question": "Apakah nama WiFi (SSID) tidak muncul di daftar jaringan?",
+    "category": "WiFi"
+  },
+  {
+    "code": "G11",
+    "name": "WiFi signal bar hanya 1-2",
+    "question": "Apakah indikator signal WiFi hanya menunjukkan 1-2 bar?",
+    "category": "WiFi"
+  },
+  {
+    "code": "G12",
+    "name": "WiFi sering disconnect",
+    "question": "Apakah koneksi WiFi sering terputus?",
+    "category": "WiFi"
+  },
+  {
+    "code": "G13",
+    "name": "Kecepatan internet sangat lambat",
+    "question": "Apakah kecepatan internet jauh di bawah biasanya?",
+    "category": "Performa"
+  },
+  {
+    "code": "G14",
+    "name": "Ping menunjukkan packet loss > 5%",
+    "question": "Apakah test ping menunjukkan paket hilang lebih dari 5%?",
+    "category": "Performa"
+  },
+  {
+    "code": "G15",
+    "name": "Ping time sangat tinggi (>100ms lokal)",
+    "question": "Apakah ping ke server lokal menunjukkan waktu >100ms?",
+    "category": "Performa"
+  },
+  {
+    "code": "G16",
+    "name": "Aplikasi tertentu tidak bisa connect",
+    "question": "Apakah hanya aplikasi tertentu yang gagal terhubung?",
+    "category": "Keamanan"
+  },
+  {
+    "code": "G17",
+    "name": "Website redirect ke halaman aneh",
+    "question": "Apakah website yang biasa diakses mengarah ke halaman yang berbeda?",
+    "category": "DNS"
+  },
+  {
+    "code": "G18",
+    "name": "Link lamp NIC/switch mati atau berkedip",
+    "question": "Apakah lampu indikator di port jaringan (NIC/switch) mati atau berkedip?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G19",
+    "name": "Semua client di jaringan terdampak",
+    "question": "Apakah semua pengguna di jaringan mengalami masalah yang sama?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G20",
+    "name": "Status NIC 'Media Disconnected'",
+    "question": "Apakah status network adapter menunjukkan 'Media disconnected'?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G21",
+    "name": "DNS server tidak respond saat nslookup",
+    "question": "Apakah perintah nslookup menunjukkan DNS server tidak merespon?",
+    "category": "DNS"
+  },
+  {
+    "code": "G22",
+    "name": "Speed test menunjukkan hasil sangat rendah",
+    "question": "Apakah speed test menunjukkan kecepatan jauh di bawah paket ISP?",
+    "category": "Performa"
+  },
+  {
+    "code": "G23",
+    "name": "Koneksi putus-nyala (intermittent)",
+    "question": "Apakah koneksi sering terputus lalu nyala kembali?",
+    "category": "Performa"
+  },
+  {
+    "code": "G24",
+    "name": "Hanya bisa akses via IP, bukan domain",
+    "question": "Apakah Anda bisa mengakses website via IP tapi gagal via nama domain?",
+    "category": "DNS"
+  },
+  {
+    "code": "G25",
+    "name": "Firewall memblokir aplikasi",
+    "question": "Apakah firewall memblokir aplikasi yang ingin Anda gunakan?",
+    "category": "Keamanan"
+  },
+  {
+    "code": "G26",
+    "name": "Device lain di jaringan yang sama normal",
+    "question": "Apakah perangkat lain di jaringan yang sama bisa normal?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G27",
+    "name": "Koneksi normal setelah restart router",
+    "question": "Apakah masalah hilang sementara setelah me-restart router?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G28",
+    "name": "Lampu WAN router merah",
+    "question": "Apakah lampu indikator WAN pada router berwarna merah?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G29",
+    "name": "Kabel terlihat rusak atau longgar",
+    "question": "Apakah kabel jaringan terlihat rusak, terkelupas, atau konektor longgar?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G30",
+    "name": "Device tidak mendapat IP DHCP",
+    "question": "Apakah perangkat tidak mendapatkan IP address secara otomatis?",
+    "category": "DHCP & IP Config"
+  },
+  {
+    "code": "G31",
+    "name": "VPN tidak bisa connect",
+    "question": "Apakah VPN client gagal membuat koneksi?",
+    "category": "Keamanan"
+  },
+  {
+    "code": "G32",
+    "name": "VPN connect tapi resource internal tidak bisa diakses",
+    "question": "Apakah VPN terhubung tapi tidak bisa mengakses resource jaringan internal?",
+    "category": "Keamanan"
+  },
+  {
+    "code": "G33",
+    "name": "Lampu LAN di router mati",
+    "question": "Apakah lampu indikator LAN pada router tidak menyala?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G34",
+    "name": "Router tidak respond saat diakses",
+    "question": "Apakah Anda tidak bisa mengakses halaman admin router?",
+    "category": "Hardware"
+  },
+  {
+    "code": "G35",
+    "name": "Error 'Destination Host Unreachable' saat ping",
+    "question": "Apakah muncul pesan 'Destination Host Unreachable' saat melakukan ping?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G36",
+    "name": "Network adapter disabled",
+    "question": "Apakah network adapter dalam keadaan disabled?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G37",
+    "name": "Driver network adapter bermasalah",
+    "question": "Apakah ada tanda seru kuning di Device Manager pada network adapter?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G38",
+    "name": "Hanya satu perangkat yang bermasalah",
+    "question": "Apakah hanya perangkat Anda yang bermasalah, yang lain normal?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G39",
+    "name": "Proxy setting aktif tanpa sepengetahuan",
+    "question": "Apakah ada setting proxy yang aktif di browser atau sistem?",
+    "category": "Konektivitas"
+  },
+  {
+    "code": "G40",
+    "name": "Error 'Limited Connectivity'",
+    "question": "Apakah status koneksi menunjukkan 'Limited Connectivity'?",
+    "category": "DHCP & IP Config"
+  }
+]

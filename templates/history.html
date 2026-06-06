@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Riwayat Diagnosis — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-medium tracking-tight text-ink">Riwayat Diagnosis</h1>
+      <p class="text-ink-mute mt-1 text-sm">
+        {% if sessions %}
+        {{ sessions | length }} diagnosis tersimpan
+        {% else %}
+        Belum ada diagnosis yang tersimpan
+        {% endif %}
+      </p>
+    </div>
+    {% if sessions %}
+    <a href="/diagnose"
+       class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="plus" class="w-4 h-4"></i>
+      Diagnosis Baru
+    </a>
+    {% endif %}
+  </div>
+
+  {% if not sessions %}
+  <!-- Empty state -->
+  <div class="bg-canvas-soft border border-hairline rounded-card p-12 text-center">
+    <i data-lucide="clipboard-list" class="w-16 h-16 text-ink-faint mx-auto mb-4"></i>
+    <h2 class="text-lg font-medium text-ink mb-2">Belum Ada Riwayat</h2>
+    <p class="text-sm text-ink-mute max-w-md mx-auto mb-6">
+      Riwayat diagnosis Anda akan tersimpan di sini. Mulai diagnosis pertama Anda untuk melihat hasilnya.
+    </p>
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="stethoscope" class="w-4 h-4"></i>
+      Mulai Diagnosis
+    </a>
+  </div>
+
+  {% else %}
+
+  <!-- Session cards -->
+  <div class="space-y-4">
+    {% for s in sessions %}
+    <div class="bg-white border border-hairline rounded-card p-5 hover:border-ink-faint transition-colors">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- Left: session info -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-3 mb-2">
+            <!-- Date -->
+            <span class="text-xs text-ink-mute flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              {{ s.created_at }}
+            </span>
+            <span class="text-ink-faint">&middot;</span>
+            <!-- Symptom count -->
+            <span class="text-xs text-ink-mute flex items-center gap-1.5">
+              <i data-lucide="list-checks" class="w-3.5 h-3.5"></i>
+              {{ s.symptom_count }} gejala
+            </span>
+          </div>
+
+          <!-- Diagnosis name + CF -->
+          {% if s.top_problem %}
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+              {{ s.top_problem.code }}
+            </span>
+            <h3 class="text-sm font-medium text-ink truncate">{{ s.top_problem.name }}</h3>
+            <span class="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full
+                         {{ 'bg-green-100 text-green-800' if s.top_cf >= 0.80 }}
+                         {{ 'bg-emerald-100 text-emerald-800' if s.top_cf >= 0.60 and s.top_cf < 0.80 }}
+                         {{ 'bg-yellow-100 text-yellow-800' if s.top_cf >= 0.40 and s.top_cf < 0.60 }}
+                         {{ 'bg-orange-100 text-orange-800' if s.top_cf < 0.40 }}">
+              {{ s.cf_label }}
+            </span>
+          </div>
+          {% else %}
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-ink-mute">Tidak ada diagnosis yang cocok</span>
+          </div>
+          {% endif %}
+
+          <!-- CF bar -->
+          {% if s.top_problem %}
+          <div class="mt-3 flex items-center gap-3">
+            <div class="flex-1 max-w-xs h-1.5 bg-hairline rounded-full overflow-hidden">
+              <div class="h-full rounded-full
+                          {{ 'bg-primary' if s.top_cf >= 0.60 }}
+                          {{ 'bg-yellow-400' if s.top_cf >= 0.40 and s.top_cf < 0.60 }}
+                          {{ 'bg-orange-400' if s.top_cf < 0.40 }}"
+                   style="width: {{ s.cf_percent }}%"></div>
+            </div>
+            <span class="text-xs font-mono font-medium
+                         {{ 'text-primary-deep' if s.top_cf >= 0.60 else 'text-ink' }}">
+              {{ s.cf_percent }}%
+            </span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Right: action buttons -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="/result/{{ s.id }}"
+             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-btn text-sm font-medium
+                    border border-hairline text-ink-mute hover:text-ink hover:border-ink-faint transition-colors">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Lihat Detail</span>
+          </a>
+          <button type="button" onclick="confirmDelete({{ s.id }}, '{{ s.top_problem.name | replace("'", "\\'") if s.top_problem else "session" }}')"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-btn text-sm font-medium
+                         border border-hairline text-red-500 hover:text-red-700 hover:border-red-200 transition-colors">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Hapus</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Bottom action -->
+  <div class="mt-8 text-center sm:hidden">
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="plus" class="w-4 h-4"></i>
+      Diagnosis Baru
+    </a>
+  </div>
+
+  {% endif %}
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 z-50 hidden">
+  <div class="fixed inset-0 bg-black/50" onclick="closeDeleteModal()"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4">
+    <div class="bg-white rounded-card shadow-lg max-w-sm w-full p-6 relative z-10">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-medium text-ink">Hapus Riwayat?</h3>
+          <p id="delete-modal-text" class="text-sm text-ink-mute mt-0.5">Riwayat diagnosis akan dihapus permanen.</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-3 mt-6">
+        <button type="button" onclick="closeDeleteModal()"
+                class="px-4 py-2 rounded-btn text-sm font-medium
+                       border border-hairline text-ink-mute hover:text-ink transition-colors">
+          Batal
+        </button>
+        <form id="delete-form" method="POST" action="">
+          <button type="submit"
+                  class="px-4 py-2 rounded-btn text-sm font-medium
+                         bg-red-600 text-white hover:bg-red-700 transition-colors">
+            Hapus
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete(sessionId, sessionName) {
+  const modal = document.getElementById("delete-modal");
+  const text = document.getElementById("delete-modal-text");
+  const form = document.getElementById("delete-form");
+
+  text.textContent = 'Riwayat "' + sessionName + '" akan dihapus permanen.';
+  form.action = '/history/' + sessionId + '/delete';
+  modal.classList.remove("hidden");
+}
+
+function closeDeleteModal() {
+  document.getElementById("delete-modal").classList.add("hidden");
+}
+
+// Close modal on Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeDeleteModal();
+});
+</script>
+{% endblock %}

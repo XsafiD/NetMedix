@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block title %}Hasil Diagnosis — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-medium tracking-tight text-ink">Hasil Diagnosis</h1>
+    <p class="text-ink-mute mt-1 text-sm">
+      {% if created_at %}
+      Diagnosis pada {{ created_at }}
+      {% endif %}
+      {% if symptoms_selected %}
+      &mdash; {{ symptoms_selected | length }} gejala dipilih
+      {% endif %}
+    </p>
+  </div>
+
+  {% if not has_results %}
+  <!-- Empty result: no rules matched -->
+  <div class="bg-canvas-soft border border-hairline rounded-card p-8 text-center">
+    <i data-lucide="search-x" class="w-12 h-12 text-ink-faint mx-auto mb-4"></i>
+    <h2 class="text-lg font-medium text-ink mb-2">Tidak Ada Diagnosis yang Cocok</h2>
+    <p class="text-sm text-ink-mute max-w-md mx-auto mb-6">
+      Kombinasi gejala yang Anda pilih tidak cocok dengan aturan manapun dalam knowledge base.
+      Coba tambahkan lebih banyak gejala atau pilih gejala yang berbeda.
+    </p>
+    <!-- Show selected symptoms as reference -->
+    <div class="flex flex-wrap gap-2 justify-center mb-6">
+      {% for code, cf in symptoms_selected.items() %}
+      {% if symptom_map.get(code) %}
+      <span class="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded">
+        {{ code }} ({{ cf }})
+      </span>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+      Diagnosis Lagi
+    </a>
+  </div>
+
+  {% else %}
+
+  <!-- Warning box if top CF < 0.40 -->
+  {% if results[0].cf_final < 0.40 %}
+  <div class="flex items-start gap-3 px-4 py-3 rounded-card border border-yellow-200 bg-yellow-50 mb-6">
+    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+    <div>
+      <p class="text-sm font-medium text-yellow-800">Diagnosis Kurang Pasti</p>
+      <p class="text-xs text-yellow-700 mt-0.5">
+        Tingkat keyakinan tertinggi di bawah 40%. Pertimbangkan menambah gejala atau konsultasi teknisi jaringan.
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Diagnosis result cards -->
+  <div class="space-y-6">
+    {% for r in results %}
+    {% set is_top = loop.index == 1 %}
+    <div class="result-card rounded-card border bg-white overflow-hidden
+                {{ 'border-primary ring-1 ring-primary/20' if is_top else 'border-hairline' }}">
+
+      <!-- Card header: CF percentage + label + problem name -->
+      <div class="px-6 py-5 {{ 'bg-primary/5' if is_top }}">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <!-- CF percentage -->
+          <div class="flex items-center gap-4 flex-shrink-0">
+            <span class="text-4xl font-semibold tracking-tight
+                         {{ 'text-primary' if r.cf_final >= 0.6 else 'text-ink' }}">
+              {{ r.cf_percent | round(1) }}%
+            </span>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                         {{ 'bg-green-100 text-green-800' if r.cf_final >= 0.80 }}
+                         {{ 'bg-emerald-100 text-emerald-800' if r.cf_final >= 0.60 and r.cf_final < 0.80 }}
+                         {{ 'bg-yellow-100 text-yellow-800' if r.cf_final >= 0.40 and r.cf_final < 0.60 }}
+                         {{ 'bg-orange-100 text-orange-800' if r.cf_final >= 0.20 and r.cf_final < 0.40 }}
+                         {{ 'bg-red-100 text-red-800' if r.cf_final < 0.20 }}">
+              {{ r.cf_label }}
+            </span>
+          </div>
+          <!-- Problem name + code -->
+          <div class="flex-1 min-w-0">
+            {% if r.problem %}
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-mono font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                {{ r.problem.code }}
+              </span>
+              {% if r.rule_code %}
+              <span class="text-xs font-mono text-ink-faint">
+                {{ r.rule_code }}
+              </span>
+              {% endif %}
+            </div>
+            <h2 class="text-lg font-medium text-ink">{{ r.problem.name }}</h2>
+            {% else %}
+            <span class="text-xs font-mono text-ink-faint">{{ r.problem_code }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="mt-4 h-2 bg-hairline rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all
+                      {{ 'bg-primary' if r.cf_final >= 0.6 }}
+                      {{ 'bg-yellow-400' if r.cf_final >= 0.4 and r.cf_final < 0.6 }}
+                      {{ 'bg-orange-400' if r.cf_final >= 0.2 and r.cf_final < 0.4 }}
+                      {{ 'bg-red-400' if r.cf_final < 0.2 }}"
+               style="width: {{ [r.cf_percent, 2] | max }}%"></div>
+        </div>
+      </div>
+
+      {% if r.problem %}
+      <!-- Problem details -->
+      <div class="px-6 py-5 space-y-4">
+
+        <!-- Description -->
+        <div>
+          <h3 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-1.5">Deskripsi</h3>
+          <p class="text-sm text-ink leading-relaxed">{{ r.problem.description }}</p>
+        </div>
+
+        <!-- Causes -->
+        {% if r.problem.causes %}
+        <div>
+          <h3 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-1.5">Penyebab Umum</h3>
+          <ul class="space-y-1">
+            {% for cause in r.problem.causes %}
+            <li class="flex items-start gap-2 text-sm text-ink">
+              <i data-lucide="circle-dot" class="w-3.5 h-3.5 text-ink-faint flex-shrink-0 mt-0.5"></i>
+              <span>{{ cause }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- Solutions -->
+        {% if r.problem.solutions %}
+        <div>
+          <h3 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-1.5">Solusi / Rekomendasi</h3>
+          <ol class="space-y-1">
+            {% for sol in r.problem.solutions %}
+            <li class="flex items-start gap-2 text-sm text-ink">
+              <span class="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-medium
+                           flex items-center justify-center">{{ loop.index }}</span>
+              <span>{{ sol }}</span>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Expandable: CF calculation detail -->
+      {% if r.details %}
+      <div class="border-t border-hairline">
+        <button type="button" class="cf-detail-toggle w-full px-6 py-3 text-left flex items-center justify-between
+                                     text-sm font-medium text-ink-mute hover:text-ink transition-colors">
+          <span class="flex items-center gap-2">
+            <i data-lucide="calculator" class="w-4 h-4"></i>
+            Lihat Detail Perhitungan CF
+          </span>
+          <i data-lucide="chevron-down" class="w-4 h-4 transition-transform cf-chevron"></i>
+        </button>
+        <div class="cf-detail-panel hidden px-6 pb-5">
+          <!-- Evidence steps table -->
+          {% if r.details.evidence_steps %}
+          <div class="mb-4">
+            <h4 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-2">
+              Langkah 1: Hitung CF Evidence per Gejala
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-hairline">
+                    <th class="text-left py-2 pr-3 text-ink-mute font-medium">Gejala</th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">MB</th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">MD</th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF Rule (MB-MD)</th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF User</th>
+                    <th class="text-center py-2 pl-2 text-ink-mute font-medium">CF Evidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for step in r.details.evidence_steps %}
+                  {% set symp = symptom_map.get(step.symptom_code, {'name': step.symptom_code}) %}
+                  <tr class="border-b border-hairline/50">
+                    <td class="py-2 pr-3">
+                      <span class="font-mono text-primary">{{ step.symptom_code }}</span>
+                      <span class="text-ink-mute ml-1">{{ symp.name if symp.name is defined and symp.name != step.symptom_code else '' }}</span>
+                    </td>
+                    <td class="text-center py-2 px-2 font-mono">{{ step.mb }}</td>
+                    <td class="text-center py-2 px-2 font-mono">{{ step.md }}</td>
+                    <td class="text-center py-2 px-2 font-mono font-medium">{{ step.cf_rule }}</td>
+                    <td class="text-center py-2 px-2 font-mono">{{ step.cf_user }}</td>
+                    <td class="text-center py-2 pl-2 font-mono font-medium text-primary">{{ step.cf_evidence }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-ink-faint mt-1">
+              Rumus: CF_evidence = CF_user &times; CF_rule &nbsp;(CF_rule = MB - MD)
+            </p>
+          </div>
+          {% endif %}
+
+          <!-- Combine steps -->
+          {% if r.details.combine_steps %}
+          <div>
+            <h4 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-2">
+              Langkah 2: Kombinasi CF Bertahap
+            </h4>
+            <div class="space-y-1.5">
+              {% for step in r.details.combine_steps %}
+              <div class="flex items-center gap-2 text-xs font-mono bg-canvas-soft px-3 py-2 rounded-btn">
+                <span class="text-ink-mute">Step {{ step.step }}:</span>
+                {% if step.cf_b is not none %}
+                <span>CF<sub>prev</sub>={{ step.cf_a }}</span>
+                <span class="text-ink-faint">+</span>
+                <span>CF<sub>new</sub>={{ step.cf_b }}</span>
+                <span class="text-ink-faint">=</span>
+                {% else %}
+                <span>CF<sub>1</sub>={{ step.cf_a }}</span>
+                <span class="text-ink-faint">(langsung)</span>
+                {% endif %}
+                <span class="font-medium text-primary">{{ step.result }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <p class="text-[10px] text-ink-faint mt-1.5">
+              Rumus: CF<sub>combine</sub> = CF<sub>1</sub> + CF<sub>2</sub> &times; (1 - CF<sub>1</sub>)
+            </p>
+          </div>
+          {% endif %}
+
+          <!-- Final result -->
+          <div class="mt-3 pt-3 border-t border-hairline flex items-center gap-2 text-sm">
+            <span class="text-ink-mute">CF Akhir:</span>
+            <span class="font-semibold text-primary">{{ r.cf_final }}</span>
+            <span class="text-ink-faint">=</span>
+            <span class="font-semibold text-ink">{{ r.cf_percent | round(2) }}%</span>
+            <span class="text-ink-faint">&mdash;</span>
+            <span class="text-ink-mute">{{ r.cf_label }}</span>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Button group -->
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10 pt-8 border-t border-hairline">
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+      Diagnosis Lagi
+    </a>
+    <a href="/history"
+       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-btn text-sm font-medium
+              border border-hairline text-ink-mute hover:text-ink hover:border-ink-faint transition-colors">
+      <i data-lucide="clock" class="w-4 h-4"></i>
+      Lihat Riwayat
+    </a>
+  </div>
+
+  {% endif %}
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Expandable CF detail panels
+  document.querySelectorAll(".cf-detail-toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const panel = btn.nextElementSibling;
+      const chevron = btn.querySelector(".cf-chevron");
+      panel.classList.toggle("hidden");
+      if (chevron) {
+        chevron.style.transform = panel.classList.contains("hidden") ? "" : "rotate(180deg)";
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

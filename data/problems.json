@@ -1,0 +1,275 @@
+[
+  {
+    "code": "P01",
+    "name": "Tidak Ada Koneksi Jaringan",
+    "name_en": "No Network Connectivity",
+    "category": "Konektivitas Dasar",
+    "description": "Perangkat tidak terhubung ke jaringan sama sekali, tidak bisa mengakses lokal maupun internet.",
+    "causes": [
+      "NIC (Network Interface Card) disabled",
+      "Kabel jaringan putus atau terlepas",
+      "Switch port mati",
+      "Driver NIC bermasalah"
+    ],
+    "solutions": [
+      "Cek apakah NIC aktif di Network Settings / Device Manager",
+      "Ganti kabel jaringan atau cek koneksi fisik",
+      "Cek status port pada switch",
+      "Update atau reinstall driver NIC"
+    ]
+  },
+  {
+    "code": "P02",
+    "name": "Koneksi Internet Terputus",
+    "name_en": "No Internet Access",
+    "category": "Konektivitas Dasar",
+    "description": "Jaringan lokal berfungsi, tetapi tidak bisa akses internet.",
+    "causes": [
+      "Gateway tidak terjangkau",
+      "ISP down",
+      "NAT misconfiguration",
+      "Kabel WAN terputus"
+    ],
+    "solutions": [
+      "Restart router/modem",
+      "Cek kabel WAN dan lampu indikator",
+      "Hubungi ISP untuk konfirmasi outage",
+      "Cek konfigurasi NAT pada router"
+    ]
+  },
+  {
+    "code": "P03",
+    "name": "DNS Resolution Failure",
+    "name_en": "DNS Resolution Failure",
+    "category": "DNS",
+    "description": "Bisa ping IP publik, tapi tidak bisa mengakses website via domain name.",
+    "causes": [
+      "DNS server tidak terkonfigurasi",
+      "DNS server down",
+      "DNS cache corrupt"
+    ],
+    "solutions": [
+      "Ganti DNS ke 8.8.8.8 atau 1.1.1.1",
+      "Flush DNS cache (ipconfig /flushdns)",
+      "Cek DNS setting di adapter properties"
+    ]
+  },
+  {
+    "code": "P04",
+    "name": "DNS Cache Poisoning / Hijacking",
+    "name_en": "DNS Cache Poisoning / Hijacking",
+    "category": "DNS",
+    "description": "Domain di-resolve ke IP yang salah, redirect ke situs tidak dikenal.",
+    "causes": [
+      "Malware mengubah DNS cache",
+      "DNS cache corrupt",
+      "DNS server dikompromi"
+    ],
+    "solutions": [
+      "Flush DNS cache",
+      "Scan malware menggunakan antivirus",
+      "Gunakan DNS terpercaya (8.8.8.8, 1.1.1.1)"
+    ]
+  },
+  {
+    "code": "P05",
+    "name": "DHCP Failure",
+    "name_en": "DHCP Failure",
+    "category": "DHCP & IP Config",
+    "description": "Perangkat mendapat IP APIPA (169.254.x.x) atau tidak mendapat IP sama sekali.",
+    "causes": [
+      "DHCP server down",
+      "DHCP scope habis",
+      "Port UDP 67/68 diblokir"
+    ],
+    "solutions": [
+      "Restart DHCP service pada server/router",
+      "Perluas DHCP scope",
+      "Cek ACL yang memblokir port UDP 67/68"
+    ]
+  },
+  {
+    "code": "P06",
+    "name": "IP Address Conflict",
+    "name_en": "IP Address Conflict",
+    "category": "DHCP & IP Config",
+    "description": "Dua atau lebih perangkat menggunakan IP address yang sama pada jaringan.",
+    "causes": [
+      "Static IP bentrok dengan DHCP pool",
+      "Salah konfigurasi manual",
+      "DHCP server memberikan IP duplikat"
+    ],
+    "solutions": [
+      "Release/renew IP (ipconfig /release && ipconfig /renew)",
+      "Ubah static IP yang bentrok",
+      "Perkecil DHCP pool untuk menghindari overlap"
+    ]
+  },
+  {
+    "code": "P07",
+    "name": "Subnet Mask / Default Gateway Salah",
+    "name_en": "Subnet Mask / Gateway Misconfiguration",
+    "category": "DHCP & IP Config",
+    "description": "Konfigurasi IP salah sehingga tidak bisa komunikasi ke jaringan luar.",
+    "causes": [
+      "Manual misconfiguration",
+      "DHCP memberikan setting salah",
+      "Perubahan topologi jaringan belum diupdate"
+    ],
+    "solutions": [
+      "Koreksi subnet mask sesuai jaringan",
+      "Set default gateway yang benar",
+      "Switch ke DHCP otomatis jika memungkinkan"
+    ]
+  },
+  {
+    "code": "P08",
+    "name": "Tidak Bisa Connect ke WiFi",
+    "name_en": "Cannot Connect to WiFi",
+    "category": "WiFi",
+    "description": "Perangkat tidak bisa terhubung ke jaringan WiFi.",
+    "causes": [
+      "Password salah",
+      "SSID hidden",
+      "Security mode tidak kompatibel (WPA2/WPA3)",
+      "Driver WiFi outdated"
+    ],
+    "solutions": [
+      "Forget network dan reconnect dengan password benar",
+      "Update driver WiFi",
+      "Cek security mode router (WPA2/WPA3)",
+      "Restart WiFi adapter"
+    ]
+  },
+  {
+    "code": "P09",
+    "name": "WiFi Signal Lemah / Interferensi",
+    "name_en": "Weak WiFi Signal / Interference",
+    "category": "WiFi",
+    "description": "WiFi connect tapi speed rendah dan sering disconnect karena signal lemah.",
+    "causes": [
+      "Jarak terlalu jauh dari access point",
+      "Dinding/halangan fisik",
+      "Interferensi channel",
+      "Terlalu banyak client pada satu AP"
+    ],
+    "solutions": [
+      "Pindah channel (2.4GHz ke 5GHz atau sebaliknya)",
+      "Dekatkan perangkat ke access point",
+      "Gunakan WiFi repeater/extender",
+      "Kurangi jumlah client atau tambah AP"
+    ]
+  },
+  {
+    "code": "P10",
+    "name": "Jaringan Lambat / Bandwidth Saturation",
+    "name_en": "Slow Network / Bandwidth Saturation",
+    "category": "Performa",
+    "description": "Koneksi ada tapi kecepatan sangat rendah, loading lama.",
+    "causes": [
+      "Bandwidth penuh karena banyak user",
+      "QoS tidak dikonfigurasi",
+      "Background download/update",
+      "Malware mengonsumsi bandwidth"
+    ],
+    "solutions": [
+      "Monitor bandwidth usage per device",
+      "Set QoS (Quality of Service) pada router",
+      "Cek aplikasi background yang mengonsumsi bandwidth",
+      "Scan malware"
+    ]
+  },
+  {
+    "code": "P11",
+    "name": "Packet Loss Tinggi",
+    "name_en": "High Packet Loss",
+    "category": "Performa",
+    "description": "Paket data hilang saat transmisi, menyebabkan komunikasi tidak stabil.",
+    "causes": [
+      "Kabel rusak atau konektor longgar",
+      "Interface error (CRC error)",
+      "Congestion pada jaringan",
+      "Wireless interference"
+    ],
+    "solutions": [
+      "Ganti kabel atau re-crimp konektor",
+      "Cek CRC error pada interface statistik",
+      "Kurangi congestion dengan QoS",
+      "Pindah channel WiFi jika wireless"
+    ]
+  },
+  {
+    "code": "P12",
+    "name": "Latensi Tinggi / Jitter",
+    "name_en": "High Latency / Jitter",
+    "category": "Performa",
+    "description": "Waktu respon sangat tinggi atau bervariasi, menyebabkan lag pada game/VoIP.",
+    "causes": [
+      "Congestion pada jaringan",
+      "Routing tidak optimal",
+      "Buffer bloat",
+      "Koneksi wireless yang tidak stabil"
+    ],
+    "solutions": [
+      "Cek dan optimalkan routing",
+      "Aktifkan QoS untuk prioritas traffic real-time",
+      "Gunakan koneksi wired untuk game/VoIP",
+      "Ganti DNS server"
+    ]
+  },
+  {
+    "code": "P13",
+    "name": "Firewall Memblokir Koneksi",
+    "name_en": "Firewall Blocking Connection",
+    "category": "Keamanan",
+    "description": "Aplikasi atau service tertentu tidak bisa berkomunikasi karena diblokir firewall.",
+    "causes": [
+      "Firewall rule terlalu ketat",
+      "Port tertentu diblokir",
+      "IDS/IPS false positive"
+    ],
+    "solutions": [
+      "Tambah exception pada firewall untuk aplikasi",
+      "Buka port yang diperlukan",
+      "Review dan sesuaikan firewall rule"
+    ]
+  },
+  {
+    "code": "P14",
+    "name": "Kerusakan Kabel / Konektor Jaringan",
+    "name_en": "Damaged Cable / Connector",
+    "category": "Hardware",
+    "description": "Kabel UTP/patch cord putus, konektor RJ45 longgar atau rusak.",
+    "causes": [
+      "Kabel terinjak atau tergigit hewan",
+      "Konektor RJ45 aus",
+      "Crimping buruk",
+      "Kabel terkelupas"
+    ],
+    "solutions": [
+      "Ganti kabel dengan yang baru",
+      "Re-crimp konektor RJ45",
+      "Cek dengan cable tester",
+      "Pastikan routing kabel aman dari kerusakan fisik"
+    ]
+  },
+  {
+    "code": "P15",
+    "name": "Kerusakan / Misconfiguration Router-Switch",
+    "name_en": "Router/Switch Damage or Misconfiguration",
+    "category": "Hardware",
+    "description": "Perangkat jaringan (router/switch) bermasalah sehingga seluruh jaringan terdampak.",
+    "causes": [
+      "Firmware bug",
+      "Konfigurasi salah",
+      "Overheating",
+      "Power supply bermasalah"
+    ],
+    "solutions": [
+      "Restart perangkat (power cycle)",
+      "Update firmware ke versi terbaru",
+      "Factory reset dan reconfigure",
+      "Cek power supply dan suhu perangkat"
+    ]
+  }
+]

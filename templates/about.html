@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+{% block title %}Tentang — NetMedix{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Tentang NetMedix
+     ═══════════════════════════════════════════════════════════ -->
+<section class="max-w-5xl mx-auto px-6 pt-16 pb-12">
+  <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Tentang Aplikasi</p>
+  <h1 class="text-3xl md:text-4xl font-medium tracking-tight text-ink leading-tight mb-6">
+    Tentang <span class="text-primary">NetMedix</span>
+  </h1>
+  <p class="text-ink-mute text-lg leading-relaxed max-w-3xl mb-4">
+    <strong class="text-ink">NetMedix</strong> adalah sistem pakar berbasis web yang dirancang untuk membantu
+    mendiagnosis masalah jaringan komputer secara cepat dan akurat. Sistem ini menggunakan metode
+    <em>Forward Chaining</em> untuk mencocokkan gejala dengan aturan, dikombinasikan dengan metode
+    <em>Certainty Factor</em> untuk menghitung tingkat keyakinan diagnosis.
+  </p>
+  <p class="text-ink-mute text-base leading-relaxed max-w-3xl mb-6">
+    Dibangun sebagai tugas UAS mata kuliah <strong class="text-ink">Sistem Cerdas</strong>, NetMedix mampu
+    mengidentifikasi <strong class="text-ink">15 masalah jaringan</strong> berdasarkan
+    <strong class="text-ink">40 gejala</strong> yang dikelompokkan dalam 7 kategori, menggunakan
+    <strong class="text-ink">15 aturan IF-THEN</strong> yang telah divalidasi.
+  </p>
+
+  <!-- Kemampuan Sistem -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+    <div class="border border-hairline rounded-card p-6">
+      <div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+        <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+      </div>
+      <h3 class="text-sm font-medium text-ink mb-1">Diagnosis Cepat</h3>
+      <p class="text-xs text-ink-mute leading-relaxed">Cukup pilih gejala yang dialami dan tentukan tingkat keyakinan — hasil ditampilkan dalam hitungan detik.</p>
+    </div>
+    <div class="border border-hairline rounded-card p-6">
+      <div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+        <i data-lucide="shield-check" class="w-4 h-4 text-primary"></i>
+      </div>
+      <h3 class="text-sm font-medium text-ink mb-1">Akurat & Terukur</h3>
+      <p class="text-xs text-ink-mute leading-relaxed">Setiap diagnosis disertai nilai Certainty Factor (CF) yang menunjukkan tingkat keyakinan secara kuantitatif.</p>
+    </div>
+    <div class="border border-hairline rounded-card p-6">
+      <div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+        <i data-lucide="database" class="w-4 h-4 text-primary"></i>
+      </div>
+      <h3 class="text-sm font-medium text-ink mb-1">Knowledge Base Lengkap</h3>
+      <p class="text-xs text-ink-mute leading-relaxed">15 masalah jaringan, 40 gejala, dan 15 aturan yang mencakup konektivitas, DNS, DHCP, WiFi, performa, keamanan, hingga hardware.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Metode Forward Chaining
+     ═══════════════════════════════════════════════════════════ -->
+<section class="border-t border-hairline bg-canvas-soft">
+  <div class="max-w-5xl mx-auto px-6 py-16">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Metode Inferensi</p>
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Forward Chaining</h2>
+    <p class="text-ink-mute leading-relaxed max-w-3xl mb-6">
+      <strong class="text-ink">Forward Chaining</strong> adalah metode penalaran maju (<em>data-driven reasoning</em>)
+      yang memulai inferensi dari fakta-fakta yang diketahui (gejala), lalu mencocokkannya dengan aturan-aturan
+      dalam knowledge base untuk menghasilkan kesimpulan (diagnosis masalah jaringan).
+    </p>
+
+    <!-- Diagram Alur -->
+    <div class="bg-canvas border border-hairline rounded-card p-6 md:p-8 mb-8 overflow-x-auto">
+      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-4">Alur Inferensi</p>
+      <div class="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-0 justify-center min-w-[400px]">
+        <div class="flex flex-col items-center text-center px-4">
+          <div class="w-12 h-12 border-2 border-primary rounded-lg flex items-center justify-center mb-2">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-primary"></i>
+          </div>
+          <span class="text-xs font-medium text-ink">Input Gejala</span>
+          <span class="text-[10px] text-ink-faint">Fakta dari user</span>
+        </div>
+        <div class="hidden md:block text-ink-faint text-lg px-2">&#8594;</div>
+        <div class="flex flex-col items-center text-center px-4">
+          <div class="w-12 h-12 border-2 border-primary rounded-lg flex items-center justify-center mb-2">
+            <i data-lucide="search" class="w-5 h-5 text-primary"></i>
+          </div>
+          <span class="text-xs font-medium text-ink">Cocokkan Aturan</span>
+          <span class="text-[10px] text-ink-faint">IF gejala THEN masalah</span>
+        </div>
+        <div class="hidden md:block text-ink-faint text-lg px-2">&#8594;</div>
+        <div class="flex flex-col items-center text-center px-4">
+          <div class="w-12 h-12 border-2 border-primary rounded-lg flex items-center justify-center mb-2">
+            <i data-lucide="calculator" class="w-5 h-5 text-primary"></i>
+          </div>
+          <span class="text-xs font-medium text-ink">Hitung CF</span>
+          <span class="text-[10px] text-ink-faint">Certainty Factor</span>
+        </div>
+        <div class="hidden md:block text-ink-faint text-lg px-2">&#8594;</div>
+        <div class="flex flex-col items-center text-center px-4">
+          <div class="w-12 h-12 border-2 border-primary rounded-lg flex items-center justify-center mb-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-primary"></i>
+          </div>
+          <span class="text-xs font-medium text-ink">Diagnosis</span>
+          <span class="text-[10px] text-ink-faint">Top 3 masalah</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contoh Aturan -->
+    <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Contoh Aturan IF-THEN</p>
+    <div class="bg-canvas-night rounded-btn p-5 font-mono text-sm leading-relaxed text-[#e0e0e0] overflow-x-auto">
+      <p class="text-ink-faint">// R01: Tidak Ada Koneksi Jaringan</p>
+      <p class="mt-1"><span class="text-primary">IF</span> <span class="text-[#e0e0e0]">G01 (Tidak ada koneksi sama sekali)</span></p>
+      <p class="ml-4"><span class="text-primary">AND</span> G20 (ipconfig menunjukkan Media Disconnected)</p>
+      <p class="ml-4"><span class="text-primary">AND</span> G26 (Kabel LAN tidak terdeteksi)</p>
+      <p class="mt-1"><span class="text-primary">THEN</span> P01 = Tidak Ada Koneksi Jaringan</p>
+      <p class="mt-3 text-ink-faint">// R03: DNS Resolution Failure</p>
+      <p><span class="text-primary">IF</span> G04 (Bisa ping IP tapi tidak bisa ping domain)</p>
+      <p class="ml-4"><span class="text-primary">AND</span> G21 (nslookup gagal resolve)</p>
+      <p class="ml-4"><span class="text-primary">AND</span> G24 (Error "DNS Server Not Responding")</p>
+      <p class="mt-1"><span class="text-primary">THEN</span> P03 = DNS Resolution Failure</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Metode Certainty Factor
+     ═══════════════════════════════════════════════════════════ -->
+<section class="border-t border-hairline">
+  <div class="max-w-5xl mx-auto px-6 py-16">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Metode Ketidakpastian</p>
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Certainty Factor (CF)</h2>
+    <p class="text-ink-mute leading-relaxed max-w-3xl mb-8">
+      Metode <strong class="text-ink">Certainty Factor</strong> diperkenalkan oleh Shortliffe & Buchanan (1975)
+      dalam sistem MYCIN. CF digunakan untuk mengukur tingkat keyakinan terhadap sebuah kesimpulan,
+      memperhitungkan ketidakpastian dalam penalaran ahli manusia.
+    </p>
+
+    <!-- Konsep MB, MD, CF -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-2">MB (Measure of Belief)</p>
+        <p class="text-sm text-ink-mute leading-relaxed">Ukuran kepercayaan terhadap hipotesis berdasarkan evidence (gejala). Nilai antara 0 dan 1.</p>
+      </div>
+      <div class="border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-2">MD (Measure of Disbelief)</p>
+        <p class="text-sm text-ink-mute leading-relaxed">Ukuran ketidakpercayaan terhadap hipotesis berdasarkan evidence. Nilai antara 0 dan 1.</p>
+      </div>
+      <div class="border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-2">CF (Certainty Factor)</p>
+        <p class="text-sm text-ink-mute leading-relaxed">Selisih antara MB dan MD. Nilai antara -1 (pasti tidak) hingga 1 (pasti ya).</p>
+      </div>
+    </div>
+
+    <!-- Rumus -->
+    <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Rumus Utama</p>
+    <div class="space-y-4 mb-8">
+      <!-- Rumus 1: CF Rule -->
+      <div class="bg-canvas-soft border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium text-ink mb-2">1. CF Rule (CF Hipotesis berdasarkan Evidence)</p>
+        <div class="bg-canvas-night rounded-btn px-4 py-3 font-mono text-sm">
+          <span class="text-primary">CF(H,E)</span> <span class="text-[#e0e0e0]">= MB(H,E) - MD(H,E)</span>
+        </div>
+        <p class="text-xs text-ink-mute mt-2">Selisih antara Measure of Belief dan Measure of Disbelief untuk suatu evidence.</p>
+      </div>
+
+      <!-- Rumus 2: CF Evidence -->
+      <div class="bg-canvas-soft border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium text-ink mb-2">2. CF Evidence (CF berdasarkan keyakinan user)</p>
+        <div class="bg-canvas-night rounded-btn px-4 py-3 font-mono text-sm">
+          <span class="text-primary">CF_evidence</span> <span class="text-[#e0e0e0]">= CF_user &times; CF(H,E)</span>
+        </div>
+        <p class="text-xs text-ink-mute mt-2">Mengalikan tingkat keyakinan user (CF_user) dengan CF rule untuk mendapatkan CF evidence per gejala.</p>
+      </div>
+
+      <!-- Rumus 3: CF Combine -->
+      <div class="bg-canvas-soft border border-hairline rounded-card p-5">
+        <p class="text-xs font-medium text-ink mb-2">3. CF Combine (Kombinasi beberapa evidence)</p>
+        <div class="bg-canvas-night rounded-btn px-4 py-3 font-mono text-sm">
+          <span class="text-primary">CF_combine</span> <span class="text-[#e0e0e0]">= CF<sub>1</sub> + CF<sub>2</sub> &times; (1 - CF<sub>1</sub>)</span>
+        </div>
+        <p class="text-xs text-ink-mute mt-2">Menggabungkan CF dari beberapa evidence secara bertahap untuk mendapatkan CF akhir diagnosis.</p>
+      </div>
+    </div>
+
+    <!-- Contoh Perhitungan -->
+    <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Contoh Perhitungan</p>
+    <div class="bg-canvas-soft border border-hairline rounded-card p-5 md:p-6 overflow-x-auto">
+      <p class="text-xs font-medium text-ink mb-3">Skenario: Koneksi Internet Terputus (P02)</p>
+      <p class="text-xs text-ink-mute mb-3">Input user: G02 (CF_user = 0.8), G03 (CF_user = 1.0), G28 (CF_user = 0.6)</p>
+
+      <div class="bg-canvas-night rounded-btn p-4 font-mono text-xs md:text-sm leading-relaxed whitespace-pre-wrap"><span class="text-ink-faint">/* Step 1: Hitung CF Rule per gejala */</span>
+<span class="text-primary">G02:</span> CF(H,E) = MB(0.90) - MD(0.05) = <span class="text-[#e0e0e0]">0.85</span>
+<span class="text-primary">G03:</span> CF(H,E) = MB(0.95) - MD(0.05) = <span class="text-[#e0e0e0]">0.90</span>
+<span class="text-primary">G28:</span> CF(H,E) = MB(0.80) - MD(0.05) = <span class="text-[#e0e0e0]">0.75</span>
+
+<span class="text-ink-faint">/* Step 2: Hitung CF Evidence per gejala */</span>
+<span class="text-primary">G02:</span> CF_evidence = 0.8 &times; 0.85 = <span class="text-[#e0e0e0]">0.68</span>
+<span class="text-primary">G03:</span> CF_evidence = 1.0 &times; 0.90 = <span class="text-[#e0e0e0]">0.90</span>
+<span class="text-primary">G28:</span> CF_evidence = 0.6 &times; 0.75 = <span class="text-[#e0e0e0]">0.45</span>
+
+<span class="text-ink-faint">/* Step 3: Kombinasi CF secara bertahap */</span>
+<span class="text-primary">Combine 1:</span> 0.68 + 0.90 &times; (1 - 0.68) = 0.68 + 0.288 = <span class="text-[#e0e0e0]">0.9680</span>
+<span class="text-primary">Combine 2:</span> 0.9680 + 0.45 &times; (1 - 0.9680) = 0.9680 + 0.0144 = <span class="text-primary">0.9824</span>
+
+<span class="text-ink-faint">/* Hasil Akhir */</span>
+<span class="text-primary">CF P02 = 98.24%</span> <span class="text-ink-faint">→ Sangat Yakin</span></div>
+    </div>
+
+    <!-- Interpretasi CF -->
+    <div class="mt-8">
+      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Interpretasi Nilai CF</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border border-hairline rounded-card overflow-hidden">
+          <thead>
+            <tr class="bg-canvas-soft">
+              <th class="text-left px-4 py-2.5 font-medium text-ink text-xs border-b border-hairline">Rentang CF</th>
+              <th class="text-left px-4 py-2.5 font-medium text-ink text-xs border-b border-hairline">Label</th>
+              <th class="text-left px-4 py-2.5 font-medium text-ink text-xs border-b border-hairline">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody class="text-ink-mute text-xs">
+            <tr class="border-b border-hairline">
+              <td class="px-4 py-2.5 font-mono">0.80 &ndash; 1.00</td>
+              <td class="px-4 py-2.5"><span class="inline-block px-2 py-0.5 bg-primary/10 text-primary-deep rounded-full text-[10px] font-medium">Sangat Yakin</span></td>
+              <td class="px-4 py-2.5">Diagnosis sangat kuat, gejala sangat cocok</td>
+            </tr>
+            <tr class="border-b border-hairline">
+              <td class="px-4 py-2.5 font-mono">0.60 &ndash; 0.79</td>
+              <td class="px-4 py-2.5"><span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[10px] font-medium">Cukup Yakin</span></td>
+              <td class="px-4 py-2.5">Diagnosis cukup kuat, mayoritas gejala cocok</td>
+            </tr>
+            <tr class="border-b border-hairline">
+              <td class="px-4 py-2.5 font-mono">0.40 &ndash; 0.59</td>
+              <td class="px-4 py-2.5"><span class="inline-block px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-[10px] font-medium">Kemungkinan</span></td>
+              <td class="px-4 py-2.5">Ada kemungkinan, perlu gejala tambahan</td>
+            </tr>
+            <tr class="border-b border-hairline">
+              <td class="px-4 py-2.5 font-mono">0.20 &ndash; 0.39</td>
+              <td class="px-4 py-2.5"><span class="inline-block px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-[10px] font-medium">Kurang Yakin</span></td>
+              <td class="px-4 py-2.5">Diagnosis lemah, gejala kurang spesifik</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2.5 font-mono">&lt; 0.20</td>
+              <td class="px-4 py-2.5"><span class="inline-block px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-[10px] font-medium">Tidak Yakin</span></td>
+              <td class="px-4 py-2.5">Diagnosis sangat lemah, hampir tidak ada kecocokan</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Arsitektur Sistem
+     ═══════════════════════════════════════════════════════════ -->
+<section class="border-t border-hairline bg-canvas-soft">
+  <div class="max-w-5xl mx-auto px-6 py-16">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Arsitektur</p>
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Arsitektur Sistem</h2>
+    <p class="text-ink-mute leading-relaxed max-w-3xl mb-8">
+      NetMedix mengikuti arsitektur sistem pakar klasik yang terdiri dari beberapa komponen utama yang
+      saling berinteraksi untuk menghasilkan diagnosis.
+    </p>
+
+    <!-- Diagram Arsitektur -->
+    <div class="bg-canvas border border-hairline rounded-card p-6 md:p-8 overflow-x-auto">
+      <div class="flex flex-col items-center gap-4 min-w-[320px]">
+        <!-- User Interface -->
+        <div class="w-full max-w-md border-2 border-ink rounded-card p-4 text-center">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <i data-lucide="monitor" class="w-4 h-4 text-ink"></i>
+            <span class="text-sm font-medium text-ink">User Interface</span>
+          </div>
+          <p class="text-[10px] text-ink-mute">Flask + Jinja2 Templates + Tailwind CSS</p>
+        </div>
+
+        <i data-lucide="arrow-down" class="w-4 h-4 text-ink-faint"></i>
+
+        <!-- Inference Engine -->
+        <div class="w-full max-w-md border-2 border-primary rounded-card p-4 text-center bg-primary/5">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <i data-lucide="cpu" class="w-4 h-4 text-primary"></i>
+            <span class="text-sm font-medium text-ink">Inference Engine</span>
+          </div>
+          <p class="text-[10px] text-ink-mute">Forward Chaining + Certainty Factor</p>
+        </div>
+
+        <i data-lucide="arrow-down" class="w-4 h-4 text-ink-faint"></i>
+
+        <div class="flex flex-col md:flex-row gap-4 w-full max-w-lg">
+          <!-- Knowledge Base -->
+          <div class="flex-1 border border-hairline rounded-card p-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-1">
+              <i data-lucide="book-open" class="w-4 h-4 text-ink-mute"></i>
+              <span class="text-sm font-medium text-ink">Knowledge Base</span>
+            </div>
+            <p class="text-[10px] text-ink-mute">JSON Files (problems, symptoms, rules)</p>
+          </div>
+
+          <!-- Working Memory -->
+          <div class="flex-1 border border-hairline rounded-card p-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-1">
+              <i data-lucide="brain" class="w-4 h-4 text-ink-mute"></i>
+              <span class="text-sm font-medium text-ink">Working Memory</span>
+            </div>
+            <p class="text-[10px] text-ink-mute">Gejala terpilih + CF user values</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Penjelasan Komponen -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <div class="border border-hairline rounded-card p-5 bg-canvas">
+        <h3 class="text-sm font-medium text-ink mb-2 flex items-center gap-2">
+          <i data-lucide="monitor" class="w-4 h-4 text-ink-mute"></i>
+          User Interface
+        </h3>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Antarmuka web berbasis Flask dengan template Jinja2. Pengguna memilih gejala melalui form interaktif,
+          menentukan tingkat keyakinan, dan melihat hasil diagnosis lengkap dengan detail perhitungan CF.
+        </p>
+      </div>
+      <div class="border border-hairline rounded-card p-5 bg-canvas">
+        <h3 class="text-sm font-medium text-ink mb-2 flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-primary"></i>
+          Inference Engine
+        </h3>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Mesin inferensi yang mengimplementasikan Forward Chaining untuk mencocokkan gejala dengan aturan,
+          dan Certainty Factor untuk menghitung tingkat keyakinan. Menghasilkan top-3 diagnosis yang diurutkan
+          berdasarkan nilai CF tertinggi.
+        </p>
+      </div>
+      <div class="border border-hairline rounded-card p-5 bg-canvas">
+        <h3 class="text-sm font-medium text-ink mb-2 flex items-center gap-2">
+          <i data-lucide="book-open" class="w-4 h-4 text-ink-mute"></i>
+          Knowledge Base
+        </h3>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Basis pengetahuan yang tersimpan dalam file JSON: 15 masalah jaringan (P01-P15),
+          40 gejala (G01-G40), dan 15 aturan IF-THEN (R01-R15) dengan nilai MB/MD per gejala.
+          Dapat dikelola melalui Admin Panel.
+        </p>
+      </div>
+      <div class="border border-hairline rounded-card p-5 bg-canvas">
+        <h3 class="text-sm font-medium text-ink mb-2 flex items-center gap-2">
+          <i data-lucide="brain" class="w-4 h-4 text-ink-mute"></i>
+          Working Memory
+        </h3>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Memori kerja yang menyimpan fakta sementara selama proses inferensi berlangsung &mdash;
+          yaitu gejala yang dipilih user beserta nilai keyakinan (CF user) yang diberikan.
+        </p>
+      </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="mt-8">
+      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Technology Stack</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Python / Flask</p>
+          <p class="text-[10px] text-ink-faint">Backend</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Tailwind CSS</p>
+          <p class="text-[10px] text-ink-faint">Styling</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Jinja2</p>
+          <p class="text-[10px] text-ink-faint">Templating</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">SQLite</p>
+          <p class="text-[10px] text-ink-faint">History DB</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">JSON</p>
+          <p class="text-[10px] text-ink-faint">Knowledge Base</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Inter</p>
+          <p class="text-[10px] text-ink-faint">Font</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Lucide Icons</p>
+          <p class="text-[10px] text-ink-faint">Icon Set</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink">Vanilla JS</p>
+          <p class="text-[10px] text-ink-faint">Client-side</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Referensi
+     ═══════════════════════════════════════════════════════════ -->
+<section class="border-t border-hairline">
+  <div class="max-w-5xl mx-auto px-6 py-16">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Referensi</p>
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Referensi</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Jurnal Indonesia -->
+      <div>
+        <h3 class="text-sm font-medium text-ink mb-3 flex items-center gap-2">
+          <i data-lucide="file-text" class="w-4 h-4 text-ink-mute"></i>
+          Jurnal Indonesia
+        </h3>
+        <ul class="space-y-3 text-xs text-ink-mute leading-relaxed">
+          <li>
+            <span class="text-ink font-medium">Kusumadewi, S.</span> (2003).
+            <em>Artificial Intelligence: Teknik dan Aplikasinya.</em> Graha Ilmu, Yogyakarta.
+          </li>
+          <li>
+            <span class="text-ink font-medium">Kusumadewi, S., et al.</span> (2021).
+            <em>Sistem Cerdas untuk Pendukung Keputusan.</em> UII Press.
+          </li>
+          <li>
+            Turban, E., et al. (n.d.).
+            <em>Decision Support Systems and Intelligent Systems.</em>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Sumber Teknis Internasional -->
+      <div>
+        <h3 class="text-sm font-medium text-ink mb-3 flex items-center gap-2">
+          <i data-lucide="globe" class="w-4 h-4 text-ink-mute"></i>
+          Sumber Internasional
+        </h3>
+        <ul class="space-y-3 text-xs text-ink-mute leading-relaxed">
+          <li>
+            <span class="text-ink font-medium">Russell, S. & Norvig, P.</span> (2020).
+            <em>Artificial Intelligence: A Modern Approach</em> (4th Ed). Pearson.
+          </li>
+          <li>
+            <span class="text-ink font-medium">Negnevitsky, M.</span> (2024).
+            <em>Artificial Intelligence: A Guide to Intelligent Systems</em> (4th Ed). Pearson.
+          </li>
+          <li>
+            <span class="text-ink font-medium">Rich, E. & Knight, K.</span> (1991).
+            <em>Artificial Intelligence</em> (2nd Ed). McGraw-Hill.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Textbook / Lainnya -->
+      <div>
+        <h3 class="text-sm font-medium text-ink mb-3 flex items-center gap-2">
+          <i data-lucide="book-marked" class="w-4 h-4 text-ink-mute"></i>
+          Textbook & Lainnya
+        </h3>
+        <ul class="space-y-3 text-xs text-ink-mute leading-relaxed">
+          <li>
+            <span class="text-ink font-medium">Shortliffe, E.H. & Buchanan, B.G.</span> (1975).
+            A Model of Inexact Reasoning in Medicine. <em>Mathematical Biosciences</em>, 23, 351-379.
+          </li>
+          <li>
+            <span class="text-ink font-medium">Chandra, V.</span> (2020).
+            <em>Artificial Intelligence</em>. PHI Learning.
+          </li>
+          <li>
+            CompTIA Network+ N10-008 Certification Study Guide &mdash; domain troubleshooting jaringan.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

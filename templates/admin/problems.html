@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Kelola Masalah — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-12">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <a href="{{ url_for('admin_dashboard') }}" class="text-ink-mute hover:text-ink transition-colors">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+      </a>
+      <div>
+        <h1 class="text-2xl font-medium tracking-tight text-ink">Kelola Masalah Jaringan</h1>
+        <p class="text-ink-mute text-sm mt-0.5">{{ problems|length }} masalah terdaftar</p>
+      </div>
+    </div>
+    <button onclick="openModal('add-modal')"
+            class="bg-primary text-ink font-medium text-sm px-4 py-2 rounded-btn
+                   hover:bg-primary-deep transition-colors flex items-center gap-1.5">
+      <i data-lucide="plus" class="w-4 h-4"></i>
+      Tambah
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-card border border-hairline overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-hairline bg-canvas-soft">
+            <th class="text-left px-4 py-3 font-medium text-ink-mute">Kode</th>
+            <th class="text-left px-4 py-3 font-medium text-ink-mute">Nama Masalah</th>
+            <th class="text-left px-4 py-3 font-medium text-ink-mute">Kategori</th>
+            <th class="text-right px-4 py-3 font-medium text-ink-mute">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in problems %}
+          <tr class="border-b border-hairline last:border-b-0 hover:bg-canvas-soft transition-colors">
+            <td class="px-4 py-3 font-mono text-xs text-ink-mute">{{ p.code }}</td>
+            <td class="px-4 py-3 text-ink">{{ p.name }}</td>
+            <td class="px-4 py-3">
+              <span class="text-xs bg-canvas-soft text-ink-mute px-2 py-0.5 rounded-full">{{ p.category }}</span>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button onclick='openEditProblem({{ p|tojson }})'
+                        class="text-ink-mute hover:text-ink transition-colors p-1" title="Edit">
+                  <i data-lucide="pencil" class="w-4 h-4"></i>
+                </button>
+                <form method="POST" action="{{ url_for('admin_problems_delete') }}" class="inline"
+                      onsubmit="return confirm('Hapus masalah {{ p.code }}?');">
+                  <input type="hidden" name="code" value="{{ p.code }}">
+                  <button type="submit" class="text-ink-mute hover:text-red-600 transition-colors p-1" title="Hapus">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if not problems %}
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-ink-faint">Belum ada masalah terdaftar.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Add Modal -->
+<div id="add-modal" class="fixed inset-0 z-50 hidden">
+  <div class="fixed inset-0 bg-black/40" onclick="closeModal('add-modal')"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4">
+    <div class="bg-white rounded-card border border-hairline w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-ink mb-4">Tambah Masalah Baru</h2>
+        <form method="POST" action="{{ url_for('admin_problems_add') }}">
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-xs font-medium text-ink-mute mb-1">Kode *</label>
+              <input type="text" name="code" placeholder="P16" required
+                     class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-mute mb-1">Kategori *</label>
+              <input type="text" name="category" placeholder="Konektivitas Dasar" required
+                     class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Nama *</label>
+            <input type="text" name="name" placeholder="Nama masalah" required
+                   class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Nama (EN)</label>
+            <input type="text" name="name_en" placeholder="English name (opsional)"
+                   class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Deskripsi *</label>
+            <textarea name="description" rows="3" placeholder="Deskripsi masalah" required
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Penyebab (satu per baris)</label>
+            <textarea name="causes" rows="3" placeholder="Penyebab 1&#10;Penyebab 2"
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Solusi (satu per baris)</label>
+            <textarea name="solutions" rows="3" placeholder="Solusi 1&#10;Solusi 2"
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="flex items-center justify-end gap-2">
+            <button type="button" onclick="closeModal('add-modal')"
+                    class="px-4 py-2 rounded-btn text-sm font-medium text-ink-mute border border-hairline hover:bg-canvas-soft transition-colors">
+              Batal
+            </button>
+            <button type="submit"
+                    class="bg-primary text-ink font-medium text-sm px-4 py-2 rounded-btn hover:bg-primary-deep transition-colors">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal" class="fixed inset-0 z-50 hidden">
+  <div class="fixed inset-0 bg-black/40" onclick="closeModal('edit-modal')"></div>
+  <div class="fixed inset-0 flex items-center justify-center p-4">
+    <div class="bg-white rounded-card border border-hairline w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-ink mb-4">Edit Masalah</h2>
+        <form id="edit-form" method="POST" action="{{ url_for('admin_problems_edit') }}">
+          <input type="hidden" id="edit-original-code" name="original_code">
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-xs font-medium text-ink-mute mb-1">Kode</label>
+              <input type="text" id="edit-code" disabled
+                     class="w-full px-3 py-2 border border-hairline rounded-btn text-sm bg-canvas-soft text-ink-faint">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-mute mb-1">Kategori *</label>
+              <input type="text" id="edit-category" name="category" required
+                     class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Nama *</label>
+            <input type="text" id="edit-name" name="name" required
+                   class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Nama (EN)</label>
+            <input type="text" id="edit-name-en" name="name_en"
+                   class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Deskripsi *</label>
+            <textarea id="edit-description" name="description" rows="3" required
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Penyebab (satu per baris)</label>
+            <textarea id="edit-causes" name="causes" rows="3"
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-ink-mute mb-1">Solusi (satu per baris)</label>
+            <textarea id="edit-solutions" name="solutions" rows="3"
+                      class="w-full px-3 py-2 border border-hairline rounded-btn text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"></textarea>
+          </div>
+          <div class="flex items-center justify-end gap-2">
+            <button type="button" onclick="closeModal('edit-modal')"
+                    class="px-4 py-2 rounded-btn text-sm font-medium text-ink-mute border border-hairline hover:bg-canvas-soft transition-colors">
+              Batal
+            </button>
+            <button type="submit"
+                    class="bg-primary text-ink font-medium text-sm px-4 py-2 rounded-btn hover:bg-primary-deep transition-colors">
+              Perbarui
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function openEditProblem(p) {
+  document.getElementById('edit-original-code').value = p.code;
+  document.getElementById('edit-code').value = p.code;
+  document.getElementById('edit-name').value = p.name;
+  document.getElementById('edit-name-en').value = p.name_en || '';
+  document.getElementById('edit-category').value = p.category;
+  document.getElementById('edit-description').value = p.description;
+  document.getElementById('edit-causes').value = (p.causes || []).join('\n');
+  document.getElementById('edit-solutions').value = (p.solutions || []).join('\n');
+  openModal('edit-modal');
+}
+</script>
+{% endblock %}

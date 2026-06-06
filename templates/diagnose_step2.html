@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% block title %}Diagnosis — Tingkat Keyakinan — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-medium tracking-tight text-ink">Tentukan Tingkat Keyakinan Anda</h1>
+    <p class="text-ink-mute mt-1 text-sm">
+      Anda memilih <span class="font-semibold text-primary">{{ symptoms | length }}</span> gejala.
+      Tentukan seberapa yakin Anda mengalami setiap gejala.
+    </p>
+  </div>
+
+  <!-- Progress indicator -->
+  <div class="flex items-center gap-2 mb-8 text-sm">
+    <a href="/diagnose" class="text-ink-mute hover:text-ink transition-colors">Pilih Gejala</a>
+    <i data-lucide="chevron-right" class="w-4 h-4 text-ink-faint"></i>
+    <span class="text-primary font-medium">Tingkat Keyakinan</span>
+    <i data-lucide="chevron-right" class="w-4 h-4 text-ink-faint"></i>
+    <span class="text-ink-faint">Hasil</span>
+  </div>
+
+  <form id="cf-form" method="POST" action="/diagnose/process">
+
+    <!-- Symptom CF Cards -->
+    <div class="space-y-4">
+      {% for symptom in symptoms %}
+      <div class="cf-card bg-white border border-hairline rounded-card p-5 transition-all"
+           data-symptom="{{ symptom.code }}">
+        <!-- Card Header -->
+        <div class="flex items-start gap-3 mb-4">
+          <span class="text-xs font-mono font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5">
+            {{ symptom.code }}
+          </span>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-sm font-medium text-ink">{{ symptom.name }}</h3>
+            <p class="text-xs text-ink-mute mt-0.5">{{ symptom.question }}</p>
+          </div>
+          <span class="cf-label text-xs font-medium px-2 py-1 rounded-full bg-canvas-soft text-ink-mute flex-shrink-0"
+                data-target="label-{{ symptom.code }}">
+            Tidak Tahu
+          </span>
+        </div>
+
+        <!-- Radio Options: 9 levels -->
+        <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
+          {% set cf_options = [
+            (-1.0, "Pasti Tidak", "bg-red-100 text-red-700 border-red-200"),
+            (-0.8, "Hampir Pasti Tidak", "bg-red-50 text-red-600 border-red-100"),
+            (-0.6, "Kemungkinan Tidak", "bg-orange-50 text-orange-600 border-orange-100"),
+            (-0.4, "Agak Tidak", "bg-yellow-50 text-yellow-600 border-yellow-100"),
+            (-0.2, "Sedikit Tidak", "bg-yellow-50 text-yellow-700 border-yellow-100"),
+            (0.2, "Tidak Tahu", "bg-canvas-soft text-ink-mute border-hairline"),
+            (0.4, "Sedikit Yakin", "bg-emerald-50 text-emerald-600 border-emerald-100"),
+            (0.6, "Cukup Yakin", "bg-emerald-50 text-emerald-700 border-emerald-200"),
+            (0.8, "Pasti Ya", "bg-primary/10 text-primary-deep border-primary/20"),
+          ] %}
+          {% for val, label, classes in cf_options %}
+          <label class="cf-radio-label flex flex-col items-center gap-1 p-2 rounded-btn border cursor-pointer
+                        transition-all text-center hover:border-ink-faint
+                        {{ classes if val == 0.2 else 'border-hairline bg-white' }}"
+                 data-value="{{ val }}"
+                 data-card="{{ symptom.code }}">
+            <input type="radio" name="cf_{{ symptom.code }}" value="{{ val }}"
+                   class="hidden"
+                   {% if val == 0.2 %}checked{% endif %}>
+            <span class="text-[11px] font-medium leading-tight">{{ label }}</span>
+            <span class="text-[10px] text-ink-faint font-mono">{{ val }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Summary Bar + Actions -->
+    <div class="sticky bottom-0 bg-white/95 backdrop-blur border-t border-hairline
+                -mx-6 px-6 py-4 mt-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <!-- Summary -->
+        <div class="flex items-center gap-4 text-sm text-ink-mute">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="list-checks" class="w-4 h-4"></i>
+            <span><span id="symptom-count" class="font-semibold text-ink">{{ symptoms | length }}</span> gejala</span>
+          </div>
+          <span class="text-ink-faint">|</span>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+            <span>Rata-rata: <span id="avg-cf" class="font-semibold text-ink">0.20</span></span>
+          </div>
+        </div>
+        <!-- Buttons -->
+        <div class="flex items-center gap-3">
+          <a href="/diagnose"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-btn text-sm font-medium
+                    border border-hairline text-ink-mute hover:text-ink hover:border-ink-faint transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            Kembali
+          </a>
+          <button type="submit" id="btn-process"
+                  class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+                         bg-primary text-ink hover:bg-primary-deep transition-colors">
+            <i data-lucide="zap" class="w-4 h-4 btn-icon-default"></i>
+            <svg class="w-4 h-4 animate-spin btn-icon-loading hidden" xmlns="http://www.w3.org/2000/svg"
+                 fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span class="btn-text">Proses Diagnosis</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // CF option visual configs
+  const cfStyles = {
+    "-1.0":  { label: "Pasti Tidak",        bg: "bg-red-100",         text: "text-red-700",     border: "border-red-200" },
+    "-0.8":  { label: "Hampir Pasti Tidak",  bg: "bg-red-50",          text: "text-red-600",     border: "border-red-100" },
+    "-0.6":  { label: "Kemungkinan Tidak",   bg: "bg-orange-50",       text: "text-orange-600",  border: "border-orange-100" },
+    "-0.4":  { label: "Agak Tidak",          bg: "bg-yellow-50",       text: "text-yellow-600",  border: "border-yellow-100" },
+    "-0.2":  { label: "Sedikit Tidak",       bg: "bg-yellow-50",       text: "text-yellow-700",  border: "border-yellow-100" },
+    "0.2":   { label: "Tidak Tahu",          bg: "bg-canvas-soft",     text: "text-ink-mute",    border: "border-hairline" },
+    "0.4":   { label: "Sedikit Yakin",       bg: "bg-emerald-50",      text: "text-emerald-600", border: "border-emerald-100" },
+    "0.6":   { label: "Cukup Yakin",         bg: "bg-emerald-50",      text: "text-emerald-700", border: "border-emerald-200" },
+    "0.8":   { label: "Pasti Ya",            bg: "bg-primary/10",      text: "text-primary-deep", border: "border-primary/20" },
+  };
+
+  const defaultClasses = "border-hairline bg-white";
+
+  function updateCardStyles(card) {
+    const symptomCode = card.dataset.symptom;
+    const selected = card.querySelector("input[type=radio]:checked");
+    const value = selected ? selected.value : "0.2";
+    const style = cfStyles[value];
+
+    // Update radio labels
+    card.querySelectorAll(".cf-radio-label").forEach(label => {
+      const labelVal = label.dataset.value;
+      const isSelected = String(labelVal) === String(value);
+      // Remove all style classes
+      label.classList.remove("bg-red-100", "bg-red-50", "bg-orange-50", "bg-yellow-50",
+        "bg-canvas-soft", "bg-emerald-50", "bg-primary/10", "bg-white",
+        "text-red-700", "text-red-600", "text-orange-600", "text-yellow-600", "text-yellow-700",
+        "text-ink-mute", "text-emerald-600", "text-emerald-700", "text-primary-deep",
+        "border-red-200", "border-red-100", "border-orange-100", "border-yellow-100",
+        "border-hairline", "border-emerald-100", "border-emerald-200", "border-primary/20",
+        "border-ink-faint");
+
+      if (isSelected) {
+        label.classList.add(style.bg, style.text, style.border);
+      } else {
+        label.classList.add(...defaultClasses.split(" "));
+      }
+    });
+
+    // Update pill label
+    const pillLabel = card.querySelector(".cf-label");
+    if (pillLabel && style) {
+      pillLabel.textContent = style.label;
+      // Remove old color classes
+      pillLabel.className = pillLabel.className
+        .replace(/bg-\S+/g, "").replace(/text-\S+/g, "").trim();
+      pillLabel.classList.add("cf-label", "text-xs", "font-medium", "px-2", "py-1",
+        "rounded-full", "flex-shrink-0", style.bg, style.text);
+    }
+  }
+
+  function updateSummary() {
+    const cards = document.querySelectorAll(".cf-card");
+    let total = 0;
+    let count = 0;
+    cards.forEach(card => {
+      const selected = card.querySelector("input[type=radio]:checked");
+      if (selected) {
+        total += parseFloat(selected.value);
+        count++;
+      }
+    });
+    const avg = count > 0 ? (total / count) : 0;
+    const avgEl = document.getElementById("avg-cf");
+    if (avgEl) {
+      avgEl.textContent = avg.toFixed(2);
+      // Color the average
+      avgEl.className = "font-semibold";
+      if (avg >= 0.6) avgEl.classList.add("text-primary-deep");
+      else if (avg >= 0.2) avgEl.classList.add("text-ink");
+      else avgEl.classList.add("text-red-600");
+    }
+  }
+
+  // Bind events
+  document.querySelectorAll(".cf-radio-label").forEach(label => {
+    label.addEventListener("click", () => {
+      const radio = label.querySelector("input[type=radio]");
+      if (radio) {
+        radio.checked = true;
+        const card = label.closest(".cf-card");
+        updateCardStyles(card);
+        updateSummary();
+      }
+    });
+  });
+
+  // Initialize all cards with default styles
+  document.querySelectorAll(".cf-card").forEach(card => updateCardStyles(card));
+  updateSummary();
+
+  // Loading spinner on form submit
+  const cfForm = document.getElementById("cf-form");
+  const btnProcess = document.getElementById("btn-process");
+  if (cfForm && btnProcess) {
+    cfForm.addEventListener("submit", () => {
+      btnProcess.disabled = true;
+      btnProcess.classList.add("opacity-70", "cursor-not-allowed");
+      btnProcess.querySelectorAll(".btn-icon-default").forEach(el => el.classList.add("hidden"));
+      btnProcess.querySelectorAll(".btn-icon-loading").forEach(el => el.classList.remove("hidden"));
+      const textEl = btnProcess.querySelector(".btn-text");
+      if (textEl) textEl.textContent = "Memproses...";
+    });
+  }
+});
+</script>
+{% endblock %}

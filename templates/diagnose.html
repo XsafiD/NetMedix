@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Diagnosis — Pilih Gejala — NetMedix{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-medium tracking-tight text-ink">Pilih Gejala yang Anda Alami</h1>
+    <p class="text-ink-mute mt-1 text-sm">Pilih satu atau lebih gejala yang sesuai dengan kondisi jaringan Anda.</p>
+  </div>
+
+  <form id="diagnose-form" method="POST" action="/diagnose/step2">
+
+    <!-- Category Tabs -->
+    <div class="mb-6 border-b border-hairline overflow-x-auto">
+      <ul id="category-tabs" class="flex gap-1 -mb-px text-sm font-medium min-w-max">
+        <li>
+          <button type="button" data-tab="all"
+                  class="tab-btn px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap
+                         border-primary text-primary">
+            Semua ({{ categories | length }} kategori)
+          </button>
+        </li>
+        {% for cat in categories %}
+        <li>
+          <button type="button" data-tab="{{ cat }}"
+                  class="tab-btn px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap
+                         border-transparent text-ink-mute hover:text-ink hover:border-hairline">
+            {{ cat }}
+          </button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- "All" panel: show everything grouped (default visible) -->
+    <div class="tab-panel" data-panel="all">
+      {% for cat in categories %}
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-ink-mute uppercase tracking-wide mb-3">{{ cat }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {% for symptom in symptoms_by_category[cat] %}
+          <label for="sym-all-{{ symptom.code }}"
+                 class="symptom-card flex items-start gap-3 p-4 rounded-card border border-hairline
+                        bg-white cursor-pointer transition-all hover:border-ink-faint"
+                 data-symptom="{{ symptom.code }}">
+            <input type="checkbox" id="sym-all-{{ symptom.code }}" name="symptoms" value="{{ symptom.code }}"
+                   class="symptom-checkbox mt-0.5 w-4 h-4 rounded border-hairline text-primary
+                          focus:ring-primary focus:ring-offset-0 flex-shrink-0 accent-[#3ecf8e]">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                  {{ symptom.code }}
+                </span>
+                <span class="text-sm font-medium text-ink">{{ symptom.name }}</span>
+              </div>
+              <p class="text-xs text-ink-mute leading-relaxed">{{ symptom.question }}</p>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Per-category panels -->
+    {% for cat in categories %}
+    <div class="tab-panel" data-panel="{{ cat }}" style="display:none;">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {% for symptom in symptoms_by_category[cat] %}
+        <label for="sym-cat-{{ symptom.code }}"
+               class="symptom-card flex items-start gap-3 p-4 rounded-card border border-hairline
+                      bg-white cursor-pointer transition-all hover:border-ink-faint"
+               data-symptom="{{ symptom.code }}">
+          <input type="checkbox" id="sym-cat-{{ symptom.code }}" name="symptoms" value="{{ symptom.code }}"
+                 class="symptom-checkbox mt-0.5 w-4 h-4 rounded border-hairline text-primary
+                        focus:ring-primary focus:ring-offset-0 flex-shrink-0 accent-[#3ecf8e]">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-mono font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                {{ symptom.code }}
+              </span>
+              <span class="text-sm font-medium text-ink">{{ symptom.name }}</span>
+            </div>
+            <p class="text-xs text-ink-mute leading-relaxed">{{ symptom.question }}</p>
+          </div>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Bottom Bar: Counter + Submit -->
+    <div class="sticky bottom-0 bg-white/95 backdrop-blur border-t border-hairline
+                -mx-6 px-6 py-4 mt-8 flex items-center justify-between">
+      <div class="text-sm text-ink-mute">
+        <span id="selected-count" class="font-semibold text-primary">0</span>
+        gejala dipilih
+      </div>
+      <button type="submit" id="btn-next"
+              class="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-btn text-sm font-medium
+                     bg-primary text-ink hover:bg-primary-deep transition-colors
+                     disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-primary"
+              disabled>
+        Lanjutkan
+        <i data-lucide="arrow-right" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+    </div>
+
+  </form>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // ── Tab switching ──
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".tab-panel");
+
+  function switchTab(tab) {
+    tabBtns.forEach(btn => {
+      if (btn.dataset.tab === tab) {
+        btn.classList.remove("border-transparent", "text-ink-mute");
+        btn.classList.add("border-primary", "text-primary");
+      } else {
+        btn.classList.remove("border-primary", "text-primary");
+        btn.classList.add("border-transparent", "text-ink-mute");
+      }
+    });
+    panels.forEach(panel => {
+      panel.style.display = panel.dataset.panel === tab ? "" : "none";
+    });
+    // Re-init Lucide icons for newly visible panel
+    if (typeof lucide !== "undefined") lucide.createIcons();
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  // Show "all" panel by default
+  switchTab("all");
+
+  // ── Checkbox handling with cross-panel sync ──
+  const form = document.getElementById("diagnose-form");
+  const counter = document.getElementById("selected-count");
+  const btnNext = document.getElementById("btn-next");
+
+  // Get unique selected symptom codes
+  function getSelectedCodes() {
+    const codes = new Set();
+    form.querySelectorAll(".symptom-checkbox:checked").forEach(cb => codes.add(cb.value));
+    return codes;
+  }
+
+  function updateCounter() {
+    const count = getSelectedCodes().size;
+    counter.textContent = count;
+    btnNext.disabled = count === 0;
+  }
+
+  // Sync all checkboxes with the same value and update card styles
+  function syncCheckboxes(changedCb) {
+    const value = changedCb.value;
+    const isChecked = changedCb.checked;
+    form.querySelectorAll(`.symptom-checkbox[value="${value}"]`).forEach(cb => {
+      cb.checked = isChecked;
+      const card = cb.closest(".symptom-card");
+      if (isChecked) {
+        card.classList.add("border-primary", "bg-primary/5");
+        card.classList.remove("border-hairline");
+      } else {
+        card.classList.remove("border-primary", "bg-primary/5");
+        card.classList.add("border-hairline");
+      }
+    });
+    updateCounter();
+  }
+
+  form.querySelectorAll(".symptom-checkbox").forEach(cb => {
+    cb.addEventListener("change", () => syncCheckboxes(cb));
+  });
+
+  updateCounter();
+});
+</script>
+{% endblock %}

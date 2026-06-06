@@ -1,0 +1,287 @@
+[
+  {
+    "code": "R01",
+    "name": "Aturan Tidak Ada Koneksi Jaringan",
+    "target_problem": "P01",
+    "symptoms": [
+      {
+        "code": "G01",
+        "mb": 0.9,
+        "md": 0.1
+      },
+      {
+        "code": "G20",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G26",
+        "mb": 0.7,
+        "md": 0.1
+      }
+    ]
+  },
+  {
+    "code": "R02",
+    "name": "Aturan Koneksi Internet Terputus",
+    "target_problem": "P02",
+    "symptoms": [
+      {
+        "code": "G02",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G03",
+        "mb": 0.9,
+        "md": 0.1
+      },
+      {
+        "code": "G28",
+        "mb": 0.9,
+        "md": 0.1
+      }
+    ]
+  },
+  {
+    "code": "R03",
+    "name": "Aturan DNS Resolution Failure",
+    "target_problem": "P03",
+    "symptoms": [
+      {
+        "code": "G04",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G21",
+        "mb": 0.9,
+        "md": 0.1
+      },
+      {
+        "code": "G24",
+        "mb": 0.9,
+        "md": 0.0
+      }
+    ]
+  },
+  {
+    "code": "R04",
+    "name": "Aturan DNS Cache Poisoning / Hijacking",
+    "target_problem": "P04",
+    "symptoms": [
+      {
+        "code": "G17",
+        "mb": 0.8,
+        "md": 0.3
+      },
+      {
+        "code": "G24",
+        "mb": 0.6,
+        "md": 0.1
+      }
+    ]
+  },
+  {
+    "code": "R05",
+    "name": "Aturan DHCP Failure",
+    "target_problem": "P05",
+    "symptoms": [
+      {
+        "code": "G05",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G30",
+        "mb": 0.9,
+        "md": 0.1
+      },
+      {
+        "code": "G40",
+        "mb": 0.7,
+        "md": 0.2
+      }
+    ]
+  },
+  {
+    "code": "R06",
+    "name": "Aturan IP Address Conflict",
+    "target_problem": "P06",
+    "symptoms": [
+      {
+        "code": "G06",
+        "mb": 1.0,
+        "md": 0.0
+      },
+      {
+        "code": "G23",
+        "mb": 0.6,
+        "md": 0.3
+      }
+    ]
+  },
+  {
+    "code": "R07",
+    "name": "Aturan Subnet Mask / Gateway Salah",
+    "target_problem": "P07",
+    "symptoms": [
+      {
+        "code": "G07",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G08",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G35",
+        "mb": 0.6,
+        "md": 0.3
+      }
+    ]
+  },
+  {
+    "code": "R08",
+    "name": "Aturan Tidak Bisa Connect ke WiFi",
+    "target_problem": "P08",
+    "symptoms": [
+      {
+        "code": "G09",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G10",
+        "mb": 0.7,
+        "md": 0.2
+      }
+    ]
+  },
+  {
+    "code": "R09",
+    "name": "Aturan WiFi Signal Lemah / Interferensi",
+    "target_problem": "P09",
+    "symptoms": [
+      {
+        "code": "G11",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G12",
+        "mb": 0.7,
+        "md": 0.2
+      }
+    ]
+  },
+  {
+    "code": "R10",
+    "name": "Aturan Jaringan Lambat / Bandwidth Saturation",
+    "target_problem": "P10",
+    "symptoms": [
+      {
+        "code": "G13",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G22",
+        "mb": 0.9,
+        "md": 0.0
+      }
+    ]
+  },
+  {
+    "code": "R11",
+    "name": "Aturan Packet Loss Tinggi",
+    "target_problem": "P11",
+    "symptoms": [
+      {
+        "code": "G14",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G23",
+        "mb": 0.5,
+        "md": 0.3
+      }
+    ]
+  },
+  {
+    "code": "R12",
+    "name": "Aturan Latensi Tinggi / Jitter",
+    "target_problem": "P12",
+    "symptoms": [
+      {
+        "code": "G15",
+        "mb": 0.9,
+        "md": 0.0
+      }
+    ]
+  },
+  {
+    "code": "R13",
+    "name": "Aturan Firewall Memblokir Koneksi",
+    "target_problem": "P13",
+    "symptoms": [
+      {
+        "code": "G16",
+        "mb": 0.7,
+        "md": 0.2
+      },
+      {
+        "code": "G25",
+        "mb": 0.9,
+        "md": 0.0
+      }
+    ]
+  },
+  {
+    "code": "R14",
+    "name": "Aturan Kerusakan Kabel / Konektor",
+    "target_problem": "P14",
+    "symptoms": [
+      {
+        "code": "G18",
+        "mb": 0.7,
+        "md": 0.2
+      },
+      {
+        "code": "G29",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G14",
+        "mb": 0.5,
+        "md": 0.3
+      }
+    ]
+  },
+  {
+    "code": "R15",
+    "name": "Aturan Kerusakan / Misconfiguration Router-Switch",
+    "target_problem": "P15",
+    "symptoms": [
+      {
+        "code": "G19",
+        "mb": 0.9,
+        "md": 0.0
+      },
+      {
+        "code": "G27",
+        "mb": 0.8,
+        "md": 0.1
+      },
+      {
+        "code": "G34",
+        "mb": 0.9,
+        "md": 0.0
+      }
+    ]
+  }
+]

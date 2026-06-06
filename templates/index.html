@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}NetMedix — Diagnosis Jaringan{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ────────────────────────────────────────── -->
+<section class="max-w-5xl mx-auto px-6 pt-20 pb-16 md:pt-28 md:pb-24 text-center">
+  <h1 class="text-4xl md:text-6xl font-medium tracking-tight text-ink leading-tight">
+    Diagnosis masalah jaringan<br>dalam hitungan <span class="text-primary">detik</span>
+  </h1>
+  <p class="mt-5 text-lg md:text-xl text-ink-mute max-w-2xl mx-auto leading-relaxed">
+    NetMedix adalah sistem pakar berbasis Forward Chaining dan Certainty Factor yang membantu Anda mengidentifikasi masalah jaringan komputer &mdash; tanpa perlu jadi ahli IT.
+  </p>
+  <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 bg-primary text-ink font-medium text-sm px-6 py-3 rounded-btn
+              hover:bg-primary-deep transition-colors">
+      <i data-lucide="stethoscope" class="w-4 h-4"></i>
+      Mulai Diagnosis
+    </a>
+    <a href="/about"
+       class="inline-flex items-center gap-2 bg-canvas text-ink font-medium text-sm px-6 py-3 rounded-btn
+              border border-hairline hover:bg-canvas-soft transition-colors">
+      <i data-lucide="info" class="w-4 h-4"></i>
+      Pelajari Metode
+    </a>
+  </div>
+</section>
+
+<!-- ── Cara Kerja ──────────────────────────────────────────── -->
+<section class="bg-canvas-soft border-y border-hairline py-16 md:py-20">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink text-center mb-12">
+      Cara Kerja
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Step 1 -->
+      <div class="bg-canvas border border-hairline rounded-card p-8 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-5">
+          <i data-lucide="list-checks" class="w-6 h-6"></i>
+        </div>
+        <div class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-2">Langkah 1</div>
+        <h3 class="text-lg font-medium text-ink mb-2">Pilih Gejala</h3>
+        <p class="text-sm text-ink-mute leading-relaxed">
+          Pilih gejala-gejala yang Anda alami dari 40 gejala jaringan yang tersedia, dikelompokkan dalam 7 kategori.
+        </p>
+      </div>
+      <!-- Step 2 -->
+      <div class="bg-canvas border border-hairline rounded-card p-8 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-5">
+          <i data-lucide="sliders-horizontal" class="w-6 h-6"></i>
+        </div>
+        <div class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-2">Langkah 2</div>
+        <h3 class="text-lg font-medium text-ink mb-2">Tentukan Keyakinan</h3>
+        <p class="text-sm text-ink-mute leading-relaxed">
+          Untuk setiap gejala, tentukan tingkat keyakinan Anda dari "Pasti Ya" hingga "Pasti Tidak" pada skala 9 tingkat.
+        </p>
+      </div>
+      <!-- Step 3 -->
+      <div class="bg-canvas border border-hairline rounded-card p-8 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-5">
+          <i data-lucide="check-circle" class="w-6 h-6"></i>
+        </div>
+        <div class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-2">Langkah 3</div>
+        <h3 class="text-lg font-medium text-ink mb-2">Lihat Hasil</h3>
+        <p class="text-sm text-ink-mute leading-relaxed">
+          Sistem menghitung diagnosis menggunakan metode Certainty Factor dan menampilkan top 3 masalah dengan persentase keyakinan.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Kategori Masalah ────────────────────────────────────── -->
+<section class="py-16 md:py-20">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink text-center mb-4">
+      Kategori Masalah Jaringan
+    </h2>
+    <p class="text-center text-ink-mute text-sm mb-12 max-w-lg mx-auto">
+      NetMedix mampu mendiagnosis 15 jenis masalah jaringan yang dikelompokkan dalam 7 kategori berikut.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Konektivitas Dasar -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="unplug" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">Konektivitas Dasar</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Tidak ada koneksi, internet terputus, NIC bermasalah
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">2 masalah &middot; 11 gejala</div>
+      </div>
+      <!-- DNS -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="globe" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">DNS</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          DNS resolution failure, cache poisoning, domain tidak bisa diakses
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">2 masalah &middot; 4 gejala</div>
+      </div>
+      <!-- DHCP & IP Config -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="network" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">DHCP & IP Config</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          DHCP failure, IP conflict, subnet/gateway salah
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">3 masalah &middot; 6 gejala</div>
+      </div>
+      <!-- WiFi -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="wifi" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">WiFi</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Gagal connect WiFi, signal lemah, interferensi
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">2 masalah &middot; 4 gejala</div>
+      </div>
+      <!-- Performa -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="gauge" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">Performa</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Jaringan lambat, packet loss, latensi tinggi
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">3 masalah &middot; 5 gejala</div>
+      </div>
+      <!-- Keamanan -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">Keamanan</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Firewall memblokir, VPN bermasalah
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">1 masalah &middot; 4 gejala</div>
+      </div>
+      <!-- Hardware -->
+      <div class="border border-hairline rounded-card p-6 hover:border-hairline-strong transition-colors">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex items-center justify-center w-9 h-9 rounded-btn bg-primary/10 text-primary">
+            <i data-lucide="hard-drive" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-medium text-ink">Hardware</h3>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Kabel rusak, router/switch bermasalah, lampu indikator mati
+        </p>
+        <div class="mt-3 text-xs text-ink-faint">2 masalah &middot; 6 gejala</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Statistik ───────────────────────────────────────────── -->
+<section class="bg-canvas-soft border-y border-hairline py-16 md:py-20">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink text-center mb-12">
+      Dibangun dengan Metode yang Terbukti
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <!-- Stat 1 -->
+      <div class="text-center">
+        <div class="text-4xl md:text-5xl font-medium tracking-tight text-primary">15</div>
+        <div class="mt-2 text-sm font-medium text-ink">Masalah Jaringan</div>
+        <div class="mt-1 text-xs text-ink-mute">P01 &ndash; P15</div>
+      </div>
+      <!-- Stat 2 -->
+      <div class="text-center">
+        <div class="text-4xl md:text-5xl font-medium tracking-tight text-primary">40</div>
+        <div class="mt-2 text-sm font-medium text-ink">Gejala Teridentifikasi</div>
+        <div class="mt-1 text-xs text-ink-mute">G01 &ndash; G40</div>
+      </div>
+      <!-- Stat 3 -->
+      <div class="text-center">
+        <div class="text-4xl md:text-5xl font-medium tracking-tight text-primary">FC + CF</div>
+        <div class="mt-2 text-sm font-medium text-ink">Forward Chaining + Certainty Factor</div>
+        <div class="mt-1 text-xs text-ink-mute">15 aturan IF-THEN dengan MB/MD</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Bottom CTA ──────────────────────────────────────────── -->
+<section class="py-16 md:py-20">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-xl md:text-2xl font-medium tracking-tight text-ink mb-4">
+      Siap mendiagnosis jaringan Anda?
+    </h2>
+    <p class="text-sm text-ink-mute mb-8 max-w-md mx-auto">
+      Pilih gejala yang Anda alami dan biarkan sistem pakar mengidentifikasi masalahnya.
+    </p>
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 bg-primary text-ink font-medium text-sm px-6 py-3 rounded-btn
+              hover:bg-primary-deep transition-colors">
+      <i data-lucide="stethoscope" class="w-4 h-4"></i>
+      Mulai Diagnosis
+    </a>
+  </div>
+</section>
+
+{% endblock %}
