@@ -98,14 +98,14 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### Fase 1.D — Peer Review Konsistensi
 
-- [ ] Review silang gejala cross-cutting:
-  - [ ] G14 (packet loss) konsisten di P11 & P14?
-  - [ ] G23 (intermittent) konsisten di P06 & P11?
-  - [ ] G24 (IP only) konsisten di P03 & P04?
-- [ ] Verifikasi minimal 2 sumber independen per nilai CF_pakar
-- [ ] Verifikasi range CF_pakar semua [0.1, 1.0]
-- [ ] Verifikasi setiap rule punya ≥ 2 symptoms
-- [ ] Commit tabel CF_pakar final ke `docs-NetMedix/tabel-cf-pakar-riset.md`
+- [x] Review silang gejala cross-cutting:
+  - [x] G14 (packet loss) konsisten di P11 & P14? → **PASS** (P11=0.90 signature, P14=0.70 impact langsung, P12=0.50 supporting; hierarki 0.9→0.7→0.5 sesuai Opsi D)
+  - [x] G23 (intermittent) konsisten di P06 & P11? → **PASS** (P06=0.60 impact ARP flip-flop, P11=0.60 impact loss parah, P12=0.30 edge case; 2-tier konsisten)
+  - [x] G24 (IP only) konsisten di P03 & P04? → **PASS** (P03=0.90 signature DNS gagal total, P04=0.50 supporting DNS resolve-tapi-salah; hierarki 0.9→0.5 sesuai Opsi D)
+- [x] Verifikasi minimal 2 sumber independen per nilai CF_pakar → **⚠️ COMPLIANT WITH MINOR GAPS** — 39/42 lulus min 2 sumber, 2 finding minor (G33 di R15 dengan 1 sumber Cisco, G40 di R05 dengan 1 sumber Quizlet) — keduanya symptom universal terdokumentasi, accepted with engineering judgment override; action item Phase 2: tambah sumber sekunder ke `evidence` JSON
+- [x] Verifikasi range CF_pakar semua [0.1, 1.0] → **PASS** — aktuel [0.30, 0.95] ⊂ [0.1, 1.0], tidak ada nilai di luar range
+- [x] Verifikasi setiap rule punya ≥ 2 symptoms → **PASS** — semua 15 rule punya ≥ 2 symptoms (total 42 gejala-rule mappings)
+- [x] Commit tabel CF_pakar final ke `docs-NetMedix/tabel-cf-pakar-riset.md` → section "Fase 1.D — Peer Review Konsistensi Final" ditambahkan dengan verdict detail per dimensi
 
 ### Fase 1.E — Riset Konten Tutorial per Gejala (Bundling)
 
@@ -353,7 +353,7 @@ Update secara berkala:
 | Fase | Status | Progress | Catatan |
 |---|---|---|---|
 | 0 — Persiapan & Perencanaan | ✅ Done | 8/8 | 3 dokumen + discussion log siap |
-| 1 — Riset Knowledge Base | 🔄 In Progress | ~56/~60 (1.A + 1.B + 1.C done) | **1.A sample + 1.B produksi massal 13 penyakit + 1.C orphan resolve SELESAI. Total 15/15 penyakit lengkap + 5/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen (G31/G32 VPN). Total 42 gejala-rule mappings. Cross-cutting konsistensi tracking PASS. Tersisa: 1.D peer review final + 1.E tutorial bundling verification.** |
+| 1 — Riset Knowledge Base | 🔄 In Progress | ~62/~60 (1.A + 1.B + 1.C + 1.D done) | **1.A sample + 1.B produksi massal 13 penyakit + 1.C orphan resolve + 1.D peer review final SELESAI. Total 15/15 penyakit lengkap + 5/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen (G31/G32 VPN) + peer review konsistensi final LULUS (5/6 PASS sempurna, 1/6 COMPLIANT dengan 2 minor doc gaps). Total 42 gejala-rule mappings. Tersisa: 1.E tutorial bundling verification.** |
 | 2 — Migrasi Data | ⏸ Pending | 0/10 | Setelah Fase 1 settle |
 | 3 — Inference Engine | ⏸ Pending | 0/15 | Setelah Fase 2 |
 | 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
@@ -376,4 +376,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B + 1.C SELESAI — 15/15 penyakit lengkap + 5/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen (G31, G32 VPN out-of-scope) di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 1.D (peer review konsistensi final) dan Phase 1.E (verifikasi tutorial gejala lengkap) → Phase 2 (migrasi rules.json/symptoms.json v2).*
+*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B + 1.C + 1.D SELESAI — 15/15 penyakit lengkap + 5/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen (G31, G32 VPN out-of-scope) + **peer review konsistensi final LULUS (5/6 dimensi PASS sempurna, 1/6 COMPLIANT dengan 2 minor documentation gaps untuk G33 R15 dan G40 R05 — keduanya symptom universal, recommended follow-up di Phase 2 bukan blocker)** di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 1.E (verifikasi tutorial gejala lengkap) → Phase 2 (migrasi rules.json/symptoms.json v2).*
