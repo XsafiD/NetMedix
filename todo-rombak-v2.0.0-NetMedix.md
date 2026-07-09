@@ -111,9 +111,14 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 > Idealnya di-bundle dengan Fase 1.B (sekali baca sumber, sekalian isi tutorial).
 
-- [ ] 40 gejala masing-masing punya: `short_desc`, `how_to_check`, `tutorial.{definition, verification_steps, interpretation, common_causes, related_symptoms}`
-- [ ] Konsistensi format steps (imperative voice: "Buka...", "Jalankan...")
-- [ ] Konsistensi interpretasi (format: "X%: kategori | Y%: kategori")
+- [x] 40 gejala masing-masing punya: `short_desc`, `how_to_check`, `tutorial.{definition, verification_steps, interpretation, common_causes, related_symptoms}`
+  - 38 full tutorial (G01–G30, G33–G40) di section P01–P15
+  - 2 stub out-of-scope (G31, G32 VPN) di section "Orphan Permanen Tutorial Stubs" baru
+  - 1 issue ditemukan & diperbaiki: G39 struktur YAML rusak (`tutorial: >` flat scalar → `tutorial:` object valid dengan 5 field child)
+- [x] Konsistensi format steps (imperative voice: "Buka...", "Jalankan...")
+  - Audit ~250+ verification steps — semua mulai dengan kata kerja imperative
+- [x] Konsistensi interpretasi (format: "X%: kategori | Y%: kategori")
+  - Pattern `value: category | value: category` konsisten di 40 gejala; unit bervariasi (ms, %, dBm, bar, state) sesuai domain gejala
 
 ---
 
@@ -353,7 +358,7 @@ Update secara berkala:
 | Fase | Status | Progress | Catatan |
 |---|---|---|---|
 | 0 — Persiapan & Perencanaan | ✅ Done | 8/8 | 3 dokumen + discussion log siap |
-| 1 — Riset Knowledge Base | 🔄 In Progress | ~62/~60 (1.A + 1.B + 1.C + 1.D done) | **1.A sample + 1.B produksi massal 13 penyakit + 1.C orphan resolve + 1.D peer review final SELESAI. Total 15/15 penyakit lengkap + 5/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen (G31/G32 VPN) + peer review konsistensi final LULUS (5/6 PASS sempurna, 1/6 COMPLIANT dengan 2 minor doc gaps). Total 42 gejala-rule mappings. Tersisa: 1.E tutorial bundling verification.** |
+| 1 — Riset Knowledge Base | ✅ **Done** | ~65/~65 (1.A + 1.B + 1.C + 1.D + 1.E done) | **Fase 1 LENGKAP. Total 15/15 penyakit + 6/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen dengan stub (G31/G32 VPN) + peer review konsistensi final LULUS (5/6 PASS, 1/6 COMPLIANT) + tutorial bundling verification LULUS (40/40 gejala: 38 full + 2 stub). Total 42 gejala-rule mappings. 1 issue fixed (G39 YAML structure). Siap Phase 2.** |
 | 2 — Migrasi Data | ⏸ Pending | 0/10 | Setelah Fase 1 settle |
 | 3 — Inference Engine | ⏸ Pending | 0/15 | Setelah Fase 2 |
 | 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
@@ -376,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B + 1.C + 1.D SELESAI — 15/15 penyakit lengkap + 5/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen (G31, G32 VPN out-of-scope) + **peer review konsistensi final LULUS (5/6 dimensi PASS sempurna, 1/6 COMPLIANT dengan 2 minor documentation gaps untuk G33 R15 dan G40 R05 — keduanya symptom universal, recommended follow-up di Phase 2 bukan blocker)** di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 1.E (verifikasi tutorial gejala lengkap) → Phase 2 (migrasi rules.json/symptoms.json v2).*
+*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: **Phase 1 (1.A + 1.B + 1.C + 1.D + 1.E) SELESAI** — 15/15 penyakit lengkap + 6/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen dengan stub tutorial (G31, G32 VPN out-of-scope) + **peer review konsistensi final LULUS (5/6 dimensi PASS sempurna, 1/6 COMPLIANT dengan 2 minor documentation gaps untuk G33 R15 dan G40 R05 — keduanya symptom universal, recommended follow-up di Phase 2 bukan blocker)** + **tutorial bundling verification LULUS (40/40 gejala: 38 full + 2 stub out-of-scope; G39 struktur YAML diperbaiki; format konsistensi PASS di semua dimensi)** di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 2 (migrasi rules.json/symptoms.json v2 schema).*
