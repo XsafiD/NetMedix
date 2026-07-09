@@ -65,19 +65,19 @@ ai_model: "Claude (glm-5)"
 
 Urutan dari yang paling mudah (gejala sedikit) ke kompleks:
 
-- [ ] **P11 — Packet Loss Tinggi** (G14, G23)
-- [ ] **P04 — DNS Cache Poisoning** (G17, G24)
-- [ ] **P10 — Jaringan Lambat** (G13, G22)
-- [ ] **P06 — IP Address Conflict** (G06, G23)
-- [ ] **P08 — Tidak Bisa Connect WiFi** (G09, G10)
-- [ ] **P09 — WiFi Signal Lemah** (G11, G12)
-- [ ] **P13 — Firewall Memblokir** (G16, G25)
-- [ ] **P01 — Tidak Ada Koneksi Jaringan** (G01, G20, G26)
-- [ ] **P02 — Koneksi Internet Terputus** (G02, G03, G28)
-- [ ] **P03 — DNS Resolution Failure** (G04, G21, G24)
-- [ ] **P05 — DHCP Failure** (G05, G30, G40)
-- [ ] **P07 — Subnet/Gateway Salah** (G07, G08, G35)
-- [ ] **P14 — Kerusakan Kabel** (G18, G29, G14)
+- [x] **P11 — Packet Loss Tinggi** (G14, G23)
+- [x] **P04 — DNS Cache Poisoning** (G17, G24)
+- [x] **P10 — Jaringan Lambat** (G13, G22)
+- [x] **P06 — IP Address Conflict** (G06, G23)
+- [x] **P08 — Tidak Bisa Connect WiFi** (G09, G10)
+- [x] **P09 — WiFi Signal Lemah** (G11, G12)
+- [x] **P13 — Firewall Memblokir** (G16, G25)
+- [x] **P01 — Tidak Ada Koneksi Jaringan** (G01, G20, G26)
+- [x] **P02 — Koneksi Internet Terputus** (G02, G03, G28)
+- [x] **P03 — DNS Resolution Failure** (G04, G21, G24)
+- [x] **P05 — DHCP Failure** (G05, G30, G40)
+- [x] **P07 — Subnet/Gateway Salah** (G07, G08, G35)
+- [x] **P14 — Kerusakan Kabel** (G18, G29, G14)
 
 Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial gejala.
 
@@ -349,7 +349,7 @@ Update secara berkala:
 | Fase | Status | Progress | Catatan |
 |---|---|---|---|
 | 0 — Persiapan & Perencanaan | ✅ Done | 8/8 | 3 dokumen + discussion log siap |
-| 1 — Riset Knowledge Base | 🔄 In Progress | ~20/~50 (1.A done) | **1.A sample P12 & P15 selesai; metodologi Opsi D VALIDATED; G33 orphan resolved; lanjut 1.B** |
+| 1 — Riset Knowledge Base | 🔄 In Progress | ~48/~50 (1.A + 1.B done) | **1.A sample + 1.B produksi massal 13 penyakit SELESAI. Total 15/15 penyakit lengkap di `tabel-cf-pakar-riset.md`. Cross-cutting konsistensi tracking inline PASS. Lanjut 1.C (orphan resolve) dan 1.D (peer review final).** |
 | 2 — Migrasi Data | ⏸ Pending | 0/10 | Setelah Fase 1 settle |
 | 3 — Inference Engine | ⏸ Pending | 0/15 | Setelah Fase 2 |
 | 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
@@ -372,4 +372,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-09 | Owner: AI (Claude) + User | Status: Phase 1.A selesai (sample P12 & P15 validated, metodologi Opsi D PASSED); next Phase 1.B — produksi massal 13 penyakit*
+*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B SELESAI — 15/15 penyakit lengkap di `tabel-cf-pakar-riset.md` dengan ~95 sumber riset, cross-cutting konsistensi PASS. Next: Phase 1.C (orphan resolve G31-G39) dan Phase 1.D (peer review final).*
