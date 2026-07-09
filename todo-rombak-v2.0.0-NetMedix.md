@@ -83,14 +83,18 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### Fase 1.C — Resolve Orphan Symptoms (G31-G39)
 
-- [ ] Riset G31 (VPN tidak bisa connect) — relevan ke problem mana?
-- [ ] Riset G32 (VPN internal gagal) — relevan?
-- [ ] Riset G33 (Lampu LAN router mati) — bedakan dari G28/G18?
-- [ ] Riset G36 (Network adapter disabled) — relevan ke P01?
-- [ ] Riset G37 (Driver adapter bermasalah) — relevan?
-- [ ] Riset G38 (Single device bermasalah) — relevan ke P01/P06?
-- [ ] Riset G39 (Proxy aktif) — rule baru atau orphan permanen?
-- [ ] **Keputusan per orphan:** tambah ke rule existing / buat rule baru / biarkan orphan dengan badge "belum didukung"
+- [x] Riset G31 (VPN tidak bisa connect) — relevan ke problem mana? → **orphan permanen (out-of-scope PRD)**
+- [x] Riset G32 (VPN internal gagal) — relevan? → **orphan permanen (out-of-scope PRD)**
+- [x] Riset G33 (Lampu LAN router mati) — bedakan dari G28/G18? → ✅ resolved di Fase 1.A (R15, CF 0.80)
+- [x] Riset G36 (Network adapter disabled) — relevan ke P01? → **resolve ke R01 (P01), CF 0.85**
+- [x] Riset G37 (Driver adapter bermasalah) — relevan? → **resolve ke R01 (P01), CF 0.80**
+- [x] Riset G38 (Single device bermasalah) — relevan ke P01/P06? → **resolve ke R01 (P01) sebagai inverse G26, CF 0.80**
+- [x] Riset G39 (Proxy aktif) — rule baru atau orphan permanen? → **resolve ke R02 (P02) sebagai minor supporting, CF 0.30**
+- [x] **Keputusan per orphan:** tambah ke rule existing / buat rule baru / biarkan orphan dengan badge "belum didukung"
+  - **5/7 resolved** ke rule existing (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02)
+  - **2/7 orphan permanen** dengan badge "belum didukung sistem" (G31, G32 VPN — out-of-scope PRD v2.0.0 non-goal #1)
+  - P01 expanded: 3 → 6 gejala; P02 expanded: 3 → 4 gejala
+  - Detail decision + sumber di `tabel-cf-pakar-riset.md` section "Fase 1.C — Orphan Resolution Decisions & Evidence"
 
 ### Fase 1.D — Peer Review Konsistensi
 
@@ -349,7 +353,7 @@ Update secara berkala:
 | Fase | Status | Progress | Catatan |
 |---|---|---|---|
 | 0 — Persiapan & Perencanaan | ✅ Done | 8/8 | 3 dokumen + discussion log siap |
-| 1 — Riset Knowledge Base | 🔄 In Progress | ~48/~50 (1.A + 1.B done) | **1.A sample + 1.B produksi massal 13 penyakit SELESAI. Total 15/15 penyakit lengkap di `tabel-cf-pakar-riset.md`. Cross-cutting konsistensi tracking inline PASS. Lanjut 1.C (orphan resolve) dan 1.D (peer review final).** |
+| 1 — Riset Knowledge Base | 🔄 In Progress | ~56/~60 (1.A + 1.B + 1.C done) | **1.A sample + 1.B produksi massal 13 penyakit + 1.C orphan resolve SELESAI. Total 15/15 penyakit lengkap + 5/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen (G31/G32 VPN). Total 42 gejala-rule mappings. Cross-cutting konsistensi tracking PASS. Tersisa: 1.D peer review final + 1.E tutorial bundling verification.** |
 | 2 — Migrasi Data | ⏸ Pending | 0/10 | Setelah Fase 1 settle |
 | 3 — Inference Engine | ⏸ Pending | 0/15 | Setelah Fase 2 |
 | 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
@@ -372,4 +376,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B SELESAI — 15/15 penyakit lengkap di `tabel-cf-pakar-riset.md` dengan ~95 sumber riset, cross-cutting konsistensi PASS. Next: Phase 1.C (orphan resolve G31-G39) dan Phase 1.D (peer review final).*
+*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: Phase 1.A + 1.B + 1.C SELESAI — 15/15 penyakit lengkap + 5/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen (G31, G32 VPN out-of-scope) di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 1.D (peer review konsistensi final) dan Phase 1.E (verifikasi tutorial gejala lengkap) → Phase 2 (migrasi rules.json/symptoms.json v2).*

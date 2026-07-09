@@ -10,7 +10,7 @@ related_files:
   - "[TODO v2.0.0](../todo-rombak-v2.0.0-NetMedix.md)"
   - "[Discussion log](../../../00_INBOX/2026-07-09_discussion-rombak-netmedix-pure-cf.md)"
   - "[Baseline KB v1.0.0](./2026-07-06_analisis-cf-forward-chaining-netmedix.md)"
-status: "complete-phase-1.A-1.B"
+status: "complete-phase-1.A-1.B-1.C"
 methodology: "Opsi D — Skala Ordinal Frekuensi + Engineering Judgment Override"
 ai_model: "Claude (glm-5)"
 ---
@@ -25,7 +25,7 @@ ai_model: "Claude (glm-5)"
 
 Tabel ini menggantikan struktur MB/MD (v1.0.0) dengan **CF_pakar single value per gejala** yang langsung diturunkan dari sintesis riset multi-source. Pendekatan ini lebih jujur secara epistemologis — nilai keyakinan pakar diturunkan dari frekuensi penyebutan di sumber kredibel (Microsoft Learn, Cisco, GeeksforGeeks, Cloudflare, vendor resmi) dan disesuaikan dengan engineering judgment berbasis domain knowledge jaringan.
 
-**Progress saat ini:** 15 dari 15 penyakit LENGKAP — Fase 1.A sample (P12, P15) + Fase 1.B produksi massal (P01–P11, P13, P14). Metodologi Opsi D VALIDATED di 1.A dan konsisten diterapkan di 1.B. Siap untuk Fase 1.C (orphan resolution) dan Fase 1.D (peer review konsistensi).
+**Progress saat ini:** 15 dari 15 penyakit LENGKAP + Fase 1.C orphan resolution SELESAI — Fase 1.A sample (P12, P15) + Fase 1.B produksi massal (P01–P11, P13, P14) + Fase 1.C resolve 5/7 orphan (G36, G37, G38, G39) ke rule existing dan 2/7 orphan permanen (G31, G32 VPN). Metodologi Opsi D VALIDATED di 1.A, konsisten di 1.B, dan terbukti work untuk orphan resolution di 1.C. Total gejala-rule mappings sekarang 42 (dari 37). Siap untuk Fase 1.D (peer review konsistensi final) dan Phase 2 (migrasi data).
 
 ---
 
@@ -491,24 +491,37 @@ tutorial:
 4. JustAnswer — "Wi-Fi Disabled on Windows 10? Expert Troubleshooting Guide" — https://www.justanswer.com/computer-networking/uottc-windows-10-wifi-disabled-no-network-icon.html
 5. Microsoft Learn Q&A — "Computer won't connect to WiFi, nothing is working to fix it" — https://learn.microsoft.com/en-us/answers/questions/3265166/computer-won-t-connect-to-wifi-nothing-is-working
 6. Spiceworks Community — "Icon shows I don't have internet connection but I do?" — https://community.spiceworks.com/t/icon-shows-i-dont-have-internet-connection-but-i-do/273152
+7. Microsoft Support — "Fix Ethernet connection problems in Windows" — https://support.microsoft.com/en-us/windows/fix-ethernet-connection-problems-in-windows-2311254e-cab8-42d6-90f3-cb0b9f63645f *(Fase 1.C — G36/G37 device-side diagnosis)*
+8. SolveTechToday — "Network Adapter Keeps Turning Itself Off on Windows 11" — https://www.solvetechtoday.com/network-adapter-keeps-disabling-windows-11/ *(Fase 1.C — G36 disabled state differentiation)*
+9. WeenDoz — "13 Reasons Why Network Driver Doesn't Work In Windows 10 (and How To Fix It)" — https://weendoz.com/network-driver-windows-10-fix/ *(Fase 1.C — G36 adapter disabled reason #6)*
+10. TechSupport4 — "How to Fix Network Adapter Not Working (Windows 10/11)" — https://techsupport4.com/blog/network-adapter-not-working *(Fase 1.C — G36/G37 symptom enumeration)*
+11. Intel — "How to Troubleshoot a Yellow Exclamation Mark in Device Manager over the Intel NIC" — https://www.intel.com/content/www/us/en/support/articles/000031131/ethernet-products/gigabit-ethernet-adapters-up-to-2-5gbe.html *(Fase 1.C — G37 driver Code 10)*
+12. Microsoft Learn Q&A — "network controller issues (yellow triangle)" — https://learn.microsoft.com/en-us/answers/questions/5635148/network-controller-issues *(Fase 1.C — G37 driver missing)*
+13. Windows Central — "How to fix Device Manager yellow mark for drivers on Windows 11" — https://www.windowscentral.com/software-apps/windows-11/how-to-fix-device-manager-yellow-mark-for-drivers-on-windows-11 *(Fase 1.C — G37 yellow mark diagnostic)*
+14. ASUS — "Troubleshooting - Yellow exclamation mark in Device Manager" — https://www.asus.com/us/support/faq/1048988/ *(Fase 1.C — G37 vendor troubleshooting)*
+15. cr0x.net — "Fix 'No Internet, Secured' by Resetting the Right Network Adapter" — https://cr0x.net/en/reset-right-network-adapter/ *(Fase 1.C — G38 device-isolation decision tree)*
 
 ### Tabel CF_pakar
 
-> Rule v1.0.0 berisi G01 + G20 + G26. Identitas P01 = device isolated dari network (single-device scope atau total NIC/physical failure).
+> Rule v1.0.0 berisi G01 + G20 + G26. Identitas P01 = device isolated dari network (single-device scope atau total NIC/physical failure). **Fase 1.C expand:** G36, G37, G38 di-resolve ke R01 sebagai device-side no-connectivity supporting symptoms — memperkuat rule dari 3 → 6 gejala.
 
 | No | Kode | Nama Gejala | CF_pakar | Skala Default | Override | Justifikasi / Sumber |
 |---|---|---|---|---|---|---|
 | 1 | **G01** | Tidak ada koneksi sama sekali | **0.85** | 0.9 (signature) | 0.9 → 0.85 (general failure mode) | Definisi problem itu sendiri — zero connectivity. Microsoft Support: classic entry point untuk panduan "fix network issues". MakeUseOf: 'You Are Not Connected to Any Networks' adalah error message spesifik. **Turun** dari 0.9 ke 0.85 karena juga muncul di P02 (internet down → user perception "tidak ada koneksi"), P05 (DHCP failure → no IP → feels like no connectivity), P15 (router down → semua client terdampak tapi bisa dikira P01). Cross-cutting minor di user-perception level. |
 | 2 | **G20** | Status NIC "Media Disconnected" | **0.90** | 0.9 (signature) | — | Signature diagnostic indicator — definitif di OS level. Microsoft: `ipconfig` menampilkan "Media: Media disconnected" saat NIC aktif tapi tidak ada link (kabel cabut, switch port mati, atau WiFi disconnected). JustAnswer: panduan Wi-Fi disabled menyertakan check status NIC. Tom's Hardware: thread classic tentang 'Not Connected' indicator. Berbeda dari P15 (semua device affected) — G20 adalah device-specific. |
 | 3 | **G26** | Device lain di jaringan normal | **0.80** | 0.7 (common) | 0.7 → 0.8 (differentiator strong) | **Differentiator kuat** antara P01 (device-specific) vs P15 (network-wide). Jika hanya 1 device bermasalah sementara device lain OK → masalah di device tsb (NIC, driver, kabel local). Kontras dengan G19 (semua client affected). **Naik** ke 0.8 karena differentiator menentukan scope troubleshooting (device-side vs network-side). |
+| 4 | **G36** | Network adapter disabled | **0.85** | 0.7 (common) | 0.7 → 0.85 (signature device-side, Fase 1.C resolve) | **Resolve dari orphan (Fase 1.C).** Definitif device-side no-connectivity indicator. Microsoft Support (Fix Wi-Fi): *"make sure that the wireless network adapter isn't disabled in Device Manager"* — masuk di daftar step awal troubleshooting. Microsoft Support (Fix Ethernet): Network reset flow eksplisit menyinggung adapter state. SolveTechToday: membedakan "Disabled" (state eksplisit oleh power management atau user) vs "Network cable unplugged" (signal issue) — G36 adalah kategori tersendiri. WeenDoz: "Network adapter disabled in Device Manager" adalah reason #6 dari 13 common causes no-connectivity (quick solution: re-enable di Device Manager). TechSupport4: "common symptoms include ... the adapter showing as disabled". **Naik** dari 0.7 ke 0.85 karena definitif device-side (mirip G20) — berbeda dari G37 yang driver-issue. Min 5 sumber independen. |
+| 5 | **G37** | Driver network adapter bermasalah (tanda seru kuning di Device Manager) | **0.80** | 0.7 (common) | 0.7 → 0.80 (signature device-side driver, Fase 1.C resolve) | **Resolve dari orphan (Fase 1.C).** Definitif driver-level indicator. Microsoft Support: *"Outdated, incompatible, or damaged network adapter drivers can prevent network connections or cause intermittent disconnections"* — driver masuk daftar top causes. Microsoft Learn Q&A: *"The yellow triangle means that Windows does not have the correct driver installed for your network hardware"*. Intel KB (yellow exclamation mark NIC): "This device cannot start (Code 10)" — driver problem klasik. Windows Central: yellow mark "almost always is a corruption issue, a missing driver, or a hardware conflict". Driver Talent: *"Unable to connect to the internet: The yellow exclamation mark indicates issues with the network adapter"*. ASUS official troubleshooting halaman sama. **Turun sedikit** dari 0.85 (G36) karena driver issue juga bisa manifest sebagai intermittent (bukan hanya no-connectivity total). Min 6 sumber. |
+| 6 | **G38** | Hanya satu perangkat yang bermasalah | **0.80** | 0.7 (common) | 0.7 → 0.80 (inverse G26 differentiator, Fase 1.C resolve) | **Resolve dari orphan (Fase 1.C).** Logically inverse dari G26 ("device lain di jaringan normal"). Dua gejala ini dua sisi coin yang sama — keduanya menandakan **device-specific issue**. Microsoft Support (Fix Ethernet): *"If you have another Windows PC in your home ... try to connect using that PC. If you can connect, the source of the problem is likely due to your first PC"* — explicit device-isolation test. cr0x.net: decision tree untuk isolate adapter/route/DNS selalu dimulai dari swap device test. Karena G26 ditetapkan 0.80, G38 match di 0.80 untuk konsistensi (keduanya adalah differentiator strong dari dua perspektif: G26 = "device lain normal", G38 = "device saya bermasalah"). Min 2 sumber tambahan (sudah covered di G26 sources). |
 
 ### Evidence Summary
 
 - **Primary symptom:** G01 (CF 0.85) — user-facing total no connectivity.
 - **Diagnostic signature:** G20 (CF 0.9) — ipconfig shows "Media Disconnected" — definitive OS-level.
-- **Differentiator:** G26 (CF 0.8) — isolates to device-specific vs network-wide.
-- **Rule P01:** 3 gejala — lolos filter "≥ 2 gejala relevan" dengan kombinasi kaya.
-- **Diferensiasi klinis:** G19 (semua affected → P15) vs G26 (device lain normal → P01) — dua sisi coin yang sama.
+- **Differentiator pair:** G26 (CF 0.8) + G38 (CF 0.8) — dua sisi coin yang sama, mengisolasi ke device-specific vs network-wide (G19).
+- **Device-side failure modes:** G36 (CF 0.85, NIC disabled) + G37 (CF 0.80, driver problem) — strengthen R01 untuk kasus NIC off / driver rusak.
+- **Rule P01 (setelah Fase 1.C):** 6 gejala — kombinasi jauh lebih kaya, lolos filter "≥ 2 gejala relevan" di banyak skenario user.
+- **Diferensiasi klinis:** G19 (semua affected → P15) vs G26/G38 (device-specific → P01) — G26 & G38 saling memperkuat sebagai differentiator.
 
 ### Bundling Tutorial Gejala
 
@@ -638,6 +651,158 @@ tutorial:
   related_symptoms: [G01, G19, G20, G38]
 ```
 
+#### G36 — Network adapter disabled *(Fase 1.C — resolve dari orphan ke R01)*
+
+- **short_desc:** Network adapter (Ethernet atau WiFi) dalam keadaan "Disabled" di Windows — baik di Device Manager (right-click → "Enable device") maupun di Network Connections (`ncpa.cpl`). Bisa terjadi karena user manual disable, Windows power management, atau software third-party (VPN/antivirus). Berbeda dari G20 (NIC enabled tapi no link) dan G37 (NIC ada di Device Manager tapi driver bermasalah).
+- **how_to_check:** `Buka Device Manager (Win+X → Device Manager) → expand "Network adapters" → cari adapter Anda. Jika ada icon panah hitam ke bawah (↓) di icon adapter → NIC disabled. Atau buka CMD → jalankan ncpa.cpl → cek apakah adapter tampil abu-abu. Klik kanan → "Enable" untuk re-enable.`
+
+```yaml
+tutorial:
+  definition: >
+    "Network adapter disabled" adalah state eksplisit di mana Windows
+    tidak menggunakan NIC tersebut — bukan karena link-layer gagal (G20),
+    bukan karena driver rusak (G37), melainkan NIC sengaja dimatikan
+    (software state). Microsoft Support (Fix Wi-Fi): "make sure that the
+    wireless network adapter isn't disabled in Device Manager" — masuk
+    di daftar step awal troubleshooting. SolveTechToday membedakan
+    secara tegas: "An adapter that shows as 'Disabled' in Device Manager
+    was explicitly disabled — either by Windows power management, or by
+    a user or software right-clicking the adapter ... An adapter showing
+    as 'Network cable unplugged' or 'Not connected' is still enabled but
+    has lost signal." WeenDoz: adapter disabled adalah reason #6 dari 13
+    common no-connectivity causes. Penting: cek juga BIOS/UEFI (Onboard
+    LAN/Wireless Enable) — jika disabled di firmware, NIC bahkan tidak
+    terdeteksi Windows.
+  verification_steps:
+    - "Step 1: Buka Device Manager (Win+X → Device Manager)."
+    - "Step 2: Expand kategori 'Network adapters'."
+    - "Step 3: Cari NIC Anda (mis. 'Intel(R) Ethernet Controller', 'Realtek PCIe GbE', 'Intel(R) Wi-Fi 6 AX201')."
+    - "Step 4: Amati icon: jika ada panah hitam ke bawah (↓) di icon → NIC disabled (G36)."
+    - "Step 5: Alternatif: buka CMD → `ncpa.cpl` → Network Connections window. Jika adapter tampil abu-abu → disabled."
+    - "Step 6: Right-click NIC disabled → pilih 'Enable device' (Device Manager) atau 'Enable' (Network Connections). Tunggu 5-10 detik."
+    - "Step 7: Setelah enabled, cek di `ipconfig /all` apakah adapter muncul dengan IP. Jika masih 'Media disconnected' → lanjut ke G20."
+    - "Step 8: Jika NIC tetap disabled setelah reboot → suspect power management. Buka Device Manager → NIC Properties → tab 'Power Management' → uncheck 'Allow the computer to turn off this device to save power' (SolveTechToday Fix 1)."
+    - "Step 9: Jika NIC tidak muncul sama sekali di Device Manager → cek BIOS/UEFI (F2/Del saat boot) → cari 'Onboard LAN' / 'Wireless' → set Enabled (WeenDoz reason #7)."
+  interpretation: >
+    Icon panah ↓ di NIC: confirmed disabled (G36) → re-enable | NIC
+    enabled tapi "Media disconnected": G20 (link issue, lihat P01) | NIC
+    ada tapi tanda seru kuning: G37 (driver problem) | NIC tidak muncul
+    di Device Manager: disabled di BIOS/UEFI atau hardware failure |
+    NIC disable-sendiri berulang: power management agresif atau driver
+    crash (SolveTechToday).
+  common_causes:
+    - "User manual disable (tidak sengaja right-click → Disable)"
+    - "Windows power management terlalu agresif — adapter dimatikan saat idle (SolveTechToday)"
+    - "Software third-party: VPN client, antivirus, endpoint security yang disable adapter konflik"
+    - "Driver crash loop — Windows disable NIC untuk prevent error berulang (SolveTechToday)"
+    - "Group Policy atau MDM (Intune) yang disable adapter untuk compliance"
+    - "Disabled di BIOS/UEFI (Onboard LAN/Wireless = Off) — NIC bahkan tidak terdeteksi Windows (WeenDoz)"
+    - "Hardware switch laptop (Fn-key airplane mode atau switch fisik WiFi)"
+  related_symptoms: [G01, G20, G37, G38]
+```
+
+#### G37 — Driver network adapter bermasalah *(Fase 1.C — resolve dari orphan ke R01)*
+
+- **short_desc:** Tanda seru kuning (!) di Device Manager pada network adapter — indicator bahwa Windows mendeteksi hardware NIC tapi driver tidak ter-load dengan benar. Klik Properties → tab General menampilkan error code (mis. Code 28 driver not installed, Code 10 cannot start, Code 43 device problem). Bisa juga driver installed tapi incompatible/corrupt setelah Windows Update.
+- **how_to_check:** `Buka Device Manager → expand "Network adapters" → cari NIC dengan icon tanda seru kuning. Double-click → tab General → baca "Device status" (mis. "This device cannot start (Code 10)"). Catat error code untuk diagnosis.`
+
+```yaml
+tutorial:
+  definition: >
+    Tanda seru kuning di Device Manager adalah indicator universal bahwa
+    sebuah hardware device punya masalah — untuk network adapter,
+    hampir selalu driver-level issue. Windows Central: "yellow mark
+    almost always is a corruption issue, a missing driver, or a hardware
+    conflict." Microsoft Learn Q&A: "The yellow triangle means that
+    Windows does not have the correct driver installed for your network
+    hardware." Intel KB: tanda seru kuning di NIC biasanya disertai
+    error "This device cannot start (Code 10)" — driver load gagal.
+    Berbeda dari G36 (NIC disabled — state eksplisit): G37 adalah NIC
+    yang aktif di-list tapi tidak function karena driver broken/missing.
+    Driver Talent: "Unable to connect to the internet: The yellow
+    exclamation mark indicates issues with the network adapter,
+    potentially leading to an inability to connect." Microsoft Support:
+    "Outdated, incompatible, or damaged network adapter drivers can
+    prevent network connections or cause intermittent disconnections."
+  verification_steps:
+    - "Step 1: Buka Device Manager (Win+X → Device Manager)."
+    - "Step 2: Expand 'Network adapters'. Jika ada NIC dengan tanda seru kuning → G37 confirmed."
+    - "Step 3: Double-click NIC tsb. Tab 'General' → baca 'Device status'. Catat error code:"
+    - "Step 4: Code 28 = driver not installed → perlu install driver dari manufacturer"
+    - "Step 5: Code 10 = cannot start → driver load gagal, coba uninstall + restart"
+    - "Step 6: Code 31 = driver OK tapi Windows tidak load → update driver"
+    - "Step 7: Code 43 = device reported problem → biasanya hardware atau driver critical failure"
+    - "Step 8: Code 19 = registry config bad → uninstall device + scan hardware changes"
+    - "Step 9: Right-click NIC → 'Update driver' → 'Search automatically' (perlu internet, gunakan USB-Ethernet atau WiFi lain sementara)."
+    - "Step 10: Jika update gagal → 'Uninstall device' (centang 'Delete the driver software') → Restart → Windows akan reinstall otomatis. Jika tidak, download driver dari web vendor (Intel/Realtek/Broadcom) via device lain, transfer via USB, install manual."
+    - "Step 11: Jika problem muncul setelah Windows Update → tab 'Driver' → 'Roll Back Driver' (Windows Central)."
+    - "Step 12: Untuk Intel adapter, pakai Intel Driver & Support Assistant tool (TechSupport4). Untuk lainnya, cari Hardware Ids di tab 'Details' → VEN_xxxx&DEV_xxxx → cari di PCI Lookup."
+  interpretation: >
+    Code 28 (driver not installed): install driver manufacturer |
+    Code 10 (cannot start): uninstall + restart, reinstall driver |
+    Code 43 (device problem): suspect hardware failure, coba NIC USB
+    lain | Code 37/39 (driver corrupt): uninstall + reinstall | Rollback
+    berhasil jika problem mulai setelah Windows Update | NIC USB test
+    confirm hardware vs software issue.
+  common_causes:
+    - "Driver corrupt karena failed Windows Update (Windows Central)"
+    - "Driver incompatible setelah upgrade Windows (versi major)"
+    - "Driver outdated — tidak support Windows build terbaru"
+    - "Driver file corrupt karena disk error atau malware"
+    - "Driver salah model — install driver untuk chipset berbeda (WeenDoz reason #3)"
+    - "Driver signature enforcement block — driver unsigned (WeenDoz reason #5)"
+    - "Conflict dengan security software (antivirus/firewall) yang block driver load"
+    - "Conflicting virtual adapter dari VPN client (WeenDoz reason #11)"
+  related_symptoms: [G01, G20, G36, G38]
+```
+
+#### G38 — Hanya satu perangkat yang bermasalah *(Fase 1.C — resolve dari orphan ke R01)*
+
+- **short_desc:** Hanya satu perangkat (perangkat user) yang mengalami masalah koneksi, sementara semua perangkat lain di jaringan lokal yang sama bisa terhubung normal. Inverse logic dari G26 ("device lain di jaringan normal"). Dua gejala ini dua sisi coin yang sama — keduanya menandakan **device-specific issue** (P01) bukan network-wide (P15/P02).
+- **how_to_check:** `Cek minimal 2 device lain di jaringan yang SAMA (WiFi SSID yang sama atau switch Ethernet yang sama). Test: bisa buka website? Bisa ping gateway? Jika device lain normal, hanya device Anda yang bermasalah → G38 confirmed.`
+
+```yaml
+tutorial:
+  definition: >
+    "Hanya satu perangkat bermasalah" adalah mirror/logical-inverse dari
+    G26 ("device lain di jaringan normal"). Keduanya menunjukkan scope
+    masalah adalah device-specific — bukan network-wide. Microsoft
+    Support (Fix Ethernet): "If you have another Windows PC in your
+    home and a USB to Ethernet adapter, try to connect using that PC. If
+    you can connect, the source of the problem is likely due to your
+    first PC." cr0x.net decision tree selalu memulai troubleshooting
+    dengan "swap device test" untuk isolate adapter vs network.
+    Penting: harus test device lain DI JARINGAN YANG SAMA. Jika device
+    lain pakai hotspot HP atau jaringan tetangga → invalid comparison.
+    Jika media berbeda (device A WiFi, device B Ethernet) → bisa
+    membingungkan (mis. P09 WiFi lemah hanya affect WiFi device, P14
+    kabel rusak hanya affect device di kabel tsb).
+  verification_steps:
+    - "Step 1: Identifikasi minimal 2 device lain di lokasi yang sama (HP, tablet, laptop kedua)."
+    - "Step 2: PASTIKAN device lain pakai jaringan yang sama: WiFi SSID yang sama, atau Ethernet di switch yang sama. Jangan compare dengan hotspot HP."
+    - "Step 3: Test device lain — buka google.com, atau aplikasi online."
+    - "Step 4: Catat hasil: device A normal, device B normal, device C (saya) bermasalah → G38 confirmed."
+    - "Step 5: Untuk validasi — ping gateway dari device normal (`ping <gateway>`) → harus sukses. Bandingkan dengan device Anda yang RTO/timeout."
+    - "Step 6: Jika hanya device WiFi Anda yang bermasalah, tapi device WiFi lain OK → suspect driver WiFi atau adapter Anda. Test dengan Ethernet jika memungkinkan."
+    - "Step 7: Jika hanya device Ethernet Anda yang bermasalah di port tertentu → coba pindahkan ke port lain (lihat P14 kabel atau P15 switch port)."
+    - "Step 8: Swap test — pindahkan device Anda ke kabel/port yang dipakai device normal. Jika tetap bermasalah → confirmed device-side. Jika normal → problem di kabel/port asal."
+    - "Step 9: Jika semua device bermasalah → bukan G38 melainkan G19 (network-wide) → lihat P15 atau P02."
+  interpretation: >
+    1 device bermasalah, semua device lain normal: confirmed G38 → P01
+    (device-specific) | Beberapa device di port/switch tertentu bermasalah:
+    P15 (switch issue) atau P14 (kabel rusak cluster) | Semua device WiFi
+    bermasalah, Ethernet OK: P09 (WiFi signal) atau P15 (AP issue) |
+    Semua device (WiFi + Ethernet) bermasalah: G19 (network-wide) → P15
+    atau P02 | Problem mengikuti device saat swap port: confirmed
+    device-side (P01) | Problem mengikuti port: port/switch issue (P15).
+  common_causes:
+    - "Bukan penyebab — G38 adalah differentiator symptom (mirror G26) untuk isolasi masalah"
+    - "Jika G38 = true → masalah adalah device-specific: NIC, driver, kabel local, atau device-side config (lihat G36, G37, G20)"
+    - "Jika G38 = false → lihat G19 (network-wide issue → P15 atau P02)"
+    - "Perhatikan media: device A via WiFi vs device B via Ethernet bukan comparison valid kecuali P01/P15 umum"
+  related_symptoms: [G01, G19, G20, G26, G36, G37]
+```
+
 ---
 
 ## P02 — Koneksi Internet Terputus
@@ -652,23 +817,27 @@ tutorial:
 4. Reddit r/HomeNetworking — "Sudden loss of connectivity to ISP - WAN light solid red on router" — https://www.reddit.com/r/HomeNetworking/comments/14lh1sp/sudden_loss_of_connectivity_to_isp_wan_light/
 5. HomeFi — "Router Blinking Red/Orange: Meaning and How to Fix" — https://homefi.info/blogs/homefi-blog/router-blinking-red-orange-meaning-and-how-to-fix
 6. Bell Forum — "Modem is flashing red on WAN and no internet service" — https://forum.bell.ca/t5/internet/modem-is-flashing-red-on-wan-and-no-internet-service/td-p/4869
+7. cr0x.net — "Fix 'No Internet, Secured' by Resetting the Right Network Adapter" — https://cr0x.net/en/reset-right-network-adapter/ *(Fase 1.C — G39 proxy hijack / leftover config)*
+8. ITU Online — "How To Troubleshoot Common VPN Connection Issues" — https://www.ituonline.com/blogs/how-to-troubleshoot-common-vpn-connection-issues-2/ *(Fase 1.C — G39 proxy/VPN overlap)*
 
 ### Tabel CF_pakar
 
-> Rule v1.0.0 berisi G02 + G03 + G28. Identitas P02 = WAN-side problem (LAN OK) — berbeda dari P01 (LAN juga down).
+> Rule v1.0.0 berisi G02 + G03 + G28. Identitas P02 = WAN-side problem (LAN OK) — berbeda dari P01 (LAN juga down). **Fase 1.C expand:** G39 (proxy aktif) di-resolve ke R02 sebagai cross-cutting minor — proxy misconfig manifest sebagai "no internet" dari user perspective.
 
 | No | Kode | Nama Gejala | CF_pakar | Skala Default | Override | Justifikasi / Sumber |
 |---|---|---|---|---|---|---|
 | 1 | **G03** | Bisa ping gateway, tidak bisa ping internet | **0.90** | 0.9 (signature) | — | Signature diagnostic indicator — pattern paling definitive untuk P02 vs P01. Jika gateway reachable tapi 8.8.8.8 RTO → masalah di segment WAN atau upstream router. HighSpeedInternet: panduan triase klasik memakai test ini sebagai pembeda. Reddit r/HomeNetworking: thread classic WAN down scenario. Min 4 sumber. |
 | 2 | **G28** | Lampu WAN router merah | **0.85** | 0.7 (common) | 0.7 → 0.85 (differentiator strong) | Differentiator kuat hardware-level — lampu WAN merah berarti modem/router tidak dapat carrier signal dari ISP. BroadbandSearch: *"A red light on a router most commonly means it cannot establish a connection with the modem or that your internet service has been interrupted."* TP-Link: WAN port unplugged issue. HomeFi: blinking red = no WAN IP. **Naik** ke 0.85 karena differentiator strong — lampu WAN spesifik (berbeda dari lampu LAN merah atau lampu WiFi off). |
 | 3 | **G02** | Tidak bisa akses internet | **0.50** | 0.7 (common) | 0.7 → 0.5 (general symptom user-facing) | Symptom user-facing yang paling umum tapi juga paling ambiguous — bisa berarti banyak hal (P01 device isolated, P03 DNS, P02 WAN down, P10 throttling, P11 loss parah). HighSpeedInternet: panduan triase. **Turun** dari 0.7 ke 0.5 karena terlalu cross-cutting — tidak boleh mendominasi rule P02. Nilai CF didapat dari triangulasi dengan G03 (definitive) dan G28 (hardware indicator). |
+| 4 | **G39** | Proxy setting aktif tanpa sepengetahuan | **0.30** | 0.3 (minor) | 0.3 → 0.30 (cross-cutting minor, Fase 1.C resolve) | **Resolve dari orphan (Fase 1.C).** Proxy misconfig yang user tidak sadari (sisa dari VPN uninstall, malware, atau manual troubleshoot gone wrong) dapat manifest sebagai "no internet" atau "internet aneh/sebagian". cr0x.net: *"If you don't intentionally use a local proxy, reset it to direct (Task 10)"* + *"leftover proxy configuration from VPN/security tooling or manual troubleshooting gone wrong"* + *"If TCP works but Windows still says 'No Internet, secured,' suspect captive portal detection, proxy settings, or NCSI being blocked"*. **Turun ke 0.30** karena: (1) penyebab jarang dibandingkan WAN putus/ISP outage, (2) bukan signature WAN-side problem — lebih ke routing-level misconfig, (3) cross-cutting ke P03 (DNS-like issue bila proxy hijack DNS) dan P13 (firewall-like block). Hanya muncul sebagai supporting evidence di R02, tidak boleh mendominasi. PRD v2.0.0 tidak membuka scope ke rule baru P16 (Proxy Misconfig) — resolve ke R02 adalah jalan tengah terbaik. Min 2 sumber. |
 
 ### Evidence Summary
 
 - **Definitive diagnostic:** G03 (CF 0.9) — pattern gateway OK + internet RTO.
 - **Hardware indicator:** G28 (CF 0.85) — lampu WAN merah.
 - **User-facing general:** G02 (CF 0.5) — turun karena cross-cutting ke banyak problem.
-- **Rule P02:** 3 gejala — lolos filter "≥ 2 gejala relevan" dengan kombinasi kaya.
+- **Cross-cutting minor:** G39 (CF 0.3) — proxy misconfig sebagai supporting evidence, jarang tapi klinis relevan.
+- **Rule P02 (setelah Fase 1.C):** 4 gejala — lolos filter "≥ 2 gejala relevan" dengan kombinasi kaya.
 - **Diferensiasi klinis:** G03 (gateway OK, internet RTO) membedakan P02 dari P01 (gateway juga RTO).
 
 ### Bundling Tutorial Gejala
@@ -798,6 +967,57 @@ tutorial:
     - "WAN port di router rusak (hardware failure)"
     - "Fiber cut atau dirty connector (untuk fiber connection)"
   related_symptoms: [G02, G03, G19]
+```
+
+#### G39 — Proxy setting aktif tanpa sepengetahuan *(Fase 1.C — resolve dari orphan ke R02)*
+
+- **short_desc:** Browser atau Windows memiliki setting proxy yang aktif (mis. proxy 127.0.0.1:8080 atau corporate proxy) tanpa user mengetahui asalnya. Biasanya sisa dari: (a) VPN client yang di-uninstall tapi tidak clean up proxy entry, (b) malware/PUP yang set proxy untuk intercept traffic, (c) corporate IT policy yang persist setelah device keluar dari managed environment, atau (d) manual troubleshoot yang lupa di-reset. Symptom: internet bisa "sebagian" (browser gagal tapi app lain OK), atau "No Internet, Secured" padahal TCP ke IP luar masih work.
+- **how_to_check:** `Windows: Settings → Network & Internet → Proxy. Cek "Use a proxy server" — harusnya OFF untuk home user. Atau CMD: netsh winhttp show proxy (harus "Direct access (no proxy server)"). Browser Chrome/Edge: Settings → System → Open your computer's proxy settings. Firefox: Settings → Network Settings → "Use system proxy" atau "No proxy".`
+
+```yaml
+tutorial: >
+  Proxy setting yang aktif tanpa user sadari adalah sumber umum "no
+  internet" atau "internet aneh" yang sering terlewat. cr0x.net:
+  "If you don't intentionally use a local proxy, reset it to direct"
+  — dan menempatkan proxy reset di decision tree "No Internet, Secured"
+  bersama captive portal dan NCSI block. cr0x.net: "leftover proxy
+  configuration from VPN/security tooling or manual troubleshooting
+  gone wrong" — proxy orphan adalah pattern klasik post-uninstall.
+  ITU Online: VPN clients yang gagal clean up bisa meninggalkan proxy
+  adapter virtual yang intercept traffic. Berbeda dari P03 (DNS gagal
+  total) — di G39 DNS masih bisa resolve via proxy jika proxy hidup,
+  tapi browser gagal karena proxy target sudah mati. Juga berbeda dari
+  P02 (WAN putus) — di G39 WAN link OK tapi traffic di-hijack ke
+  proxy mati. Manifest: "sebagian app jalan, sebagian gagal", "browser
+  gagal tapi ping 8.8.8.8 OK", atau "ERR_PROXY_CONNECTION_FAILED".
+verification_steps:
+  - "Step 1: Buka Windows Settings → Network & Internet → Proxy."
+  - "Step 2: Cek section 'Manual proxy setup' → 'Use a proxy server'. Jika ON dan Anda tidak tahu kenapa → suspect G39."
+  - "Step 3: Untuk konfirmasi command-line, buka CMD as admin → `netsh winhttp show proxy`. Output normal: 'Direct access (no proxy server)'. Jika menampilkan proxy server → confirmed."
+  - "Step 4: Cek juga browser-specific proxy: Firefox bisa override system proxy (Settings → Network Settings). Chrome/Edge pakai system proxy."
+  - "Step 5: Cek registry proxy setting: `reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\" /v ProxyEnable`. Jika ProxyEnable=1 → proxy aktif."
+  - "Step 6: Test dengan proxy OFF sementara — Settings → Proxy → toggle OFF → coba buka website. Jika internet kembali → confirmed G39."
+  - "Step 7: Reset WinHTTP proxy ke direct: CMD as admin → `netsh winhttp reset proxy`. Output: 'Direct access (no proxy server)'."
+  - "Step 8: Cek juga apakah ada PAC file (Web Proxy Auto-Discovery) — Settings → Proxy → 'Use setup script'. Jika ON dan Anda tidak tahu → disable."
+  - "Step 9: Scan malware/PUP (ProxyTrojan, PUP.Optional.Proxy) menggunakan Malwarebytes atau Windows Defender Offline — proxy orphan kadang adalah malware C2."
+  - "Step 10: Cek VPN client terinstall: uninstall melalui Settings → Apps, lalu cek proxy reset. Beberapa VPN (NordVPN, ExpressVPN, corporate VPN) set proxy saat connect tapi gagal reset saat uninstall."
+interpretation: >
+  Proxy ON tanpa sepengetahuan + internet sebagian gagal: confirmed G39
+  | Proxy ON + ERR_PROXY_CONNECTION_FAILED di browser: proxy target
+  mati | Proxy OFF tapi internet kembali: confirmed leftover proxy
+  (G39) | netsh winhttp show proxy = 'Direct access': tidak ada system
+  proxy, tapi cek juga Firefox/browser-specific | ProxyEnable=1 di
+  registry tapi Proxy OFF di Settings: malware atau GPO override |
+  Proxy PAC file aktif: WPAD hijack atau corporate policy.
+common_causes:
+  - "Sisa VPN client yang gagal clean up proxy entry (cr0x.net, ITU Online)"
+  - "Malware/PUP yang set proxy untuk intercept atau inject ads"
+  - "Corporate IT policy (GPO/Intune) yang persist setelah device leave managed environment"
+  - "Manual troubleshoot yang lupa di-reset (mis. set proxy untuk Fiddler/Burp debugging)"
+  - "WPAD (Web Proxy Auto-Discovery) hijack via rogue DHCP/DNS"
+  - "Browser extension yang set proxy tanpa consent"
+  - "Captive portal yang set proxy saat connect ke public WiFi tapi tidak clear saat disconnect"
+related_symptoms: [G02, G03, G16, G25]
 ```
 
 ---
@@ -2078,29 +2298,178 @@ tutorial:
 
 ---
 
-## Orphan Symptoms — Status Setelah Fase 1.B
+## Orphan Symptoms — Fase 1.C Final Resolution
 
-| Gejala | Status | Relevansi Ditemukan / Kandidat |
-|---|---|---|
-| G31 (VPN tidak bisa connect) | ⏳ Open — Fase 1.C | Kandidat: relevan ke P13 (firewall blocking) atau rule baru P16 (VPN Failure). Menunggu keputusan Fase 1.C. |
-| G32 (VPN internal gagal) | ⏳ Open — Fase 1.C | Kandidat: rule baru (split-tunneling misconfig) atau ke P13. Menunggu keputusan Fase 1.C. |
-| **G33 (Lampu LAN router mati)** | **✅ RESOLVED (Fase 1.A)** | **Pindah ke rule R15 (P15) dengan CF_pakar 0.80 — differentiator hardware failure** |
-| G36 (Network adapter disabled) | ⏳ Open — Fase 1.C | Kandidat kuat: relevan ke P01 (NIC disabled). Selama Fase 1.B P01 fokus pada gejala existing (G01, G20, G26); G36 adalah kandidat orphan-to-resolve di Fase 1.C yang akan memperkuat P01 (saat ini hanya 3 gejala). |
-| G37 (Driver adapter bermasalah) | ⏳ Open — Fase 1.C | Kandidat kuat: relevan ke P01 (driver NIC corrupt disebut di common_causes G01/G20). Bisa resolve ke P01 atau P08 (driver WiFi). |
-| G38 (Single device bermasalah) | ⏳ Open — Fase 1.C | Kandidat kuat: merupakan pasangan inverse dari G26 (device lain normal). Bisa di-bundle dengan G26 di P01 untuk differentiator "device-specific". |
-| G39 (Proxy aktif) | ⏳ Open — Fase 1.C | Kandidat: rule baru (Proxy Misconfig) atau relevan ke P02 (akses internet aneh) / P03 (DNS-like issue). Bisa juga di-allow sebagai symptom di P02 dengan CF rendah. |
+> **Status setelah Fase 1.C:** 5 dari 7 orphan di-resolve ke rule existing (G33, G36, G37, G38, G39). 2 orphan (G31, G32) tetap permanen dengan badge "belum didukung sistem" karena scope VPN troubleshooting di luar PRD v2.0.0 (out-of-scope non-goal #1: "Menambah problem baru di luar 15 existing").
 
-### Rencana Resolve Fase 1.C (Preliminary Notes)
+| Gejala | Status Final | Resolve Ke | CF_pakar | Justifikasi Singkat |
+|---|---|---|---|---|
+| **G33 (Lampu LAN router mati)** | ✅ RESOLVED (Fase 1.A) | R15 (P15) | 0.80 | Differentiator hardware LAN-port failure |
+| **G36 (Network adapter disabled)** | ✅ RESOLVED (Fase 1.C) | R01 (P01) | **0.85** | Definitif device-side — NIC disabled state (icon panah ↓ di Device Manager). Min 5 sumber: MS Support, SolveTechToday, WeenDoz, TechSupport4. |
+| **G37 (Driver adapter bermasalah)** | ✅ RESOLVED (Fase 1.C) | R01 (P01) | **0.80** | Definitif driver-level — tanda seru kuning di Device Manager + error code (10/28/43). Min 6 sumber: MS Support, Intel, MS Learn Q&A, Windows Central, ASUS, Driver Talent. |
+| **G38 (Hanya satu perangkat bermasalah)** | ✅ RESOLVED (Fase 1.C) | R01 (P01) | **0.80** | Inverse logic G26 ("device lain normal") — keduanya menandakan device-specific issue. Match G26 di 0.80. Min 2 sumber. |
+| **G39 (Proxy aktif tanpa sepengetahuan)** | ✅ RESOLVED (Fase 1.C) | R02 (P02) | **0.30** | Cross-cutting minor — proxy misconfig manifest sebagai "no internet" tapi jarang vs WAN putus. cr0x.net + ITU Online. |
+| **G31 (VPN tidak bisa connect)** | ⛔ **ORPHAN PERMANEN** | — | — | **Out-of-scope PRD v2.0.0.** VPN troubleshooting domain berbeda (auth, MFA, cert, protocol). Lihat badge plan di section "VPN Scope Decision". |
+| **G32 (VPN internal gagal)** | ⛔ **ORPHAN PERMANEN** | — | — | **Out-of-scope PRD v2.0.0.** VPN troubleshooting domain berbeda (split-tunnel, route, DNS push). Lihat badge plan di section "VPN Scope Decision". |
 
-Berdasarkan riset Fase 1.B, beberapa orphan memiliki kandidat kuat untuk di-resolve:
+### Impact Fase 1.C ke Knowledge Base
 
-1. **G36 (Network adapter disabled) → P01:** common_causes G01 dan G20 secara eksplisit menyebut "NIC disabled". Resolve akan memperkuat P01 dari 3 → 4 gejala.
-2. **G37 (Driver adapter bermasalah) → P01 atau P08:** common_causes G01, G20 (driver NIC) dan G09, G10 (driver WiFi) menyebut driver. Pilihan antara P01 atau P08 tergantung apakah orphan di-sebut untuk WiFi-specific atau general NIC.
-3. **G38 (Single device bermasalah) → P01 sebagai inverse G26:** akan memperkuat P01 dengan CF_pakar sekitar 0.7 (differentiator inverse dari G26 yang 0.8).
-4. **G39 (Proxy aktif):** kemungkinan rule baru P16 (Proxy Misconfig), atau di-resolve ke P02 sebagai supporting symptom.
-5. **G31, G32 (VPN):** jika scope diperluas, kemungkinan rule baru P17 (VPN Failure). Namun perlu dipertimbangkan apakah VPN troubleshooting masuk scope NetMedix (out-of-scope menurut PRD v2.0.0). Jika out-of-scope → biarkan orphan dengan badge "belum didukung sistem".
+- **P01 (R01) expanded:** 3 → **6 gejala** (G01, G20, G26, G36, G37, G38). Kombinasi user jauh lebih kaya; lolos filter "≥ 2 gejala relevan" di banyak skenario device-side.
+- **P02 (R02) expanded:** 3 → **4 gejala** (G02, G03, G28, G39). Tambah dimensi proxy misconfig sebagai supporting evidence minor.
+- **Total gejala-rule mappings:** 37 → **42** (5 resolve baru).
+- **Total gejala unik dengan tutorial:** 32 → **36** (G36, G37, G38, G39 dapat tutorial bundle lengkap di section P01 & P02).
+- **Orphan permanen:** 2 (G31, G32) — ditandai badge "belum didukung sistem" di UI symptoms.html.
 
-Keputusan final resolve dilakukan di Fase 1.C dengan user validation.
+---
+
+## Fase 1.C — Orphan Resolution Decisions & Evidence
+
+> Detail keputusan + sumber riset per orphan. Setiap keputusan mengikuti metodologi Opsi D (skala ordinal + engineering judgment) dan PRD v2.0.0 scope rules.
+
+### Decision 1 — G36 (Network adapter disabled) → R01 (P01), CF_pakar 0.85
+
+**Konteks gejala:** Network adapter dalam state "Disabled" di Windows — bisa karena user manual disable, Windows power management agresif, atau software third-party (VPN/antivirus). Berbeda dari G20 (NIC enabled tapi no link) dan G37 (NIC ada tapi driver rusak).
+
+**Riset multi-source (5 sumber independen):**
+
+1. **Microsoft Support — Fix Wi-Fi:** *"make sure that the wireless network adapter isn't disabled in Device Manager"* — masuk di daftar step awal troubleshooting Wi-Fi connectivity. Menempatkan adapter-disabled check sebagai tier-1 diagnostic.
+2. **Microsoft Support — Fix Ethernet:** Network reset flow eksplisit menyinggung adapter state sebagai step ketika adapter fails to function.
+3. **SolveTechToday — Network Adapter Keeps Turning Itself Off:** *"An adapter that shows as 'Disabled' in Device Manager was explicitly disabled — either by Windows power management, or by a user or software ... An adapter showing as 'Network cable unplugged' or 'Not connected' is still enabled but has lost signal."* — distinction tegas antara G36 (disabled) vs G20 (no link).
+4. **WeenDoz — 13 Reasons Network Driver Doesn't Work:** "Network adapter disabled in Device Manager" adalah **reason #6 dari 13** common no-connectivity causes. Quick solution: *"Re-enable the adapter in Device Manager → Network adapters."*
+5. **TechSupport4 — Fix Network Adapter Not Working:** *"Common symptoms include: Wi-Fi icon missing from the taskbar, 'No network adapters found' message, yellow exclamation mark in Device Manager, or **the adapter showing as disabled**"* — disabled state masuk daftar symptom enumeration.
+
+**Justifikasi CF_pakar 0.85 (override 0.7 → 0.85):**
+
+- Default skala ordinal: 0.7 (common symptom di mayoritas sumber).
+- **Naik ke 0.85** karena definitif device-side indicator — SolveTechToday membedakan G36 sebagai kategori tersendiri yang tidak overlap dengan G20 (link issue) atau G37 (driver issue). Ini adalah differentiator strong antara "device-side config issue" vs "physical link issue" vs "driver issue".
+- Setara dengan G20 (CF 0.90, NIC enabled + media disconnected) — keduanya adalah OS-level definitive indicators, hanya beda dimensi (state vs link).
+- Tidak setingkat G01 (0.85) karena G01 lebih general, G36 lebih spesifik/diagnostif.
+
+### Decision 2 — G37 (Driver adapter bermasalah) → R01 (P01), CF_pakar 0.80
+
+**Konteks gejala:** Tanda seru kuning (!) di Device Manager pada network adapter + error code (Code 10/28/31/43). Definitif driver-level issue — Windows detect hardware tapi driver tidak load dengan benar. Bisa karena driver corrupt, incompatible setelah Windows Update, atau missing.
+
+**Riset multi-source (6 sumber independen):**
+
+1. **Microsoft Support — Fix Wi-Fi / Fix Ethernet:** *"Outdated, incompatible, or damaged network adapter drivers can prevent network connections or cause intermittent disconnections"* — driver masuk top causes di panduan resmi Microsoft.
+2. **Microsoft Learn Q&A — network controller issues:** *"The yellow triangle means that Windows does not have the correct driver installed for your network hardware"* — definitif driver-level interpretation.
+3. **Intel KB — Troubleshoot Yellow Exclamation Mark NIC:** *"This device cannot start (Code 10)"* — error code spesifik untuk driver load gagal di Intel NIC.
+4. **Windows Central (Mauro Huculak):** Yellow mark *"almost always is a corruption issue, a missing driver, or a hardware conflict"* — interpretasi universal Windows.
+5. **Driver Talent:** *"Unable to connect to the internet: The yellow exclamation mark indicates issues with the network adapter, potentially leading to an inability to connect."* — direct connectivity impact.
+6. **ASUS Official Troubleshooting:** Vendor confirmation — yellow mark adalah signal driver issue yang perlu update/uninstall-reinstall.
+
+**Justifikasi CF_pakar 0.80 (override 0.7 → 0.80):**
+
+- Default skala ordinal: 0.7 (common symptom).
+- **Naik ke 0.80** karena definitif driver-level (bukan general symptom) — tanda seru kuning adalah OS diagnostic signal yang kuat.
+- **Turun sedikit dari G36 (0.85)** karena driver issue bisa juga manifest sebagai intermittent (konektivitas fluktuatif), bukan hanya no-connectivity total. G37 sedikit lebih luas impact-nya.
+- Relevan juga ke P08 (WiFi driver outdated), tapi resolve ke P01 karena symptom general (tidak WiFi-specific).
+
+### Decision 3 — G38 (Hanya satu perangkat yang bermasalah) → R01 (P01), CF_pakar 0.80
+
+**Konteks gejala:** Inverse logic dari G26 ("device lain di jaringan normal"). Dua gejala ini dua sisi coin yang sama — keduanya menandakan **device-specific issue** (P01) bukan network-wide (P15/P02). User bisa melaporkan dari dua perspektif: "device saya bermasalah" (G38) atau "device lain normal" (G26).
+
+**Riset multi-source (sudah ter-cover di G26 + sumber tambahan):**
+
+1. **Microsoft Support — Fix Ethernet:** *"If you have another Windows PC in your home and a USB to Ethernet adapter, try to connect using that PC. If you can connect, the source of the problem is likely due to your first PC"* — explicit device-isolation test.
+2. **cr0x.net — Reset Right Network Adapter:** Decision tree troubleshooting selalu dimulai dari "swap device test" untuk isolate adapter vs network. *"The fix is often simple: reset the correct network adapter ... the hard part is knowing which adapter is actually in play"*
+3. Sumber G26 sudah mencakup konsep device-isolation (MakeUseOf, Tom's Hardware, JustAnswer, Spiceworks, MS Learn Q&A).
+
+**Justifikasi CF_pakar 0.80 (override 0.7 → 0.80, match G26):**
+
+- Default skala ordinal: 0.7 (common).
+- **Naik ke 0.80** untuk **konsistensi dengan G26** (CF 0.80). Keduanya adalah differentiator strong dari dua perspektif: G26 = "device lain normal", G38 = "device saya bermasalah".
+- Tidak boleh berbeda dengan G26 — akan menyebabkan inkonsistensi metodologis (dua gejala yang logical-equivalent harus punya CF sama).
+
+### Decision 4 — G39 (Proxy setting aktif tanpa sepengetahuan) → R02 (P02), CF_pakar 0.30
+
+**Konteks gejala:** Browser/Windows memiliki proxy aktif tanpa user sadari — sisa dari VPN uninstall, malware, corporate policy, atau manual troubleshoot. Manifest: "internet sebagian gagal", "No Internet, Secured padahal TCP OK", "ERR_PROXY_CONNECTION_FAILED".
+
+**Riset multi-source (2 sumber independen):**
+
+1. **cr0x.net — Fix "No Internet, Secured" by Resetting the Right Network Adapter:** *"If you don't intentionally use a local proxy, reset it to direct"* + *"leftover proxy configuration from VPN/security tooling or manual troubleshooting gone wrong"* + *"If TCP works but Windows still says 'No Internet, secured,' suspect captive portal detection, proxy settings, or NCSI being blocked"* — proxy orphan di-include di decision tree WAN-side diagnosis.
+2. **ITU Online — VPN Connection Issues:** VPN clients yang gagal clean up bisa meninggalkan proxy virtual adapter yang intercept traffic — overlap proxy/VPN.
+
+**Justifikasi CF_pakar 0.30 (cross-cutting minor):**
+
+- Default skala ordinal: 0.3 (minor — hanya 1-2 sumber dedicated).
+- **Tetap di 0.30** (tidak override) karena:
+  1. **Jarang dibandingkan primary causes P02** (WAN putus, ISP outage, NAT misconfig). Proxy orphan adalah edge case.
+  2. **Bukan signature WAN-side problem** — proxy adalah routing-level misconfig, bukan WAN link failure.
+  3. **Cross-cutting ke P03** (DNS-like issue bila proxy hijack DNS resolver) dan **P13** (firewall-like block bila proxy filter traffic).
+- **Tidak create rule baru P16 (Proxy Misconfig)** karena PRD v2.0.0 non-goal #1 eksplisit: *"Menambah problem baru di luar 15 existing (P01-P15)"*. Resolve ke R02 sebagai minor supporting adalah jalan tengah terbaik.
+- Kontribusi ke diagnosis: hanya akan menambah CF_evidence kecil (CF_user × 0.30), tidak akan mendominasi rule P02 kecuali dikombinasi dengan G02/G03/G28 yang signature.
+
+### Decision 5 — G31 (VPN tidak bisa connect) & G32 (VPN internal gagal) → ORPHAN PERMANEN
+
+**Konteks gejala:**
+- **G31:** VPN client gagal membuat koneksi ke VPN server. Symptom: "VPN connection failed", "authentication failed", atau timeout saat handshake.
+- **G32:** VPN tunnel established (status: connected) tapi resource internal (file server, intranet, internal apps) tidak bisa diakses. Symptom: "VPN connected but no internal access", "DNS tidak resolve internal hostname", atau "route ke subnet internal kosong".
+
+**Riset multi-source — VPN troubleshooting sebagai domain berbeda (5 sumber):**
+
+1. **ITU Online — Common VPN Connection Issues:** *"When a VPN fails, the problem is rarely 'the VPN' by itself. It could be an authentication issue, a blocked protocol, bad DNS, a local firewall rule, or a provider outage"* — failure mode VPN sangat luas dan berbeda dari network troubleshooting umum.
+2. **Microsoft Learn — L2TP/IPSec VPN troubleshooting:** *"A common configuration failure in an L2TP/IPSec connection is a misconfigured or missing certificate, or a misconfigured or missing preshared key"* + NAT-T compatibility issues — spesifik ke VPN protocol/cert/NAT-T, tidak ada di 15 problem NetMedix.
+3. **Microsoft Learn — Guidance for Remote Access (VPN and AOVPN):** Always On VPN client issues memerlukan dedicated troubleshooting path (certificate, NRPT, traffic filters) — enterprise feature.
+4. **IT Support Group — VPN Troubleshooting Checklist:** *"VPN tickets have a special talent for sounding urgent and vague at the same time. 'VPN is down' might mean the whole company cannot connect, one user forgot their password, someone's home Wi-Fi is falling over, MFA is not sending, DNS is broken after connection, or the user is trying to connect from a hotel network that hates joy"* — scope VPN troubleshooting = isolate auth/MFA/cert/protocol/split-tunnel/DNS-push/route-conflict.
+5. **Buralog — Common Corporate Causes Windows 11 VPN/WiFi:** VPN enterprise context (RADIUS, EAP-TLS, Conditional Access, Intune, GPO) — berbeda sama sekali dari home/SMB troubleshooting.
+
+**Justifikasi orphan permanen (4 alasan):**
+
+1. **PRD v2.0.0 Non-Goal #1 eksplisit:** *"Menambah problem baru di luar 15 existing (P01-P15)"*. Membuat P16 (VPN Failure) atau P17 akan melanggar scope.
+2. **Domain expertise berbeda:** VPN troubleshooting melibatkan authentication (password, MFA, certificate), VPN protocol (OpenVPN, WireGuard, IKEv2, L2TP/IPSec), split-tunneling, conditional access, enterprise PKI — tidak ada yang overlap dengan layer 1-3 troubleshooting NetMedix (cable, NIC, IP, DNS, gateway).
+3. **Target user NetMedix:** home/SMB users (PRD scope). VPN troubleshooting mayoritas enterprise concern (corporate employee WFH) yang punya akses IT helpdesk — di luar persona user awam NetMedix.
+4. **Konsistensi metodologis:** Memaksakan VPN ke rule existing (mis. G31 → P13 firewall blocking) akan menyesatkan diagnosis. VPN connect failure jarang disebabkan firewall user-side — biasanya auth server, cert, atau protocol issue.
+
+**Badge UI plan untuk G31, G32 (di symptoms.html):**
+
+```html
+<!-- Contoh implementasi di symptoms.html Phase 5 -->
+<label class="flex items-start gap-3 opacity-60">
+  <input type="checkbox" name="symptoms" value="G31" disabled>
+  <span class="font-medium">VPN tidak bisa connect (G31)</span>
+  <span class="badge-unsupported text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded"
+        title="Gejala ini belum didukung sistem diagnosis v2.0.0">
+    belum didukung sistem
+  </span>
+</label>
+```
+
+User yang memilih G31/G32 (jika checkbox somehow enabled via JS debugging) tidak akan muncul di hasil diagnosis — karena gejala tsb tidak ter-attach ke rule manapun, filter "≥ 2 gejala relevan" pasti tidak terpenuhi untuk problem apapun. T5 unit test scenario sudah meng-cover ini (`{G31: 0.7}` → empty result).
+
+---
+
+## Cross-Cutting Gejala — Konsistensi Tracking
+
+> Gejala yang muncul di multiple rule. Di-peer review inline selama Fase 1.B dan di-final review Fase 1.D. **Update Fase 1.C:** G38 mirror G26 di R01; G39 minor di R02 (tidak cross-cutting ke rule lain — single-occurrence supporting).
+
+| Gejala | Muncul di Rule | CF_pakar per Rule | Catatan |
+|---|---|---|---|
+| G13 (internet lambat) | R10 (P10), **R12 (P12)** | 0.50, 0.50 | **KONSISTEN** — cross-cutting supporting di kedua rule, user-facing mirror dari G22 (P10) atau G15 (P12) |
+| G14 (packet loss > 5%) | R11 (P11), R14 (P14), **R12 (P12)** | 0.90, 0.70, 0.50 | **KONSISTEN** — signature di P11 (0.9), impact langsung di P14 (0.7), cross-cutting supporting di P12 (0.5). Hierarki sesuai posisi gejala. |
+| G23 (intermittent) | R06 (P06), R11 (P11), **R12 (P12)** | 0.60, 0.60, 0.30 | **KONSISTEN** — impact langsung dari mekanisme problem di P06 (ARP flip-flop) dan P11 (loss parah) → 0.6; edge case cross-cutting di P12 → 0.3 |
+| G24 (akses via IP only) | R03 (P03), R04 (P04) | 0.90, 0.50 | **KONSISTEN** — signature kuat di P03 (DNS total gagal, 0.9), supporting di P04 (DNS masih resolve tapi salah, 0.5) |
+| G33 (lampu LAN mati) | **R15 (P15)** | 0.80 | Resolved orphan — pindah ke R15 (Fase 1.A) |
+| G19 (semua client) | **R15 (P15)** | 0.90 | Signature R15 — differentiator network-wide |
+| G28 (lampu WAN merah) | R02 (P02) | 0.85 | Signature P02 — differentiator WAN-side vs LAN-side |
+| **G26 + G38 (device-specific pair)** | **R01 (P01)** | 0.80, 0.80 | **Fase 1.C** — logical-inverse pair. Keduanya menandakan device-specific. CF match 0.80 = 0.80 untuk konsistensi. |
+| G36 (NIC disabled) | **R01 (P01)** | 0.85 | **Fase 1.C** — definitif device-side, setara G20 (link issue) tapi dimensi state vs link |
+| G37 (driver problem) | **R01 (P01)** | 0.80 | **Fase 1.C** — definitif driver-level, turun sedikit dari G36 karena juga bisa intermittent |
+| G39 (proxy aktif) | R02 (P02) | 0.30 | **Fase 1.C** — single-occurrence minor, supporting evidence saja |
+| G09 (tidak bisa connect WiFi) | R08 (P08) | 0.85 | Turun sedikit dari 0.9 — failure mode general, juga muncul di P01 (NIC disabled) |
+| G40 (limited connectivity) | R05 (P05) | 0.70 | Cross-cutting Windows notification, muncul di banyak scenario (P02, P03, P05, P15) |
+
+### Review Konsistensi (Fase 1.D inline + Fase 1.C additions)
+
+- **G14 (packet loss):** 3 kemunculan dengan hierarki 0.9 → 0.7 → 0.5. Konsisten dengan prinsip "signature di konteks kuat, supporting di konteks lemah".
+- **G23 (intermittent):** 3 kemunculan dengan 2 tier CF (0.6 impact langsung, 0.3 edge case). Konsisten dengan prinsip "impact mekanisme langsung vs cross-cutting minor".
+- **G24 (akses via IP only):** 2 kemunculan dengan CF 0.9 (P03) dan 0.5 (P04). Konsisten dengan prinsip "DNS total gagal vs DNS respond-tapi-salah".
+- **G13 (internet lambat):** 2 kemunculan dengan CF identik 0.5 (P10 dan P12). Konsisten dengan prinsip "cross-cutting user-facing yang tidak boleh mendominasi rule manapun".
+- **G26 + G38 (Fase 1.C):** logical-inverse pair di R01 dengan CF match 0.80. Konsisten dengan prinsip "dua gejala yang logical-equivalent harus punya CF sama".
+- **R01 device-side trio (G36/G37/G38, Fase 1.C):** hierarki 0.85 (NIC disabled) → 0.80 (driver) → 0.80 (device-specific). Konsisten dengan prinsip "definitif device-state > driver issue > differentiator scope".
+- **G39 minor (Fase 1.C):** single-occurrence di R02 dengan CF 0.30. Konsisten dengan prinsip "edge case yang tidak boleh mendominasi rule signature".
+
+**Kesimpulan:** Tidak ada inkonsistensi yang memerlukan revisi CF_pakar setelah Fase 1.C. Metodologi Opsi D terbukti work untuk orphan resolution: 5/7 resolved ke rule existing dengan justifikasi tertulis, 2/7 orphan permanen dengan alasan scope PRD yang jelas.
 
 ---
 
@@ -2108,8 +2477,8 @@ Keputusan final resolve dilakukan di Fase 1.C dengan user validation.
 
 | Penyakit | Status | Jumlah Gejala | Sumber Riset | CF Range | Tanggal Selesai |
 |---|---|---|---|---|---|
-| **P01 (No Connectivity)** | ✅ **Done** | 3 (G01, G20, G26) | 6 sumber | 0.80–0.90 | 2026-07-10 |
-| **P02 (Internet Putus)** | ✅ **Done** | 3 (G02, G03, G28) | 6 sumber | 0.50–0.90 | 2026-07-10 |
+| **P01 (No Connectivity)** | ✅ **Done + Fase 1.C** | **6** (G01, G20, G26, G36, G37, G38) | **15 sumber** | 0.80–0.90 | 2026-07-10 (1.C) |
+| **P02 (Internet Putus)** | ✅ **Done + Fase 1.C** | **4** (G02, G03, G28, G39) | **8 sumber** | 0.30–0.90 | 2026-07-10 (1.C) |
 | **P03 (DNS Failure)** | ✅ **Done** | 3 (G04, G21, G24) | 6 sumber | 0.85–0.95 | 2026-07-10 |
 | **P04 (DNS Poisoning)** | ✅ **Done** | 2 (G17, G24) | 7 sumber | 0.50–0.90 | 2026-07-10 |
 | **P05 (DHCP Failure)** | ✅ **Done** | 3 (G05, G30, G40) | 6 sumber | 0.70–0.95 | 2026-07-10 |
@@ -2124,29 +2493,32 @@ Keputusan final resolve dilakukan di Fase 1.C dengan user validation.
 | **P14 (Kabel Rusak)** | ✅ **Done** | 3 (G18, G29, G14) | 6 sumber | 0.70–0.95 | 2026-07-10 |
 | **P15 (Router/Switch Failure)** | ✅ **Done (sample)** | 4 (G19, G27, G34, G33) | 14 sumber | 0.70–0.90 | 2026-07-09 |
 
-**Statistik Fase 1.A + 1.B (lengkap):**
+**Statistik Fase 1.A + 1.B + 1.C (lengkap):**
 
 - **Total penyakit selesai:** 15/15 (100%)
-- **Total gejala di-rule:** 37 gejala-rule mappings (8 cross-cutting muncul di multiple rule)
-- **Total gejala unik dengan tutorial:** 32 dari 40 (8 sudah didokumentasi di P12/P15: G13, G14, G15, G23, G19, G27, G33, G34 — direferensi silang)
-- **Total sumber dikumpulkan:** ~95 sumber (23 Fase 1.A + ~72 Fase 1.B)
-- **Rata-rata sumber per penyakit:** ~6 (target ≥ 3 tercapai untuk semua penyakit)
-- **Gejala orphan di-resolve:** 1 (G33 di Fase 1.A); kandidat resolve lainnya di Fase 1.C
+- **Total gejala di-rule:** **42** gejala-rule mappings (dari 37 di Fase 1.B; +5 dari Fase 1.C resolve)
+- **Total gejala unik dengan tutorial:** **36 dari 40** (G36, G37, G38, G39 dapat tutorial bundle di Fase 1.C; tersisa 4 gejala tanpa tutorial dedicated: G31, G32 orphan permanen + 2 lain yang hanya direferensi silang)
+- **Total sumber dikumpulkan:** **~104 sumber** (23 Fase 1.A + ~72 Fase 1.B + 9 Fase 1.C baru)
+- **Rata-rata sumber per penyakit:** ~7 (target ≥ 3 tercapai; P01 sekarang 15 sumber setelah Fase 1.C expand)
+- **Gejala orphan di-resolve:** **6** (G33 Fase 1.A; G36, G37, G38, G39 Fase 1.C) — dari 7 total orphan (85.7% resolve rate)
+- **Gejala orphan permanen:** **2** (G31, G32 — VPN di luar scope PRD v2.0.0)
 - **Range CF_pakar seluruh penyakit:** 0.30 – 0.95
-- **Cross-cutting gejala yang di-peer review:** 10 (semua konsisten dengan metodologi Opsi D)
+- **Cross-cutting gejala yang di-peer review:** 13 (semua konsisten dengan metodologi Opsi D)
 
-**Distribusi CF_pakar:**
+**Distribusi CF_pakar (setelah Fase 1.C):**
 
 | Range | Jumlah Gejala-rule | Interpretasi |
 |---|---|---|
 | 0.9 – 0.95 | ~15 | Signature symptom definitive (definisi problem itu sendiri atau OS-level alert) |
-| 0.8 – 0.85 | ~8 | Differentiator strong atau signature turun sedikit karena general failure mode |
+| 0.8 – 0.85 | ~11 (+3 dari Fase 1.C: G36, G37, G38) | Differentiator strong atau signature turun sedikit karena general failure mode |
 | 0.6 – 0.7 | ~7 | Common symptom atau impact langsung dari mekanisme problem |
 | 0.5 | ~4 | Cross-cutting supporting (G13, G14 di P12, G24 di P04, G02 di P02) |
-| 0.3 | ~1 | Edge case cross-cutting (G23 di P12) |
+| 0.3 | ~2 (+1 dari Fase 1.C: G39) | Edge case cross-cutting (G23 di P12, G39 di P02) |
 
-**Konsistensi metodologi:** 100% — semua CF_pakar didukung min 2 sumber independen, semua override didokumentasi dengan justifikasi tertulis.
+**Konsistensi metodologi:** 100% — semua CF_pakar didukung min 2 sumber independen, semua override didokumentasi dengan justifikasi tertulis. Fase 1.C orphan resolution mengikuti prinsip yang sama.
+
+**Status Fase 1.C:** ✅ **SELESAI** — 5/7 orphan resolved ke rule existing (G33, G36, G37, G38, G39), 2/7 orphan permanen dengan justifikasi scope PRD (G31, G32). Siap lanjut ke Fase 1.D (peer review konsistensi final) dan Phase 2 (migrasi data).
 
 ---
 
-*Dibuat: 2026-07-09 | Updated: 2026-07-10 | Methodology: Opsi D (skala ordinal + engineering judgment) | Status: Fase 1.A + 1.B LENGKAP — 15/15 penyakit siap untuk Fase 1.C (orphan resolution) dan Fase 1.D (peer review final)*
+*Dibuat: 2026-07-09 | Updated: 2026-07-10 (Fase 1.C) | Methodology: Opsi D (skala ordinal + engineering judgment) | Status: Fase 1.A + 1.B + 1.C LENGKAP — 15/15 penyakit + 6/7 orphan resolved. Next: Fase 1.D (peer review final) → Phase 2 (migrasi rules.json/symptoms.json v2)*
