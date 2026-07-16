@@ -176,9 +176,12 @@ def diagnose():
     symptoms_by_category = {}
     for cat in categories:
         symptoms_by_category[cat] = kb.get_symptoms_by_category(cat)
+    # Get symptoms with info for modal
+    symptoms_with_info = kb.get_symptoms_with_info()
     return render_template("diagnose.html",
                            categories=categories,
-                           symptoms_by_category=symptoms_by_category)
+                           symptoms_by_category=symptoms_by_category,
+                           symptoms_with_info=symptoms_with_info)
 
 
 @app.route("/diagnose/step2", methods=["POST"])
