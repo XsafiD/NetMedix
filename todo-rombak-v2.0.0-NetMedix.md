@@ -223,20 +223,20 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### 5.C result.html (Hasil Diagnosis)
 
-- [ ] Tambah **Section Kesimpulan** di atas:
-  - [ ] Empty state: tampilkan pesan "tidak ada diagnosis lolos filter"
-  - [ ] Found state: narasi kandidat utama + persentase + label
-  - [ ] List alternatif (maks 3 di narasi, sisanya di detail section)
-- [ ] **Section Detail Kandidat** — tampil semua (bukan top-3):
-  - [ ] Card per problem dengan header (code, name, percentage badge)
-  - [ ] Match count indicator (matched/total symptoms in rule)
-- [ ] **Section Trace Perhitungan** (collapsible per card):
-  - [ ] Tabel evidence_steps dengan kolom: Symptom | CF_pakar | CF_user | CF_evidence
-  - [ ] **Hapus** kolom MB, MD, CF_rule
-  - [ ] Tambah evidence_note (justifikasi pakar)
-  - [ ] Tabel combine_steps dengan kolom: Step | CFₐ | CFᵦ | Result
-- [ ] Styling: badge label (Sangat Yakin hijau, Kurang Yakin abu, dst)
-- [ ] Responsive: card stack di mobile
+- [x] Tambah **Section Kesimpulan** di atas:
+  - [x] Empty state: tampilkan pesan "tidak ada diagnosis lolos filter"
+  - [x] Found state: narasi kandidat utama + persentase + label
+  - [x] List alternatif (maks 3 di narasi, sisanya di detail section)
+- [x] **Section Detail Kandidat** — tampil semua (bukan top-3):
+  - [x] Card per problem dengan header (code, name, percentage badge)
+  - [x] Match count indicator (matched/total symptoms in rule)
+- [x] **Section Trace Perhitungan** (collapsible per card):
+  - [x] Tabel evidence_steps dengan kolom: Symptom | CF_pakar | CF_user | CF_evidence
+  - [x] **Hapus** kolom MB, MD, CF_rule
+  - [x] Tambah evidence_note (justifikasi pakar)
+  - [x] Tabel combine_steps dengan kolom: Step | CFₐ | CFᵦ | Result
+- [x] Styling: badge label (Sangat Yakin hijau, Kurang Yakin abu, dst)
+- [x] Responsive: card stack di mobile
 
 ### 5.D tutorial.html (BARU)
 
@@ -362,7 +362,7 @@ Update secara berkala:
 | 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
 | 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
 | 4 — Backend (app.py) | ✅ **Done** | 8/8 | **Phase 4 SELESAI — 2026-07-16. Commit f70820f: app.py v2 (clamping CF [0.1, 1.0], route /tutorial/<code>, diagnose() rename, build_kesimpulan helper, result route update). Breaking changes: CF_user range, result structure baru, kesimpulan narasi.** |
-| 5 — Frontend (Templates) | ⏳ In Progress | 13/25 | **Phase 5.A & 5.B SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis). Commit d633060: diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom, styling update). Next: 5.C (result.html kesimpulan + semua kandidat).** |
+| 5 — Frontend (Templates) | ⏳ In Progress | 20/25 | **Phase 5.A & 5.B & 5.C SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis). Commit d633060: diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom, styling update). Commit 9ca2f54: result.html v2 (Section Kesimpulan empty/found state, Section Detail Kandidat semua kandidat bukan top-3, match count indicator, Trace Perhitungan Pure CF hapus MB/MD tambah CF_pakar+evidence_note). Breaking changes: 9 level CF → 5 level CF, range [0.1, 1.0] only, result structure baru, kesimpulan narasi. Next: 5.D (tutorial.html).** |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
 | 7 — Testing & QA | ⏸ Pending | 0/20 | Setelah Fase 6 |
 | 8 — Deployment & Version Bump | ⏸ Pending | 0/8 | Setelah Fase 7 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.B SELESAI** — 2026-07-16 commit d633060: **Phase 5.B Implementasi diagnose_step2.html (Step 2 - Pilih CF_user) COMPLETED**. diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom responsive, styling update color scheme gray→yellow→emerald→primary→solid, JavaScript update cfStyles config dan updateCardStyles function, summary avg default 0.50). Breaking changes: 9 level CF → 5 level CF, range [0.1, 1.0] only (no negative). Next: Phase 5.C (result.html kesimpulan + semua kandidat).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.C SELESAI** — 2026-07-16 commit 9ca2f54: **Phase 5.C Implementasi result.html (Step 3 - Hasil Diagnosis) COMPLETED**. result.html v2 (Section Kesimpulan empty/found state dengan narasi kandidat utama, Section Detail Kandidat tampilkan SEMUA kandidat bukan top-3, match count indicator matched/total symptoms, Trace Perhitungan Pure CF hapus MB/MD/CF_rule tambah CF_pakar+evidence_note, badge label styling, responsive). Breaking changes: result structure baru, kesimpulan narasi, trace structure baru (Pure CF). Next: Phase 5.D (tutorial.html).*
