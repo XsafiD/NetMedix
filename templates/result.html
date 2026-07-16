@@ -16,34 +16,82 @@
     </p>
   </div>
 
-  {% if not has_results %}
-  <!-- Empty result: no rules matched -->
-  <div class="bg-canvas-soft border border-hairline rounded-card p-8 text-center">
-    <i data-lucide="search-x" class="w-12 h-12 text-ink-faint mx-auto mb-4"></i>
-    <h2 class="text-lg font-medium text-ink mb-2">Tidak Ada Diagnosis yang Cocok</h2>
-    <p class="text-sm text-ink-mute max-w-md mx-auto mb-6">
-      Kombinasi gejala yang Anda pilih tidak cocok dengan aturan manapun dalam knowledge base.
-      Coba tambahkan lebih banyak gejala atau pilih gejala yang berbeda.
-    </p>
-    <!-- Show selected symptoms as reference -->
-    <div class="flex flex-wrap gap-2 justify-center mb-6">
-      {% for code, cf in symptoms_selected.items() %}
-      {% if symptom_map.get(code) %}
-      <span class="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded">
-        {{ code }} ({{ cf }})
-      </span>
-      {% endif %}
-      {% endfor %}
+  <!-- Section Kesimpulan (v2.0.0) -->
+  <div class="mb-8 rounded-card border p-6
+              {% if kesimpulan.status == "empty" %}border-hairline bg-canvas-soft
+              {% else %}border-primary/20 bg-primary/5{% endif %}">
+    {% if kesimpulan.status == "empty" %}
+    <!-- Empty state: tidak ada diagnosis lolos filter -->
+    <div class="text-center">
+      <i data-lucide="search-x" class="w-12 h-12 text-ink-faint mx-auto mb-4"></i>
+      <h2 class="text-lg font-medium text-ink mb-2">Tidak Ada Diagnosis yang Memenuhi Syarat</h2>
+      <p class="text-sm text-ink-mute max-w-md mx-auto mb-6">
+        {{ kesimpulan.message }}
+      </p>
+      <!-- Show selected symptoms as reference -->
+      <div class="flex flex-wrap gap-2 justify-center mb-6">
+        {% for code, cf in symptoms_selected.items() %}
+        {% if symptom_map.get(code) %}
+        <span class="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded">
+          {{ code }} ({{ cf }})
+        </span>
+        {% endif %}
+        {% endfor %}
+      </div>
+      <a href="/diagnose"
+         class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+                bg-primary text-ink hover:bg-primary-deep transition-colors">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        Diagnosis Lagi
+      </a>
     </div>
-    <a href="/diagnose"
-       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
-              bg-primary text-ink hover:bg-primary-deep transition-colors">
-      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-      Diagnosis Lagi
-    </a>
+
+    {% else %}
+    <!-- Found state: narasi kandidat utama + persentase + label -->
+    <div>
+      <div class="flex items-start gap-3 mb-4">
+        <i data-lucide="check-circle-2" class="w-6 h-6 text-primary flex-shrink-0 mt-0.5"></i>
+        <div class="flex-1">
+          <h2 class="text-lg font-medium text-ink mb-2">Hasil Diagnosis</h2>
+          <p class="text-base text-ink leading-relaxed">
+            Berdasarkan {{ symptoms_selected | length }} gejala yang Anda pilih, sistem memperkirakan
+            masalah utama:
+            <strong class="text-primary">{{ kesimpulan.top_problem.problem_name }}</strong>
+            dengan keyakinan
+            <strong class="text-primary">{{ kesimpulan.top_problem.cf_percent }}%
+                   ({{ kesimpulan.top_problem.cf_label }})</strong>.
+          </p>
+        </div>
+      </div>
+
+      {% if kesimpulan.alternatives %}
+      <div class="pl-9 mb-3">
+        <p class="text-sm text-ink-mute">
+          Kandidat lain yang perlu dipertimbangkan:
+          {% for alt in kesimpulan.alternatives %}
+          <span class="inline-flex items-center gap-1 mr-2">
+            <span class="font-medium">{{ alt.problem_name }}</span>
+            <span class="text-xs font-mono text-ink-faint">({{ alt.cf_percent }}%)</span>
+          </span>
+          {% if not loop.last %}<span class="text-ink-faint">·</span>{% endif %}
+          {% endfor %}
+        </p>
+      </div>
+      {% endif %}
+
+      <div class="pl-9">
+        <p class="text-xs text-ink-faint">
+          Total {{ kesimpulan.total_candidates }} kandidat teridentifikasi.
+          {% if kesimpulan.total_candidates > 1 %}
+          Lihat detail perhitungan lengkap di bawah.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    {% endif %}
   </div>
 
-  {% else %}
+  {% if kesimpulan.status == "found" %}
 
   <!-- Warning box if top CF < 0.40 -->
   {% if results[0].cf_final < 0.40 %}
@@ -58,12 +106,29 @@
   </div>
   {% endif %}
 
-  <!-- Diagnosis result cards -->
-  <div class="space-y-6">
+  <!-- Warning box if top CF < 0.40 -->
+  {% if results[0].cf_final < 0.40 %}
+  <div class="flex items-start gap-3 px-4 py-3 rounded-card border border-yellow-200 bg-yellow-50 mb-6">
+    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+    <div>
+      <p class="text-sm font-medium text-yellow-800">Diagnosis Kurang Pasti</p>
+      <p class="text-xs text-yellow-700 mt-0.5">
+        Tingkat keyakinan tertinggi di bawah 40%. Pertimbangkan menambah gejala atau konsultasi teknisi jaringan.
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Section Detail Kandidat (v2.0.0 - tampilkan SEMUA, bukan top-3) -->
+  <div class="space-y-5">
+    <h3 class="text-sm font-medium text-ink-mute uppercase tracking-wide">
+      Detail Perhitungan per Kandidat
+    </h3>
+
     {% for r in results %}
     {% set is_top = loop.index == 1 %}
-    <div class="result-card rounded-card border bg-white overflow-hidden
-                {{ 'border-primary ring-1 ring-primary/20' if is_top else 'border-hairline' }}">
+    <article class="result-card rounded-card border bg-white overflow-hidden
+                      {{ 'border-primary ring-1 ring-primary/20' if is_top else 'border-hairline' }}">
 
       <!-- Card header: CF percentage + label + problem name -->
       <div class="px-6 py-5 {{ 'bg-primary/5' if is_top }}">
@@ -101,6 +166,15 @@
             <span class="text-xs font-mono text-ink-faint">{{ r.problem_code }}</span>
             {% endif %}
           </div>
+        </div>
+
+        <!-- Match count indicator (v2.0.0) -->
+        <div class="mt-3 flex items-center gap-2 text-sm text-ink-mute">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>
+            Matched: <strong class="text-ink">{{ r.matched_count }}</strong> /
+            <strong class="text-ink">{{ r.total_symptoms_in_rule }}</strong> gejala relevan
+          </span>
         </div>
 
         <!-- Progress bar -->
@@ -157,19 +231,19 @@
       </div>
       {% endif %}
 
-      <!-- Expandable: CF calculation detail -->
+      <!-- Expandable: CF calculation detail (v2.0.0 - Pure CF) -->
       {% if r.details %}
       <div class="border-t border-hairline">
         <button type="button" class="cf-detail-toggle w-full px-6 py-3 text-left flex items-center justify-between
                                      text-sm font-medium text-ink-mute hover:text-ink transition-colors">
           <span class="flex items-center gap-2">
             <i data-lucide="calculator" class="w-4 h-4"></i>
-            Lihat Detail Perhitungan CF
+            Lihat Trace Perhitungan
           </span>
           <i data-lucide="chevron-down" class="w-4 h-4 transition-transform cf-chevron"></i>
         </button>
         <div class="cf-detail-panel hidden px-6 pb-5">
-          <!-- Evidence steps table -->
+          <!-- Evidence steps table (v2.0.0 - Pure CF: Hapus MB/MD/CF_rule, tambah CF_pakar + evidence_note) -->
           {% if r.details.evidence_steps %}
           <div class="mb-4">
             <h4 class="text-xs font-medium text-ink-mute uppercase tracking-wide mb-2">
@@ -180,11 +254,10 @@
                 <thead>
                   <tr class="border-b border-hairline">
                     <th class="text-left py-2 pr-3 text-ink-mute font-medium">Gejala</th>
-                    <th class="text-center py-2 px-2 text-ink-mute font-medium">MB</th>
-                    <th class="text-center py-2 px-2 text-ink-mute font-medium">MD</th>
-                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF Rule (MB-MD)</th>
-                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF User</th>
-                    <th class="text-center py-2 pl-2 text-ink-mute font-medium">CF Evidence</th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF<sub>pakar</sub></th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF<sub>user</sub></th>
+                    <th class="text-center py-2 px-2 text-ink-mute font-medium">CF<sub>evidence</sub></th>
+                    <th class="text-left py-2 pl-2 text-ink-mute font-medium">Catatan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,18 +268,19 @@
                       <span class="font-mono text-primary">{{ step.symptom_code }}</span>
                       <span class="text-ink-mute ml-1">{{ symp.name if symp.name is defined and symp.name != step.symptom_code else '' }}</span>
                     </td>
-                    <td class="text-center py-2 px-2 font-mono">{{ step.mb }}</td>
-                    <td class="text-center py-2 px-2 font-mono">{{ step.md }}</td>
-                    <td class="text-center py-2 px-2 font-mono font-medium">{{ step.cf_rule }}</td>
+                    <td class="text-center py-2 px-2 font-mono text-ink">{{ step.cf_pakar }}</td>
                     <td class="text-center py-2 px-2 font-mono">{{ step.cf_user }}</td>
-                    <td class="text-center py-2 pl-2 font-mono font-medium text-primary">{{ step.cf_evidence }}</td>
+                    <td class="text-center py-2 px-2 font-mono font-medium text-primary">{{ step.cf_evidence }}</td>
+                    <td class="py-2 pl-2 text-ink-faint text-[10px] max-w-[200px]">
+                      {{ step.evidence_note }}
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
             <p class="text-[10px] text-ink-faint mt-1">
-              Rumus: CF_evidence = CF_user &times; CF_rule &nbsp;(CF_rule = MB - MD)
+              Rumus: CF<sub>evidence</sub> = CF<sub>user</sub> × CF<sub>pakar</sub>
             </p>
           </div>
           {% endif %}
@@ -253,7 +327,7 @@
       </div>
       {% endif %}
 
-    </div>
+    </article>
     {% endfor %}
   </div>
 
@@ -273,6 +347,7 @@
     </a>
   </div>
 
+  {% endif %}
   {% endif %}
 </section>
 
