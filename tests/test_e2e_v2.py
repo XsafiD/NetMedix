@@ -152,9 +152,9 @@ class E2ETester:
         symptoms = self.kb.load_symptoms()
         symptoms_with_info = self.kb.get_symptoms_with_info()
 
-        # Check all symptoms have required fields
+        # Check all symptoms have required fields (symptoms_with_info is now a dict)
         missing_count = 0
-        for s in symptoms_with_info:
+        for code, s in symptoms_with_info.items():
             if not s.get('short_desc') or not s.get('how_to_check'):
                 missing_count += 1
 

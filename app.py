@@ -242,7 +242,6 @@ def diagnose_process():
         full_results.append({
             "problem_code": r["problem_code"],
             "rule_code": r["rule_code"],
-            "rule_name": r["rule_name"],
             "cf_final": r["cf_final"],
             "cf_label": label,
             "cf_percent": round(r["cf_final"] * 100, 2),

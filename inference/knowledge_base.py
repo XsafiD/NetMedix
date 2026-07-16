@@ -71,14 +71,16 @@ class KnowledgeBase:
 
     def get_symptoms_with_info(self):
         """
-        Return list symptoms dengan fields info tambahan.
+        Return dict symptoms dengan fields info tambahan.
         Method ini untuk modal info di symptoms.html.
+        Di-index oleh symptom code untuk akses cepat di JavaScript.
 
         Returns:
-            list: List of symptom dicts dengan short_desc dan how_to_check
+            dict: Dict of symptom dicts dengan short_desc dan how_to_check,
+                  di-index oleh symptom code (e.g., {"G01": {...}, "G02": {...}})
         """
-        return [
-            {
+        return {
+            s["code"]: {
                 "code": s["code"],
                 "name": s["name"],
                 "category": s.get("category", ""),
@@ -86,7 +88,7 @@ class KnowledgeBase:
                 "how_to_check": s.get("how_to_check", ""),
             }
             for s in self.symptoms
-        ]
+        }
 
     def get_symptoms_by_category(self, category):
         """
