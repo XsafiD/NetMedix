@@ -4,6 +4,8 @@ import sqlite3
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 
+__version__ = "2.0.0"
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "netmedix-dev-key-change-in-prod")
 
