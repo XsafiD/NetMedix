@@ -81,6 +81,97 @@
     @keyframes flashFadeOut {
       to { opacity: 0; transform: translateY(-8px); }
     }
+
+    /* Responsive Design Improvements (v2.0.0 Phase 5.E) */
+    /* Safe area inset support for devices with notch */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+    }
+
+    /* Touch-friendly tap target sizing (min 44x44px per iOS HIG) */
+    @media (max-width: 768px) {
+      button, a, input[type="checkbox"], input[type="radio"] {
+        min-height: 44px;
+        min-width: 44px;
+      }
+      /* Exception: inline buttons, small icons */
+      .info-btn, .modal-close, button[type="button"].info-btn {
+        min-height: 36px;
+        min-width: 36px;
+      }
+    }
+
+    /* Better scrollbar for mobile */
+    @media (max-width: 768px) {
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+      }
+    }
+
+    /* Text size adjust prevention for landscape mode */
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    /* Improved touch targets for radio/checkbox cards */
+    @media (max-width: 768px) {
+      .symptom-card, .cf-radio-label {
+        padding: 1rem !important;
+      }
+    }
+
+    /* Modal responsive improvements */
+    @media (max-width: 375px) {
+      .modal-content {
+        margin: 1rem !important;
+        max-height: 85vh !important;
+      }
+      .modal-header, .modal-body {
+        padding: 1rem !important;
+      }
+    }
+
+    /* Stack tables on mobile */
+    @media (max-width: 640px) {
+      table {
+        font-size: 0.75rem !important;
+      }
+      td, th {
+        padding: 0.5rem 0.25rem !important;
+      }
+    }
+
+    /* Prevent horizontal overflow */
+    img, video, iframe, table, pre, code {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Radio card stack improvement for very small screens */
+    @media (max-width: 375px) {
+      .grid.grid-cols-5 {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+      }
+      .grid.grid-cols-5 .cf-radio-label:last-child {
+        grid-column: span 2;
+      }
+    }
   </style>
 </head>
 <body class="bg-canvas text-ink antialiased">
