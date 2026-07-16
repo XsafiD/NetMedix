@@ -197,15 +197,15 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### 5.A symptoms.html (Step 1 — Pilih Gejala)
 
-- [ ] Tambah info button (ⓘ) inline di samping tiap gejala
-- [ ] Implementasi modal info (single modal, populated dynamically via JS):
-  - [ ] Tampilkan `short_desc`
-  - [ ] Tampilkan `how_to_check` (monospace block)
-  - [ ] Link "Pelajari lebih lanjut →" → `/tutorial/<code>`
-  - [ ] Tombol tutup
-- [ ] Inject symptom data via Jinja2 → JS global `SYMPTOM_DATA`
-- [ ] Styling modal (Tailwind: overlay, fixed center, max-width)
-- [ ] Styling info button (subtle, tidak ganggu checkbox)
+- [x] Tambah info button (ⓘ) inline di samping tiap gejala
+- [x] Implementasi modal info (single modal, populated dynamically via JS):
+  - [x] Tampilkan `short_desc`
+  - [x] Tampilkan `how_to_check` (monospace block)
+  - [x] Link "Pelajari lebih lanjut →" → `/tutorial/<code>`
+  - [x] Tombol tutup
+- [x] Inject symptom data via Jinja2 → JS global `SYMPTOM_DATA`
+- [x] Styling modal (Tailwind: overlay, fixed center, max-width)
+- [x] Styling info button (subtle, tidak ganggu checkbox)
 - [ ] Optional: badge "belum didukung sistem" untuk orphan symptoms
 
 ### 5.B diagnose.html (Step 2 — Pilih CF_user)
@@ -362,7 +362,7 @@ Update secara berkala:
 | 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
 | 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
 | 4 — Backend (app.py) | ✅ **Done** | 8/8 | **Phase 4 SELESAI — 2026-07-16. Commit f70820f: app.py v2 (clamping CF [0.1, 1.0], route /tutorial/<code>, diagnose() rename, build_kesimpulan helper, result route update). Breaking changes: CF_user range, result structure baru, kesimpulan narasi.** |
-| 5 — Frontend (Templates) | ⏸ Pending | 0/25 | Setelah Fase 4 |
+| 5 — Frontend (Templates) | ⏳ In Progress | 7/25 | **Phase 5.A SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis, SYMPTOM_DATA injection, styling modal & button, keyboard support). Next: 5.B (diagnose.html radio 5 level).** |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
 | 7 — Testing & QA | ⏸ Pending | 0/20 | Setelah Fase 6 |
 | 8 — Deployment & Version Bump | ⏸ Pending | 0/8 | Setelah Fase 7 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 4 SELESAI** — 2026-07-16 commit f70820f: **Phase 4 Implementasi Backend (app.py) v2.0.0 COMPLETED**. app.py v2 (clamping CF_user [0.1, 1.0], route /tutorial/<code> dengan normalize + related_symptoms, engine.diagnose() ganti forward_chaining(), helper build_kesimpulan() untuk narasi kesimpulan, result route update dengan handle v1/v2 format + pass kesimpulan). Breaking changes: CF_user range [-1, 1] → [0.1, 1.0], result structure baru (percentage, label, matched_count, kesimpulan). Next: Phase 5 (Implementasi Frontend Templates).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.A SELESAI** — 2026-07-16 commit f2de1a3: **Phase 5.A Implementasi symptoms.html (Step 1 - Pilih Gejala) COMPLETED**. symptoms.html v2 (info button ⓘ inline di setiap gejala, modal info dinamis dengan SYMPTOM_DATA injection, styling modal & button, keyboard support Escape key). Backend: route /diagnose updated untuk mengirim symptoms_with_info. Next: Phase 5.B (diagnose.html radio 5 level).*
