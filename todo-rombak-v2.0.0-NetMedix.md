@@ -240,15 +240,15 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### 5.D tutorial.html (BARU)
 
-- [ ] Layout format **mirip YAML frontmatter**:
-  - [ ] Header card: dark background (gray-900), monospace, syntax highlighting warna
-  - [ ] Body: section terpisah (Definisi, Cara Verifikasi, Interpretasi, Penyebab Umum, Gejala Terkait)
-- [ ] Tombol "← Kembali ke form" di atas
-- [ ] Render `verification_steps` sebagai ordered list
-- [ ] Render `common_causes` sebagai unordered list
-- [ ] Render `related_symptoms` sebagai link ke `/tutorial/<related_code>`
-- [ ] Max-width constraint (max-w-3xl) untuk readability
-- [ ] Styling konsisten dengan tema NetMedix (Tailwind + Inter font)
+- [x] Layout format **mirip YAML frontmatter**:
+  - [x] Header card: dark background (gray-900), monospace, syntax highlighting warna
+  - [x] Body: section terpisah (Definisi, Cara Verifikasi, Interpretasi, Penyebab Umum, Gejala Terkait)
+- [x] Tombol "← Kembali ke form" di atas
+- [x] Render `verification_steps` sebagai ordered list
+- [x] Render `common_causes` sebagai unordered list
+- [x] Render `related_symptoms` sebagai link ke `/tutorial/<related_code>`
+- [x] Max-width constraint (max-w-3xl) untuk readability
+- [x] Styling konsisten dengan tema NetMedix (Tailwind + Inter font)
 
 ### 5.E CSS/Styling Updates
 
@@ -362,7 +362,7 @@ Update secara berkala:
 | 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
 | 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
 | 4 — Backend (app.py) | ✅ **Done** | 8/8 | **Phase 4 SELESAI — 2026-07-16. Commit f70820f: app.py v2 (clamping CF [0.1, 1.0], route /tutorial/<code>, diagnose() rename, build_kesimpulan helper, result route update). Breaking changes: CF_user range, result structure baru, kesimpulan narasi.** |
-| 5 — Frontend (Templates) | ⏳ In Progress | 20/25 | **Phase 5.A & 5.B & 5.C SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis). Commit d633060: diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom, styling update). Commit 9ca2f54: result.html v2 (Section Kesimpulan empty/found state, Section Detail Kandidat semua kandidat bukan top-3, match count indicator, Trace Perhitungan Pure CF hapus MB/MD tambah CF_pakar+evidence_note). Breaking changes: 9 level CF → 5 level CF, range [0.1, 1.0] only, result structure baru, kesimpulan narasi. Next: 5.D (tutorial.html).** |
+| 5 — Frontend (Templates) | ⏳ In Progress | 21/25 | **Phase 5.A & 5.B & 5.C & 5.D SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis). Commit d633060: diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom, styling update). Commit 9ca2f54: result.html v2 (Section Kesimpulan empty/found state, Section Detail Kandidat semua kandidat bukan top-3, match count indicator, Trace Perhitungan Pure CF hapus MB/MD tambah CF_pakar+evidence_note). Commit 9a7019c: tutorial.html v2 (YAML-like header dengan dark background+monospace+syntax highlighting, section terpisah Definisi/Cara Verifikasi/Interpretasi/Penyebab Umum/Gejala Terkait, ordered list untuk verification_steps, unordered list untuk common_causes, grid cards untuk related_symptoms, max-width constraint, styling konsisten dengan tema NetMedix). Breaking changes: 9 level CF → 5 level CF, range [0.1, 1.0] only, result structure baru, kesimpulan narasi, tutorial page baru. Next: 5.E (CSS/Styling Updates).** |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
 | 7 — Testing & QA | ⏸ Pending | 0/20 | Setelah Fase 6 |
 | 8 — Deployment & Version Bump | ⏸ Pending | 0/8 | Setelah Fase 7 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.C SELESAI** — 2026-07-16 commit 9ca2f54: **Phase 5.C Implementasi result.html (Step 3 - Hasil Diagnosis) COMPLETED**. result.html v2 (Section Kesimpulan empty/found state dengan narasi kandidat utama, Section Detail Kandidat tampilkan SEMUA kandidat bukan top-3, match count indicator matched/total symptoms, Trace Perhitungan Pure CF hapus MB/MD/CF_rule tambah CF_pakar+evidence_note, badge label styling, responsive). Breaking changes: result structure baru, kesimpulan narasi, trace structure baru (Pure CF). Next: Phase 5.D (tutorial.html).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.D SELESAI** — 2026-07-16 commit 9a7019c: **Phase 5.D Implementasi tutorial.html (Step 4 - Tutorial Gejala) COMPLETED**. tutorial.html v2 dengan layout YAML-like (dark background+monospace+syntax highlighting warna), back button ke form diagnosis, section terpisah (Definisi, Cara Verifikasi, Interpretasi, Penyebab Umum, Gejala Terkait), ordered list untuk verification_steps dengan numbered styling, unordered list untuk common_causes dengan icon, grid cards untuk related_symptoms dengan hover effect, max-width constraint (max-w-3xl) untuk readability, styling konsisten dengan tema NetMedix (Tailwind + Inter font + Lucide icons), responsive design. Breaking changes: tutorial page baru. Next: Phase 5.E (CSS/Styling Updates).*
