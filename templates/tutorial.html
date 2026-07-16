@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}{{ symptom.code }} — {{ symptom.name }} — NetMedix{% endblock %}
+
+{% block content %}
+<article class="max-w-3xl mx-auto px-6 py-10">
+  <!-- Back button -->
+  <div class="mb-6">
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 text-sm font-medium text-ink-mute hover:text-ink transition-colors">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      Kembali ke form diagnosis
+    </a>
+  </div>
+
+  <!-- YAML-like header -->
+  <header class="bg-canvas-night text-green-400 p-5 rounded-card font-mono text-sm leading-relaxed
+                  shadow-lg border border-hairline/20">
+    <div class="grid grid-cols-[120px_1fr] gap-x-4 gap-y-1">
+      <span class="text-ink-faint select-none">code:</span>
+      <span class="text-yellow-300">{{ symptom.code }}</span>
+
+      <span class="text-ink-faint select-none">name:</span>
+      <span class="text-yellow-300">{{ symptom.name }}</span>
+
+      <span class="text-ink-faint select-none">category:</span>
+      <span class="text-yellow-300">{{ symptom.category }}</span>
+
+      <span class="text-ink-faint select-none">short_desc:</span>
+      <span class="text-yellow-300">{{ symptom.short_desc }}</span>
+    </div>
+  </header>
+
+  <!-- Body content -->
+  <div class="mt-8 space-y-8">
+    <!-- Section: Definisi -->
+    <section class="tutorial-section">
+      <h2 class="text-lg font-semibold text-ink border-b border-hairline pb-2 mb-3 flex items-center gap-2">
+        <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
+        Definisi
+      </h2>
+      <div class="prose prose-sm max-w-none text-ink leading-relaxed">
+        {{ symptom.tutorial.definition | safe }}
+      </div>
+    </section>
+
+    <!-- Section: Cara Verifikasi -->
+    <section class="tutorial-section">
+      <h2 class="text-lg font-semibold text-ink border-b border-hairline pb-2 mb-3 flex items-center gap-2">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-primary"></i>
+        Cara Verifikasi
+      </h2>
+      <div class="bg-canvas-soft rounded-card p-5 border border-hairline/50">
+        <ol class="space-y-3">
+          {% for step in symptom.tutorial.verification_steps %}
+          <li class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold
+                          flex items-center justify-center mt-0.5">{{ loop.index }}</span>
+            <span class="text-ink leading-relaxed">{{ step }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Section: Interpretasi Hasil -->
+    <section class="tutorial-section">
+      <h2 class="text-lg font-semibold text-ink border-b border-hairline pb-2 mb-3 flex items-center gap-2">
+        <i data-lucide="bar-chart-3" class="w-5 h-5 text-primary"></i>
+        Interpretasi Hasil
+      </h2>
+      <div class="bg-primary/5 rounded-card p-5 border border-primary/20">
+        <p class="text-ink font-mono text-sm leading-relaxed">
+          {{ symptom.tutorial.interpretation | safe }}
+        </p>
+      </div>
+    </section>
+
+    <!-- Section: Penyebab Umum -->
+    <section class="tutorial-section">
+      <h2 class="text-lg font-semibold text-ink border-b border-hairline pb-2 mb-3 flex items-center gap-2">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-primary"></i>
+        Penyebab Umum
+      </h2>
+      <ul class="space-y-2">
+        {% for cause in symptom.tutorial.common_causes %}
+        <li class="flex items-start gap-3">
+          <i data-lucide="circle-dot" class="w-4 h-4 text-primary flex-shrink-0 mt-1"></i>
+          <span class="text-ink leading-relaxed">{{ cause }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- Section: Gejala Terkait -->
+    {% if related %}
+    <section class="tutorial-section">
+      <h2 class="text-lg font-semibold text-ink border-b border-hairline pb-2 mb-3 flex items-center gap-2">
+        <i data-lucide="link" class="w-5 h-5 text-primary"></i>
+        Gejala Terkait
+      </h2>
+      <ul class="grid sm:grid-cols-2 gap-2">
+        {% for rel in related %}
+        <li>
+          <a href="/tutorial/{{ rel.code }}"
+             class="flex items-center gap-2 px-4 py-2.5 rounded-card border border-hairline
+                    bg-white text-ink-mute hover:text-ink hover:border-primary/50 hover:bg-primary/5
+                    transition-all text-sm font-medium group">
+            <span class="font-mono text-primary group-hover:text-primary-deep">{{ rel.code }}</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-ink-faint group-hover:text-ink"></i>
+            <span class="truncate">{{ rel.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </div>
+
+  <!-- Bottom action -->
+  <div class="mt-10 pt-6 border-t border-hairline">
+    <a href="/diagnose"
+       class="inline-flex items-center gap-2 px-6 py-2.5 rounded-btn text-sm font-medium
+              bg-primary text-ink hover:bg-primary-deep transition-colors">
+      <i data-lucide="stethoscope" class="w-4 h-4"></i>
+      Lanjutkan Diagnosis
+    </a>
+  </div>
+</article>
+{% endblock %}
