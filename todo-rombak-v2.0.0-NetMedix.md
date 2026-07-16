@@ -124,49 +124,49 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ## Phase 2 — Migrasi Data
 
-- [ ] Backup `data/rules.json` → `data/rules.v1.0.0.json.bak`
-- [ ] Backup `data/symptoms.json` → `data/symptoms.v1.0.0.json.bak`
-- [ ] Port nilai CF_pakar dari `docs-NetMedix/tabel-cf-pakar-riset.md` → `rules.json` v2 schema
-  - [ ] Tambah field `sources` per rule (min 2 URL)
-  - [ ] Tambah field `cf_pakar` per gejala
-  - [ ] Tambah field `evidence` per gejala
-  - [ ] Hapus field `mb`, `md` per gejala
-- [ ] Expand `symptoms.json` v2
-  - [ ] Tambah `short_desc` per gejala (40 gejala)
-  - [ ] Tambah `how_to_check` per gejala
-  - [ ] Tambah `tutorial` object per gejala (definition, verification_steps, interpretation, common_causes, related_symptoms)
-- [ ] Update `data/problems.json` jika ada perubahan kategori/deskripsi (minor)
-- [ ] Tambah orphan symptoms yang di-resolve ke rule yang sesuai (kalau ada)
-- [ ] **Validasi JSON schema** (pakai `jsonschema` validator):
-  - [ ] Semua rule punya ≥ 2 symptoms
-  - [ ] Semua gejala di rule punya `cf_pakar` di [0.1, 1.0]
-  - [ ] Semua rule punya ≥ 2 `sources`
-  - [ ] Semua gejala di symptoms.json punya tutorial lengkap
-  - [ ] Format URL di `sources` valid
-- [ ] Manual smoke test load KB di Python REPL (cek `KnowledgeBase().rules` & `.symptoms`)
+- [x] Backup `data/rules.json` → `data/rules.v1.0.0.json.bak`
+- [x] Backup `data/symptoms.json` → `data/symptoms.v1.0.0.json.bak`
+- [x] Port nilai CF_pakar dari `docs-NetMedix/tabel-cf-pakar-riset.md` → `rules.json` v2 schema
+  - [x] Tambah field `sources` per rule (min 2 URL)
+  - [x] Tambah field `cf_pakar` per gejala
+  - [x] Tambah field `evidence` per gejala
+  - [x] Hapus field `mb`, `md` per gejala
+- [x] Expand `symptoms.json` v2
+  - [x] Tambah `short_desc` per gejala (40 gejala)
+  - [x] Tambah `how_to_check` per gejala
+  - [x] Tambah `tutorial` object per gejala (definition, verification_steps, interpretation, common_causes, related_symptoms)
+- [x] Update `data/problems.json` jika ada perubahan kategori/deskripsi (minor)
+- [x] Tambah orphan symptoms yang di-resolve ke rule yang sesuai (kalau ada)
+- [x] **Validasi JSON schema** (pakai `jsonschema` validator):
+  - [x] Semua rule punya ≥ 2 symptoms
+  - [x] Semua gejala di rule punya `cf_pakar` di [0.1, 1.0]
+  - [x] Semua rule punya ≥ 2 `sources`
+  - [x] Semua gejala di symptoms.json punya tutorial lengkap
+  - [x] Format URL di `sources` valid
+- [x] Manual smoke test load KB di Python REPL (cek `KnowledgeBase().rules` & `.symptoms`)
 
 ---
 
 ## Phase 3 — Implementasi Inference Engine
 
-- [ ] Baca `inference/engine.py` v1.0.0 sekali lagi sebagai baseline konfirmasi
-- [ ] **Drop:**
-  - [ ] Function `calculate_cf_rule(mb, md)` (line 8-10)
-  - [ ] AND-strict matching `issubset` (line 36-37)
-  - [ ] Top-3 truncation `results[:3]` (line 92)
-  - [ ] Trace fields `mb`, `md`, `cf_rule` di evidence_steps (line 60-78)
-- [ ] **Update:**
-  - [ ] `calculate_cf_evidence` signature: param `cf_rule` → `cf_pakar`
-  - [ ] Trace evidence_steps: tambah `cf_pakar`, `evidence_note`
-  - [ ] Trace evidence_steps: tambah `percentage`, `label`, `matched_count` di result
-- [ ] **Implementasi baru:**
-  - [ ] Filter "≥ 2 gejala relevan dipilih user" (ganti `issubset`)
-  - [ ] Method `_combine_cfs_with_trace` (refactor dari `_combine_cfs`, return trace)
-  - [ ] Rename `forward_chaining()` → `diagnose()` (recommended)
-- [ ] **Update `knowledge_base.py`:**
-  - [ ] Handle schema baru (cf_pakar, evidence, sources)
-  - [ ] Add method `get_symptom(code)` untuk route `/tutorial/<code>`
-  - [ ] Add method `get_symptoms_with_info()` untuk modal info di symptoms.html
+- [x] Baca `inference/engine.py` v1.0.0 sekali lagi sebagai baseline konfirmasi
+- [x] **Drop:**
+  - [x] Function `calculate_cf_rule(mb, md)` (line 8-10)
+  - [x] AND-strict matching `issubset` (line 36-37)
+  - [x] Top-3 truncation `results[:3]` (line 92)
+  - [x] Trace fields `mb`, `md`, `cf_rule` di evidence_steps (line 60-78)
+- [x] **Update:**
+  - [x] `calculate_cf_evidence` signature: param `cf_rule` → `cf_pakar`
+  - [x] Trace evidence_steps: tambah `cf_pakar`, `evidence_note`
+  - [x] Trace evidence_steps: tambah `percentage`, `label`, `matched_count` di result
+- [x] **Implementasi baru:**
+  - [x] Filter "≥ 2 gejala relevan dipilih user" (ganti `issubset`)
+  - [x] Method `_combine_cfs_with_trace` (refactor dari `_combine_cfs`, return trace)
+  - [x] Rename `forward_chaining()` → `diagnose()` (recommended)
+- [x] **Update `knowledge_base.py`:**
+  - [x] Handle schema baru (cf_pakar, evidence, sources)
+  - [x] Add method `get_symptom(code)` untuk route `/tutorial/<code>`
+  - [x] Add method `get_symptoms_with_info()` untuk modal info di symptoms.html
 
 ---
 
@@ -359,8 +359,8 @@ Update secara berkala:
 |---|---|---|---|
 | 0 — Persiapan & Perencanaan | ✅ Done | 8/8 | 3 dokumen + discussion log siap |
 | 1 — Riset Knowledge Base | ✅ **Done** | ~65/~65 (1.A + 1.B + 1.C + 1.D + 1.E done) | **Fase 1 LENGKAP. Total 15/15 penyakit + 6/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen dengan stub (G31/G32 VPN) + peer review konsistensi final LULUS (5/6 PASS, 1/6 COMPLIANT) + tutorial bundling verification LULUS (40/40 gejala: 38 full + 2 stub). Total 42 gejala-rule mappings. 1 issue fixed (G39 YAML structure). Siap Phase 2.** |
-| 2 — Migrasi Data | ⏸ Pending | 0/10 | Setelah Fase 1 settle |
-| 3 — Inference Engine | ⏸ Pending | 0/15 | Setelah Fase 2 |
+| 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
+| 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
 | 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
 | 5 — Frontend (Templates) | ⏸ Pending | 0/25 | Setelah Fase 4 |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-10 | Owner: AI (Claude) + User | Status: **Phase 1 (1.A + 1.B + 1.C + 1.D + 1.E) SELESAI** — 15/15 penyakit lengkap + 6/7 orphan resolved (G33, G36, G37, G38, G39) + 2/7 orphan permanen dengan stub tutorial (G31, G32 VPN out-of-scope) + **peer review konsistensi final LULUS (5/6 dimensi PASS sempurna, 1/6 COMPLIANT dengan 2 minor documentation gaps untuk G33 R15 dan G40 R05 — keduanya symptom universal, recommended follow-up di Phase 2 bukan blocker)** + **tutorial bundling verification LULUS (40/40 gejala: 38 full + 2 stub out-of-scope; G39 struktur YAML diperbaiki; format konsistensi PASS di semua dimensi)** di `tabel-cf-pakar-riset.md` dengan ~104 sumber riset dan 42 gejala-rule mappings. Next: Phase 2 (migrasi rules.json/symptoms.json v2 schema).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 3 SELESAI** — 2026-07-16 commit afdabb6: **Phase 3 Implementasi Inference Engine v2.0.0 COMPLETED**. engine.py v2 (Pure CF, filter ≥2 gejala relevan, diagnose() rename, _combine_cfs_with_trace, interpret_cf update with "Hampir Tidak Yakin"), knowledge_base.py v2 (get_symptom untuk /tutorial/<code>, get_symptoms_with_info untuk modal, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru (percentage, label, matched_count, rule_sources), trace structure baru (cf_pakar, evidence_note, no mb/md). Next: Phase 4 (Implementasi Backend app.py).*
