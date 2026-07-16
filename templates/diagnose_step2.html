@@ -8,7 +8,7 @@
     <h1 class="text-2xl font-medium tracking-tight text-ink">Tentukan Tingkat Keyakinan Anda</h1>
     <p class="text-ink-mute mt-1 text-sm">
       Anda memilih <span class="font-semibold text-primary">{{ symptoms | length }}</span> gejala.
-      Tentukan seberapa yakin Anda mengalami setiap gejala.
+      Tentukan seberapa yakin Anda mengalami setiap gejala (skala 0.1 - 1.0).
     </p>
   </div>
 
@@ -37,35 +37,31 @@
             <h3 class="text-sm font-medium text-ink">{{ symptom.name }}</h3>
             <p class="text-xs text-ink-mute mt-0.5">{{ symptom.question }}</p>
           </div>
-          <span class="cf-label text-xs font-medium px-2 py-1 rounded-full bg-canvas-soft text-ink-mute flex-shrink-0"
+          <span class="cf-label text-xs font-medium px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0"
                 data-target="label-{{ symptom.code }}">
-            Tidak Tahu
+            Cukup Yakin
           </span>
         </div>
 
-        <!-- Radio Options: 9 levels -->
-        <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
+        <!-- Radio Options: 5 levels (v2.0.0) -->
+        <div class="grid grid-cols-5 gap-2">
           {% set cf_options = [
-            (-1.0, "Pasti Tidak", "bg-red-100 text-red-700 border-red-200"),
-            (-0.8, "Hampir Pasti Tidak", "bg-red-50 text-red-600 border-red-100"),
-            (-0.6, "Kemungkinan Tidak", "bg-orange-50 text-orange-600 border-orange-100"),
-            (-0.4, "Agak Tidak", "bg-yellow-50 text-yellow-600 border-yellow-100"),
-            (-0.2, "Sedikit Tidak", "bg-yellow-50 text-yellow-700 border-yellow-100"),
-            (0.2, "Tidak Tahu", "bg-canvas-soft text-ink-mute border-hairline"),
-            (0.4, "Sedikit Yakin", "bg-emerald-50 text-emerald-600 border-emerald-100"),
-            (0.6, "Cukup Yakin", "bg-emerald-50 text-emerald-700 border-emerald-200"),
-            (0.8, "Pasti Ya", "bg-primary/10 text-primary-deep border-primary/20"),
+            (0.1, "Hampir Tidak Yakin", "bg-gray-50 text-gray-600 border-gray-200"),
+            (0.3, "Kurang Yakin", "bg-yellow-50 text-yellow-600 border-yellow-200"),
+            (0.5, "Cukup Yakin", "bg-emerald-50 text-emerald-700 border-emerald-200"),
+            (0.7, "Yakin", "bg-primary/10 text-primary-deep border-primary/30"),
+            (1.0, "Sangat Yakin", "bg-primary text-white border-primary"),
           ] %}
           {% for val, label, classes in cf_options %}
-          <label class="cf-radio-label flex flex-col items-center gap-1 p-2 rounded-btn border cursor-pointer
-                        transition-all text-center hover:border-ink-faint
-                        {{ classes if val == 0.2 else 'border-hairline bg-white' }}"
+          <label class="cf-radio-label flex flex-col items-center gap-1.5 p-2.5 rounded-btn border cursor-pointer
+                        transition-all text-center hover:border-ink-faint hover:shadow-sm
+                        {{ classes if val == 0.5 else 'border-hairline bg-white' }}"
                  data-value="{{ val }}"
                  data-card="{{ symptom.code }}">
             <input type="radio" name="cf_{{ symptom.code }}" value="{{ val }}"
                    class="hidden"
-                   {% if val == 0.2 %}checked{% endif %}>
-            <span class="text-[11px] font-medium leading-tight">{{ label }}</span>
+                   {% if val == 0.5 %}checked{% endif %}>
+            <span class="text-xs font-semibold leading-tight">{{ label }}</span>
             <span class="text-[10px] text-ink-faint font-mono">{{ val }}</span>
           </label>
           {% endfor %}
@@ -87,7 +83,7 @@
           <span class="text-ink-faint">|</span>
           <div class="flex items-center gap-1.5">
             <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-            <span>Rata-rata: <span id="avg-cf" class="font-semibold text-ink">0.20</span></span>
+            <span>Rata-rata: <span id="avg-cf" class="font-semibold text-ink">0.50</span></span>
           </div>
         </div>
         <!-- Buttons -->
@@ -119,17 +115,13 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // CF option visual configs
+  // CF option visual configs (v2.0.0 — 5 level: 0.1, 0.3, 0.5, 0.7, 1.0)
   const cfStyles = {
-    "-1.0":  { label: "Pasti Tidak",        bg: "bg-red-100",         text: "text-red-700",     border: "border-red-200" },
-    "-0.8":  { label: "Hampir Pasti Tidak",  bg: "bg-red-50",          text: "text-red-600",     border: "border-red-100" },
-    "-0.6":  { label: "Kemungkinan Tidak",   bg: "bg-orange-50",       text: "text-orange-600",  border: "border-orange-100" },
-    "-0.4":  { label: "Agak Tidak",          bg: "bg-yellow-50",       text: "text-yellow-600",  border: "border-yellow-100" },
-    "-0.2":  { label: "Sedikit Tidak",       bg: "bg-yellow-50",       text: "text-yellow-700",  border: "border-yellow-100" },
-    "0.2":   { label: "Tidak Tahu",          bg: "bg-canvas-soft",     text: "text-ink-mute",    border: "border-hairline" },
-    "0.4":   { label: "Sedikit Yakin",       bg: "bg-emerald-50",      text: "text-emerald-600", border: "border-emerald-100" },
-    "0.6":   { label: "Cukup Yakin",         bg: "bg-emerald-50",      text: "text-emerald-700", border: "border-emerald-200" },
-    "0.8":   { label: "Pasti Ya",            bg: "bg-primary/10",      text: "text-primary-deep", border: "border-primary/20" },
+    "0.1":  { label: "Hampir Tidak Yakin",   bg: "bg-gray-50",         text: "text-gray-600",   border: "border-gray-200" },
+    "0.3":  { label: "Kurang Yakin",          bg: "bg-yellow-50",       text: "text-yellow-600", border: "border-yellow-200" },
+    "0.5":  { label: "Cukup Yakin",            bg: "bg-emerald-50",      text: "text-emerald-700", border: "border-emerald-200" },
+    "0.7":  { label: "Yakin",                  bg: "bg-primary/10",      text: "text-primary-deep", border: "border-primary/30" },
+    "1.0":  { label: "Sangat Yakin",           bg: "bg-primary",         text: "text-white",     border: "border-primary" },
   };
 
   const defaultClasses = "border-hairline bg-white";
@@ -137,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateCardStyles(card) {
     const symptomCode = card.dataset.symptom;
     const selected = card.querySelector("input[type=radio]:checked");
-    const value = selected ? selected.value : "0.2";
+    const value = selected ? selected.value : "0.5";
     const style = cfStyles[value];
 
     // Update radio labels
@@ -145,16 +137,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const labelVal = label.dataset.value;
       const isSelected = String(labelVal) === String(value);
       // Remove all style classes
-      label.classList.remove("bg-red-100", "bg-red-50", "bg-orange-50", "bg-yellow-50",
-        "bg-canvas-soft", "bg-emerald-50", "bg-primary/10", "bg-white",
-        "text-red-700", "text-red-600", "text-orange-600", "text-yellow-600", "text-yellow-700",
-        "text-ink-mute", "text-emerald-600", "text-emerald-700", "text-primary-deep",
-        "border-red-200", "border-red-100", "border-orange-100", "border-yellow-100",
-        "border-hairline", "border-emerald-100", "border-emerald-200", "border-primary/20",
-        "border-ink-faint");
+      label.classList.remove("bg-gray-50", "bg-yellow-50", "bg-emerald-50", "bg-primary/10", "bg-primary", "bg-white",
+        "text-gray-600", "text-yellow-600", "text-emerald-700", "text-primary-deep", "text-white",
+        "border-gray-200", "border-yellow-200", "border-emerald-200", "border-primary/30", "border-primary",
+        "border-hairline", "border-ink-faint", "hover:shadow-sm");
 
       if (isSelected) {
-        label.classList.add(style.bg, style.text, style.border);
+        label.classList.add(style.bg, style.text, style.border, "hover:shadow-sm");
       } else {
         label.classList.add(...defaultClasses.split(" "));
       }
@@ -164,11 +153,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const pillLabel = card.querySelector(".cf-label");
     if (pillLabel && style) {
       pillLabel.textContent = style.label;
-      // Remove old color classes
-      pillLabel.className = pillLabel.className
-        .replace(/bg-\S+/g, "").replace(/text-\S+/g, "").trim();
-      pillLabel.classList.add("cf-label", "text-xs", "font-medium", "px-2", "py-1",
-        "rounded-full", "flex-shrink-0", style.bg, style.text);
+      // Remove old color classes (keep base classes)
+      pillLabel.className = "cf-label text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 " + style.bg + " " + style.text;
+      if (style.border) pillLabel.classList.add(style.border);
     }
   }
 
@@ -183,15 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
         count++;
       }
     });
-    const avg = count > 0 ? (total / count) : 0;
+    const avg = count > 0 ? (total / count) : 0.5;
     const avgEl = document.getElementById("avg-cf");
     if (avgEl) {
       avgEl.textContent = avg.toFixed(2);
-      // Color the average
+      // Color the average based on v2.0.0 5-level scale
       avgEl.className = "font-semibold";
-      if (avg >= 0.6) avgEl.classList.add("text-primary-deep");
-      else if (avg >= 0.2) avgEl.classList.add("text-ink");
-      else avgEl.classList.add("text-red-600");
+      if (avg >= 0.7) avgEl.classList.add("text-primary-deep");
+      else if (avg >= 0.5) avgEl.classList.add("text-emerald-700");
+      else if (avg >= 0.3) avgEl.classList.add("text-yellow-600");
+      else avgEl.classList.add("text-gray-600");
     }
   }
 
@@ -208,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Initialize all cards with default styles
+  // Initialize all cards with default styles (0.5 pre-checked)
   document.querySelectorAll(".cf-card").forEach(card => updateCardStyles(card));
   updateSummary();
 
