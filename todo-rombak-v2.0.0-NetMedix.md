@@ -210,16 +210,16 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ### 5.B diagnose.html (Step 2 — Pilih CF_user)
 
-- [ ] Ganti input ke **radio button 5 level** per gejala yang sudah dipilih:
-  - [ ] 0.1 — Hampir Tidak Yakin
-  - [ ] 0.3 — Kurang Yakin
-  - [ ] 0.5 — Cukup Yakin (default pre-checked)
-  - [ ] 0.7 — Yakin
-  - [ ] 1.0 — Sangat Yakin
-- [ ] Layout: grid 5 kolom (responsive, stack di mobile)
-- [ ] Styling radio card (selected state distinct)
-- [ ] Form validation: pastikan setiap gejala yang dipilih Step 1 ada radio-nya
-- [ ] JS: sinkronisasi state radio antar gejala (default 0.5 jika user belum pilih)
+- [x] Ganti input ke **radio button 5 level** per gejala yang sudah dipilih:
+  - [x] 0.1 — Hampir Tidak Yakin
+  - [x] 0.3 — Kurang Yakin
+  - [x] 0.5 — Cukup Yakin (default pre-checked)
+  - [x] 0.7 — Yakin
+  - [x] 1.0 — Sangat Yakin
+- [x] Layout: grid 5 kolom (responsive, stack di mobile)
+- [x] Styling radio card (selected state distinct)
+- [x] Form validation: pastikan setiap gejala yang dipilih Step 1 ada radio-nya
+- [x] JS: sinkronisasi state radio antar gejala (default 0.5 jika user belum pilih)
 
 ### 5.C result.html (Hasil Diagnosis)
 
@@ -362,7 +362,7 @@ Update secara berkala:
 | 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
 | 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
 | 4 — Backend (app.py) | ✅ **Done** | 8/8 | **Phase 4 SELESAI — 2026-07-16. Commit f70820f: app.py v2 (clamping CF [0.1, 1.0], route /tutorial/<code>, diagnose() rename, build_kesimpulan helper, result route update). Breaking changes: CF_user range, result structure baru, kesimpulan narasi.** |
-| 5 — Frontend (Templates) | ⏳ In Progress | 7/25 | **Phase 5.A SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis, SYMPTOM_DATA injection, styling modal & button, keyboard support). Next: 5.B (diagnose.html radio 5 level).** |
+| 5 — Frontend (Templates) | ⏳ In Progress | 13/25 | **Phase 5.A & 5.B SELESAI — 2026-07-16. Commit f2de1a3: symptoms.html v2 (info button ⓘ, modal info dinamis). Commit d633060: diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom, styling update). Next: 5.C (result.html kesimpulan + semua kandidat).** |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
 | 7 — Testing & QA | ⏸ Pending | 0/20 | Setelah Fase 6 |
 | 8 — Deployment & Version Bump | ⏸ Pending | 0/8 | Setelah Fase 7 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.A SELESAI** — 2026-07-16 commit f2de1a3: **Phase 5.A Implementasi symptoms.html (Step 1 - Pilih Gejala) COMPLETED**. symptoms.html v2 (info button ⓘ inline di setiap gejala, modal info dinamis dengan SYMPTOM_DATA injection, styling modal & button, keyboard support Escape key). Backend: route /diagnose updated untuk mengirim symptoms_with_info. Next: Phase 5.B (diagnose.html radio 5 level).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 5.B SELESAI** — 2026-07-16 commit d633060: **Phase 5.B Implementasi diagnose_step2.html (Step 2 - Pilih CF_user) COMPLETED**. diagnose_step2.html v2 (radio 5 level CF 0.1-1.0, default 0.5 pre-checked, grid 5 kolom responsive, styling update color scheme gray→yellow→emerald→primary→solid, JavaScript update cfStyles config dan updateCardStyles function, summary avg default 0.50). Breaking changes: 9 level CF → 5 level CF, range [0.1, 1.0] only (no negative). Next: Phase 5.C (result.html kesimpulan + semua kandidat).*
