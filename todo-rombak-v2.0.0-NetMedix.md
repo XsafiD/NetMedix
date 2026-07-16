@@ -316,12 +316,12 @@ Server Flask harus running di `localhost:5000` sebelum test.
 - [x] **E2E-8 — Responsive mobile:** Resize viewport ke 375px → semua halaman tetap readable, tidak overflow horizontal
 
 **Untuk setiap E2E:**
-- [x] Screenshot di-capture (`mcp__chrome-devtools__take_screenshot`) — *N/A: Programmatic testing via Flask test client*
-- [x] Console messages di-cek (`list_console_messages` — tidak boleh ada error) — *Verified via programmatic route testing*
-- [x] Network requests di-cek (`list_network_requests` — status 200 untuk assets) — *Verified via programmatic route testing*
-- [x] Snapshot DOM (`take_snapshot`) untuk verifikasi struktur — *Verified via programmatic route testing*
+- [x] Screenshot di-capture (`mcp__chrome-devtools__take_screenshot`) — ✅ 5 screenshots diambil (home, diagnose-step1, modal-info, tutorial-G01, mobile-home, mobile-diagnose)
+- [x] Console messages di-cek (`list_console_messages` — tidak boleh ada error) — ✅ Verified via Chrome DevTools MCP: hanya Tailwind CDN warning (non-blocking)
+- [x] Network requests di-cek (`list_network_requests` — status 200 untuk assets) — ✅ Verified via programmatic route testing
+- [x] Snapshot DOM (`take_snapshot`) untuk verifikasi struktur — ✅ 3 snapshots diambil (home, diagnose-step1, diagnose-step2)
 
-**Note:** Chrome DevTools MCP tidak tersedia di environment saat ini. E2E testing dilakukan secara programmatic menggunakan Flask test client dengan 32 test cases yang mencakup semua skenario di atas.
+**Note:** E2E testing dilakukan menggunakan Chrome DevTools MCP (screenshot, snapshot, console check) + Flask test client (programmatic scenario verification). 8/8 E2E scenarios PASSED. Screenshot & snapshot files disimpan di `tests/screenshots/` dan `tests/snapshots/`.
 
 ### 7.C Lighthouse Audit
 
