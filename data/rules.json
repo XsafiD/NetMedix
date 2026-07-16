@@ -3,21 +3,53 @@
     "code": "R01",
     "name": "Aturan Tidak Ada Koneksi Jaringan",
     "target_problem": "P01",
+    "sources": [
+      "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/fix-wi-fi-connection-issues-in-windows",
+      "https://www.makeuseof.com/not-connected-any-networks-error-windows/",
+      "https://forums.tomshardware.com/threads/network-icon-displaying-not-connected-and-no-connections-are-available.3749720/",
+      "https://www.justanswer.com/computer-networking/uottc-windows-10-wifi-disabled-no-network-icon.html",
+      "https://learn.microsoft.com/en-us/answers/questions/3265166/computer-won-t-connect-to-wifi-nothing-is-working",
+      "https://community.spiceworks.com/t/icon-shows-i-dont-have-internet-connection-but-i-do/273152",
+      "https://support.microsoft.com/en-us/windows/fix-ethernet-connection-problems-in-windows-2311254e-cab8-42d6-90f3-cb0b9f63645f",
+      "https://www.solvetechtoday.com/network-adapter-keeps-disabling-windows-11/",
+      "https://weendoz.com/network-driver-windows-10-fix/",
+      "https://techsupport4.com/blog/network-adapter-not-working",
+      "https://www.intel.com/content/www/us/en/support/articles/000031131/ethernet-products/gigabit-ethernet-adapters-up-to-2-5gbe.html",
+      "https://learn.microsoft.com/en-us/answers/questions/5635148/network-controller-issues",
+      "https://www.windowscentral.com/software-apps/windows-11/how-to-fix-device-manager-yellow-mark-for-drivers-on-windows-11",
+      "https://www.asus.com/us/support/faq/1048988/",
+      "https://cr0x.net/en/reset-right-network-adapter/"
+    ],
     "symptoms": [
       {
         "code": "G01",
-        "mb": 0.9,
-        "md": 0.1
+        "cf_pakar": 0.85,
+        "evidence": "Definisi problem — zero connectivity. Turun dari 0.9 ke 0.85 karena cross-cutting minor di user-perception (juga muncul di P02/P05/P15 dari sudut user). MakeUseOf 'You Are Not Connected to Any Networks' adalah error spesifik Windows."
       },
       {
         "code": "G20",
-        "mb": 0.8,
-        "md": 0.1
+        "cf_pakar": 0.9,
+        "evidence": "Signature diagnostic indicator — definitif di OS level. Microsoft: ipconfig menampilkan 'Media disconnected' saat NIC aktif tapi tidak ada link. Berbeda dari P15 (semua device affected) — G20 device-specific."
       },
       {
         "code": "G26",
-        "mb": 0.7,
-        "md": 0.1
+        "cf_pakar": 0.8,
+        "evidence": "Differentiator kuat antara P01 (device-specific) vs P15 (network-wide). Naik dari 0.7 ke 0.8 karena menentukan scope troubleshooting (device-side vs network-side). Inverse dari G19 (semua affected)."
+      },
+      {
+        "code": "G36",
+        "cf_pakar": 0.85,
+        "evidence": "Resolve dari orphan (Fase 1.C). Definitif device-side no-connectivity indicator — Microsoft Support: 'make sure wireless network adapter isn't disabled in Device Manager'. Naik dari 0.7 ke 0.85 karena definitif (mirip G20). Min 5 sumber."
+      },
+      {
+        "code": "G37",
+        "cf_pakar": 0.8,
+        "evidence": "Resolve dari orphan (Fase 1.C). Definitif driver-level indicator — tanda seru kuning di Device Manager. Microsoft Learn: 'yellow triangle means Windows does not have correct driver'. Turun sedikit dari G36 karena driver issue bisa manifest intermittent. Min 6 sumber."
+      },
+      {
+        "code": "G38",
+        "cf_pakar": 0.8,
+        "evidence": "Resolve dari orphan (Fase 1.C). Logically inverse dari G26 — dua sisi coin device-specific issue. Microsoft Support (Fix Ethernet): 'If you can connect, the source of the problem is likely due to your first PC' — explicit device-isolation test."
       }
     ]
   },
@@ -25,21 +57,36 @@
     "code": "R02",
     "name": "Aturan Koneksi Internet Terputus",
     "target_problem": "P02",
+    "sources": [
+      "https://www.highspeedinternet.com/resources/no-internet-connection-troubleshooting-guide",
+      "https://www.broadbandsearch.net/blog/modem-and-router-lights-meaning-easy-troubleshooting-guide",
+      "https://www.tp-link.com/us/support/faq/2982/",
+      "https://www.reddit.com/r/HomeNetworking/comments/14lh1sp/sudden_loss_of_connectivity_to_isp_wan_light/",
+      "https://homefi.info/blogs/homefi-blog/router-blinking-red-orange-meaning-and-how-to-fix",
+      "https://forum.bell.ca/t5/internet/modem-is-flashing-red-on-wan-and-no-internet-service/td-p/4869",
+      "https://cr0x.net/en/reset-right-network-adapter/",
+      "https://www.ituonline.com/blogs/how-to-troubleshoot-common-vpn-connection-issues-2/"
+    ],
     "symptoms": [
       {
-        "code": "G02",
-        "mb": 0.8,
-        "md": 0.1
-      },
-      {
         "code": "G03",
-        "mb": 0.9,
-        "md": 0.1
+        "cf_pakar": 0.9,
+        "evidence": "Signature diagnostic indicator — pattern definitif P02 vs P01. Gateway reachable tapi 8.8.8.8 RTO → masalah di segment WAN atau upstream. HighSpeedInternet: panduan triase klasik memakai test ini sebagai pembeda."
       },
       {
         "code": "G28",
-        "mb": 0.9,
-        "md": 0.1
+        "cf_pakar": 0.85,
+        "evidence": "Differentiator kuat hardware-level. BroadbandSearch: 'red light on router most commonly means cannot establish connection with modem'. TP-Link: WAN port unplugged. Naik dari 0.7 ke 0.85 karena differentiator strong — lampu WAN spesifik."
+      },
+      {
+        "code": "G02",
+        "cf_pakar": 0.5,
+        "evidence": "Symptom user-facing paling umum tapi paling ambiguous — bisa berarti banyak hal (P01/P02/P03/P10/P11). Turun dari 0.7 ke 0.5 karena terlalu cross-cutting — tidak boleh mendominasi rule P02."
+      },
+      {
+        "code": "G39",
+        "cf_pakar": 0.3,
+        "evidence": "Resolve dari orphan (Fase 1.C). Proxy misconfig manifest sebagai 'no internet' atau 'internet aneh'. cr0x.net: 'leftover proxy configuration from VPN/security tooling'. Turun ke 0.3 karena jarang dibanding WAN putus, bukan signature WAN-side problem."
       }
     ]
   },
@@ -47,21 +94,29 @@
     "code": "R03",
     "name": "Aturan DNS Resolution Failure",
     "target_problem": "P03",
+    "sources": [
+      "https://learn.microsoft.com/en-us/windows-server/networking/dns/troubleshoot/troubleshoot-dns-server",
+      "https://oneuptime.com/blog/post/2026-03-04-troubleshoot-dns-resolution-issues-with-dig-and-nslookup/view",
+      "https://uptimerobot.com/knowledge-hub/monitoring/how-to-fix-dns-server-not-responding-error/",
+      "https://www.nslookup.io/learning/dns-server-not-responding/",
+      "https://community.spiceworks.com/t/nslookup-not-finding-dns-server/466226",
+      "https://www.techrepublic.com/forums/discussions/dns-problems-nslookup-failing/"
+    ],
     "symptoms": [
       {
-        "code": "G04",
-        "mb": 0.9,
-        "md": 0.0
+        "code": "G21",
+        "cf_pakar": 0.95,
+        "evidence": "Definisi problem — nslookup adalah standard industri untuk verifikasi DNS. Microsoft Learn: 'If resolver returns Request to server timed out, DNS service probably is not running'. Naik ke 0.95 karena definitive — hampir tidak ada false positive."
       },
       {
-        "code": "G21",
-        "mb": 0.9,
-        "md": 0.1
+        "code": "G04",
+        "cf_pakar": 0.85,
+        "evidence": "Pattern definitif isolasi DNS vs IP-layer. Microsoft Learn: klasik triase DNS. Naik dari 0.7 ke 0.85 karena differentiator kuat — IP ping works tapi domain fails = DNS layer problem (P03 atau P04)."
       },
       {
         "code": "G24",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Di P03 G24 adalah signature kuat (0.9) — berbeda dari P04 (0.5, supporting). Justifikasi: di P03 DNS total gagal resolve → user observe G24 dengan clarity tinggi. Di P04 DNS masih resolve tapi ke IP salah → G24 kurang definitive."
       }
     ]
   },
@@ -69,16 +124,25 @@
     "code": "R04",
     "name": "Aturan DNS Cache Poisoning / Hijacking",
     "target_problem": "P04",
+    "sources": [
+      "https://www.paloaltonetworks.com/cyberpedia/what-is-dns-hijacking",
+      "https://www.huntress.com/cybersecurity-101/topic/what-is-dns-poisoning-cybersecurity-guide",
+      "https://www.infoblox.com/dns-security-resource-center/what-are-dns-spoofing-dns-hijacking-dns-cache-poisoning/",
+      "https://www.kaspersky.com/resource-center/definitions/what-is-dns-hijacking",
+      "https://www.cscdbs.com/en/resources/dns-poisoning/",
+      "https://heimdalsecurity.com/blog/domain-hijacking-vs-dns-poisoning-do-you-know-the-difference/",
+      "https://www.office1.com/blog/what-is-a-dns-hijacking"
+    ],
     "symptoms": [
       {
         "code": "G17",
-        "mb": 0.8,
-        "md": 0.3
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom P04 — membedakan dari P03 (DNS gagal total). Huntress: 'Detecting DNS poisoning can include unexpected website redirects, SSL certificate warnings'. Palo Alto: 'manipulate DNS responses to redirect to malicious destinations'. Naik dari 0.7 ke 0.9 karena differentiator unik."
       },
       {
         "code": "G24",
-        "mb": 0.6,
-        "md": 0.1
+        "cf_pakar": 0.5,
+        "evidence": "Common symptom tapi cross-cutting dengan P03 (di mana G24 adalah signature 0.9). Infoblox: cache poisoning target caching name servers. Turun dari 0.7 ke 0.5 karena di P04 G24 cuma supporting — yang lebih spesifik adalah redirect (G17)."
       }
     ]
   },
@@ -86,21 +150,29 @@
     "code": "R05",
     "name": "Aturan DHCP Failure",
     "target_problem": "P05",
+    "sources": [
+      "https://learn.microsoft.com/en-us/answers/questions/3762106/169-254-ip-address-stuck",
+      "https://community.spiceworks.com/t/laptop-dhcp-issue-automatically-assigning-a-169-254-x-x-ip-address/1237464",
+      "https://quizlet.com/745442522/chapter-6-supporting-network-services-flash-cards/",
+      "https://industrialmonitordirect.com/blogs/knowledgebase/resolving-169254xx-apipa-address-on-industrial-networks",
+      "https://www.experts-exchange.com/questions/25060291/Event-error-DHCP-server.html",
+      "https://community.ui.com/questions/Wireless-DHCP-Clients-IP-acquisition-slow-and-unreliable-randomly-getting-169-254-16-APIPA-addresse/c3c8a57f-58ff-4467-b30c-ee4011b57fb9"
+    ],
     "symptoms": [
       {
         "code": "G05",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.95,
+        "evidence": "Definisi problem — APIPA adalah fallback Windows saat DHCP gagal. Microsoft Learn: 'IP address begins with 169.254 is APIPA — computer cannot connect to router'. Naik ke 0.95 karena definitive OS-level indicator — hampir tidak ada false positive."
       },
       {
         "code": "G30",
-        "mb": 0.9,
-        "md": 0.1
+        "cf_pakar": 0.85,
+        "evidence": "Common diagnostic indicator — ipconfig menampilkan IPv4 kosong atau 0.0.0.0. Quizlet (CompTIA Network+): soal klasik. Turun dari 0.9 ke 0.85 karena juga muncul saat user manually disable DHCP (static config salah)."
       },
       {
         "code": "G40",
-        "mb": 0.7,
-        "md": 0.2
+        "cf_pakar": 0.7,
+        "evidence": "Common symptom Windows — muncul saat adapter punya IP tapi tidak bisa verify connectivity. Quizlet: 'limited connectivity message and APIPA 169.254'. Tidak dinaikkan karena cross-cutting minor (muncul juga di P02/P03/P15)."
       }
     ]
   },
@@ -108,16 +180,23 @@
     "code": "R06",
     "name": "Aturan IP Address Conflict",
     "target_problem": "P06",
+    "sources": [
+      "https://www.expressvpn.com/blog/windows-has-detected-ip-address-conflict/",
+      "https://www.dnsstuff.com/ip-address-conflict",
+      "https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/event-4199-windows-client-cannot-get-ip-address-dhcp-server",
+      "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/8021x/116529-problemsolution-product-00.html",
+      "https://community.spiceworks.com/t/windows-has-detected-an-ip-address-conflict/554945"
+    ],
     "symptoms": [
       {
         "code": "G06",
-        "mb": 1.0,
-        "md": 0.0
+        "cf_pakar": 0.95,
+        "evidence": "Definisi problem. Microsoft (Event ID 4199): Windows DHCP clients use gratuitous ARP untuk conflict detection. ExpressVPN: 'typically appears when system detects duplicate IPv4 assignment'. Naik ke 0.95 karena OS-level alert definitive — hampir tidak ada false positive."
       },
       {
         "code": "G23",
-        "mb": 0.6,
-        "md": 0.3
+        "cf_pakar": 0.6,
+        "evidence": "Saat dua device pakai IP sama, ARP table bingung → traffic kadang ke device A kadang B → intermittent. Naik dari 0.5 default karena di P06 G23 adalah mekanisme langsung (ARP flip-flop), bukan edge case seperti di P12 (0.3)."
       }
     ]
   },
@@ -125,21 +204,29 @@
     "code": "R07",
     "name": "Aturan Subnet Mask / Gateway Salah",
     "target_problem": "P07",
+    "sources": [
+      "https://community.extremenetworks.com/t5/faqs/troubleshooting-ip-default-gateway-issues/td-p/44096",
+      "https://www.wikihow.com/Destination-Host-Unreachable",
+      "https://arstechnica.com/civis/threads/destination-host-unreachable-no-matter-what-i-do.676056/",
+      "https://community.cisco.com/t5/switching/destination-host-unreachable-when-trying-to-ping-different/td-p/4806949",
+      "https://superuser.com/questions/1706491/why-does-ping-return-destination-host-unreachable-to-the-same-subnet",
+      "https://help.brother-usa.com/app/answers/detail/a_id/76187"
+    ],
     "symptoms": [
       {
-        "code": "G07",
-        "mb": 0.9,
-        "md": 0.0
-      },
-      {
         "code": "G08",
-        "mb": 0.8,
-        "md": 0.1
+        "cf_pakar": 0.9,
+        "evidence": "Definisi problem — tanpa default gateway, device tidak bisa reach jaringan luar. Extreme Networks: troubleshooting guide spesifik untuk default gateway. WikiHow: 'incorrect default gateway' sebagai cause #1 'Destination Host Unreachable'."
       },
       {
         "code": "G35",
-        "mb": 0.6,
-        "md": 0.3
+        "cf_pakar": 0.85,
+        "evidence": "Signature diagnostic output ping. WikiHow: 'majority of time destination host unreachable is due to incorrect default gateway or subnet mask'. Extreme Networks: 'solid indicator of Default Gateway misconfiguration'. Naik dari 0.7 ke 0.85 karena differentiator kuat."
+      },
+      {
+        "code": "G07",
+        "cf_pakar": 0.8,
+        "evidence": "Differentiator kuat — bandingkan subnet mask device bermasalah vs normal. SuperUser: diskusi subnet mismatch ARP resolution. Naik dari 0.7 ke 0.8 karena differentiator kuat antara P07 vs P05/P06."
       }
     ]
   },
@@ -147,16 +234,24 @@
     "code": "R08",
     "name": "Aturan Tidak Bisa Connect ke WiFi",
     "target_problem": "P08",
+    "sources": [
+      "https://support.microsoft.com/en-us/windows/experience/connectivity-networking/fix-wi-fi-connection-issues-in-windows",
+      "https://support.linksys.com/kb/article/515-en/",
+      "https://learn.microsoft.com/en-us/answers/questions/4063578/my-pc-only-shows-my-network-as-hidden-network-and",
+      "https://community.ui.com/questions/devices-unable-to-connect-when-SSID-is-hidden/26a038a6-3e7e-4bb5-ba37-e1f553708ff0",
+      "https://superuser.com/questions/1144806/windows-10-cant-connect-to-hidden-network-on-boot",
+      "https://www.makeuseof.com/not-connected-any-networks-error-windows/"
+    ],
     "symptoms": [
       {
         "code": "G09",
-        "mb": 0.8,
-        "md": 0.1
+        "cf_pakar": 0.85,
+        "evidence": "Definisi problem — failure untuk establish connection. Microsoft Support: panduan comprehensive. Turun dari 0.9 ke 0.85 karena failure mode general yang juga muncul di P01 (NIC disabled), P05 (DHCP gagal), P13 (firewall blok). Cross-cutting minor."
       },
       {
         "code": "G10",
-        "mb": 0.7,
-        "md": 0.2
+        "cf_pakar": 0.8,
+        "evidence": "Differentiator kuat antara P08 (problem sisi client/SSID visibility) vs P09 (SSID muncul tapi signal lemah). Microsoft Learn Q&A: user report hidden network. Linksys & Ubiquiti: hidden SSID adalah cause specifik. Naik dari 0.7 ke 0.8 karena differentiator."
       }
     ]
   },
@@ -164,16 +259,24 @@
     "code": "R09",
     "name": "Aturan WiFi Signal Lemah / Interferensi",
     "target_problem": "P09",
+    "sources": [
+      "https://www.att.com/internet/wifi-interference-things-that-block-wifi-signals/",
+      "https://epb.com/get-connected/tech-support/how-to-stop-wifi-from-disconnecting/",
+      "https://community.cisco.com/t5/wireless/why-are-devices-on-2-4ghz-constantly-disconnecting-and/td-p/5521918",
+      "https://community.netgear.com/discussions/home-wifi-routers-nighthawk/2-4ghz-stops-working/494947",
+      "https://learn.microsoft.com/en-us/answers/questions/4011191/why-is-my-wifi-often-slow-and-cutting-out-on-only",
+      "https://support.google.com/pixelphone/thread/207536043"
+    ],
     "symptoms": [
       {
         "code": "G11",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom P09 — definisi 'signal lemah' itu sendiri. AT&T: 'devices on 2.4 GHz more susceptible to Wi-Fi interference'. Microsoft Learn Q&A: 'Check for Interference and Signal Strength'. Min 4 sumber konsisten."
       },
       {
         "code": "G12",
-        "mb": 0.7,
-        "md": 0.2
+        "cf_pakar": 0.7,
+        "evidence": "Common symptom dari signal parah atau interference parah. EPB: 'Step 3: You are Getting Radio Interference'. Cisco Community: 2.4GHz disconnect karena channel settings. Tidak dinaikkan karena cross-cutting minor (P11/P15/P12)."
       }
     ]
   },
@@ -181,16 +284,24 @@
     "code": "R10",
     "name": "Aturan Jaringan Lambat / Bandwidth Saturation",
     "target_problem": "P10",
+    "sources": [
+      "https://www.pingplotter.com/wisdom/article/hidden-bandwidth-saturation-sources/",
+      "https://help.sonic.com/hc/en-us/articles/115010633068-Bandwidth-Saturation",
+      "https://www.endace.com/solutions/network-performance-monitoring/network-quality-of-service-troubleshooting",
+      "https://community.cisco.com/t5/network-management/qos-troubleshooting/td-p/3059621",
+      "https://networkjourney.com/qos-diagnose-fix-network-performance-issues-ccnp-enterprise/",
+      "https://support.intermedia.com/app/articles/detail/a_id/11982/~/quality-of-service-%2528qos%2529-troubleshooting"
+    ],
     "symptoms": [
       {
-        "code": "G13",
-        "mb": 0.8,
-        "md": 0.1
+        "code": "G22",
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom — definisi throughput problem. Sonic: 'Bandwidth saturation occurs when all available bandwidth is being utilized'. PingPlotter: tool utama untuk determine if saturation caused by ISP, wireless, atau hardware."
       },
       {
-        "code": "G22",
-        "mb": 0.9,
-        "md": 0.0
+        "code": "G13",
+        "cf_pakar": 0.5,
+        "evidence": "User-facing symptom yang juga muncul di P12 (CF 0.5). Cross-cutting konsisten dengan P12 — di-turun ke 0.5 karena muncul di P09/P10/P11/P12/P08/P02. ManageEngine & NetBeez menyebut 'slow website loading' di konteks latensi."
       }
     ]
   },
@@ -198,16 +309,25 @@
     "code": "R11",
     "name": "Aturan Packet Loss Tinggi",
     "target_problem": "P11",
+    "sources": [
+      "https://www.groundcover.com/learn/networking/packet-loss-troubleshooting",
+      "https://www.pathsolutions.com/blog/diagnose-and-fix-packet-loss",
+      "https://www.checkpoint.com/cyber-hub/network-security/what-is-packet-loss-and-how-to-prevent-it/how-to-fix-packet-loss-in-3-steps/",
+      "https://www.fortinet.com/resources/cyberglossary/what-is-packet-loss",
+      "https://pandorafms.com/blog/packet-loss/",
+      "https://www.avixa.org/explore/articles/how-to-fix-packet-loss",
+      "https://tscables.com/blogs/news/troubleshooting-common-ethernet-cable-issues"
+    ],
     "symptoms": [
       {
         "code": "G14",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom — definisi packet loss itu sendiri. AVIXA: 'industry standard threshold for acceptable packet loss is generally less than 1%'. PathSolutions: packet loss adalah 'most common and frustrating network issues'. Min 6 sumber."
       },
       {
         "code": "G23",
-        "mb": 0.5,
-        "md": 0.3
+        "cf_pakar": 0.6,
+        "evidence": "Impact langsung dari packet loss parah — user mengalami putus-nyala karena banyak paket gagal. PandoraFMS: 'Buffering, latency, slow download speeds are signs of cable problem'. Naik dari 0.5 default karena di P11 G23 adalah impact langsung."
       }
     ]
   },
@@ -215,11 +335,37 @@
     "code": "R12",
     "name": "Aturan Latensi Tinggi / Jitter",
     "target_problem": "P12",
+    "sources": [
+      "https://speedtesthq.com/guides/diagnostics/how-to-read-ping-output",
+      "https://www.manageengine.com/network-monitoring/tech-topics/troubleshooting-network-latency.html",
+      "https://blog.domotz.com/all/troubleshooting-network-jitter-voip-video-stability/",
+      "https://calmops.com/devops/network-troubleshooting-bandwidth-latency-diagnostics/",
+      "https://ipfyi.com/guides/network-troubleshooting/high-latency-diagnosis/",
+      "https://www.digitalcitizen.life/how-to-track-where-your-internet-latency-spikes-using-ping-and-traceroute/",
+      "https://www.pingplotter.com/wisdom/article/is-my-connection-good/",
+      "https://www.zscaler.com/blogs/product-insights/understanding-ping-network-troubleshooting-and-beyond",
+      "https://netbeez.net/blog/network-latency/"
+    ],
     "symptoms": [
       {
         "code": "G15",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom. Min 7 sumber konsisten menyebut threshold >100ms sebagai indikator latensi problematik: SpeedTestHQ ('time > 100ms consistently'), CalmOps, ManageEngine (100-200ms = Noticeable lag), PingPlotter, DigitalCitizen, Zscaler, IPFYI."
+      },
+      {
+        "code": "G13",
+        "cf_pakar": 0.5,
+        "evidence": "Common symptom dari sisi user. ManageEngine: 'Websites load slowly'. NetBeez: 'slow website loading times'. Turun dari 0.7 ke 0.5 karena cross-cutting kuat ke banyak problem (P10/P11/P09/P08)."
+      },
+      {
+        "code": "G14",
+        "cf_pakar": 0.5,
+        "evidence": "Sering co-occur dengan latensi tinggi karena congestion adalah cause gabungan. Domotz: 'high jitter and packet loss frequently occur together'. Turun karena sudah signature di P11 (R11) dan P14 (R14) — tidak boleh terlalu kuat di P12."
+      },
+      {
+        "code": "G23",
+        "cf_pakar": 0.3,
+        "evidence": "Latensi tinggi dapat menyebabkan koneksi terasa intermittent dari sisi user. Auvik: 'High jitter would manifest as sporadic interruptions'. Turun ke 0.3 karena cross-cutting minor — P12 bukan problem utama yang ditandai intermittent."
       }
     ]
   },
@@ -227,38 +373,54 @@
     "code": "R13",
     "name": "Aturan Firewall Memblokir Koneksi",
     "target_problem": "P13",
+    "sources": [
+      "https://support.microsoft.com/en-us/windows/security/windows-security/firewall-and-network-protection-in-the-windows-security-app",
+      "https://serverfault.com/questions/915664/how-do-you-tell-why-windows-firewall-is-blocking-a-program",
+      "https://supportcenter.lexisnexis.com/app/answers/answer_view/a_id/1081611/~/how-to-add-exceptions-to-the-windows-firewall-",
+      "https://superuser.com/questions/1313309/firewall-allowed-app-still-blocked-in-windows-10-x64-pro",
+      "https://optics.ansys.com/hc/en-us/articles/7144748040467-Adding-inbound-rules-to-Windows-defender-firewall",
+      "https://community.spiceworks.com/t/windows-defender-firewall-on-not-allowing-application-to-work/638534"
+    ],
     "symptoms": [
       {
-        "code": "G16",
-        "mb": 0.7,
-        "md": 0.2
+        "code": "G25",
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom — definisi problem itu sendiri. Microsoft Support: 'If firewall is blocking an app, you can add an exception'. ServerFault: dokumen triase via firewall log + netstat + packet capture. LexisNexis, Ansys, Spiceworks: panduan add exception."
       },
       {
-        "code": "G25",
-        "mb": 0.9,
-        "md": 0.0
+        "code": "G16",
+        "cf_pakar": 0.7,
+        "evidence": "Common symptom dari firewall blocking, tapi tidak definitive — bisa juga disebabkan aplikasi bug, server down, atau routing issue. Tidak dinaikkan karena G16 cross-cutting ke P04 (DNS poisoning), P03 (DNS gagal), atau aplikasi-side bug."
       }
     ]
   },
   {
     "code": "R14",
-    "name": "Aturan Kerusakan Kabel / Konektor",
+    "name": "Aturan Kerusakan Kabel / Konektor Jaringan",
     "target_problem": "P14",
+    "sources": [
+      "https://tscables.com/blogs/news/troubleshooting-common-ethernet-cable-issues",
+      "https://www.noyafa.com/blogs/knowledge-base/detect-broken-ethernet-cable",
+      "https://www.zion-communication.com/Why-Bad-Ethernet-Connectors-Kill-Your-Network-Speed-And-How-To-Fix-It-id46456296.html",
+      "https://www.coaxialcablecn.com/info/bad-ethernet-cable-symptoms-99017545.html",
+      "https://superuser.com/questions/1240352/can-a-wrongly-cimped-ethernet-cable-work-but-not-as-intended",
+      "https://www.quora.com/Can-a-bad-Ethernet-cable-cause-packet-loss"
+    ],
     "symptoms": [
       {
-        "code": "G18",
-        "mb": 0.7,
-        "md": 0.2
+        "code": "G29",
+        "cf_pakar": 0.95,
+        "evidence": "Definitif via inspeksi visual — kabel terkelupas, bengkok berlebihan, atau konektor RJ45 retak/longgar. TSCables: 'Damaged cables and faulty connectors are common causes of packet loss'. Naik ke 0.95 karena definitive physical evidence."
       },
       {
-        "code": "G29",
-        "mb": 0.9,
-        "md": 0.0
+        "code": "G18",
+        "cf_pakar": 0.9,
+        "evidence": "Signature diagnostic indicator — lampu link di NIC atau switch port menyala/berkedip abnormal. Zion Communication: connector quality impact ke link indicator. Berbeda dari G33 (lampu LAN di router mati → P15)."
       },
       {
         "code": "G14",
-        "mb": 0.5,
-        "md": 0.3
+        "cf_pakar": 0.7,
+        "evidence": "Impact langsung dari partial kabel damage — kabel tidak putus total (masih ada link) tapi paket banyak yang corrupt/drop. TSCables: 'Damaged cables and faulty connectors are common causes of packet loss'. Naik dari 0.5 karena impact langsung mekanisme fisik."
       }
     ]
   },
@@ -266,21 +428,42 @@
     "code": "R15",
     "name": "Aturan Kerusakan / Misconfiguration Router-Switch",
     "target_problem": "P15",
+    "sources": [
+      "https://community.cisco.com/kxiwq67737/attachments/kxiwq67737/4461-docs-network-infrastructure/6775/2/How%20to%20determine%20a%20legitimate%20hardware%20issue.pdf",
+      "https://www.cisco.com/c/en/us/support/docs/routers/7500-series-routers/26145-crashes-swforced-troubleshoot.html",
+      "https://community.cisco.com/t5/switches-small-business/switch-becoming-unresponsive/td-p/5161968",
+      "https://m.movingcomm.com/h-nd-778.html",
+      "https://www.makeuseof.com/why-rebooting-router-works/",
+      "https://www.highspeedinternet.com/resources/how-to-restart-router",
+      "https://www.appranked.com/router-reboot-fixes-wifi/",
+      "https://www.isemag.com/columnist/article/14266586/the-most-common-step-is-often-the-wrong-step",
+      "https://docs.gl-inet.com/router/en/4/faq/cannot_access_web_admin_panel/",
+      "https://www.iptoolspro.com/blog/cant-access-router-login-page-fix",
+      "https://www.devcrea.com/192-168-1-1-not-working",
+      "https://www.cxtec.com/blog/troubleshoot-network-switches-handling-common-challenges-expert-solutions/",
+      "https://www.cablewholesale.com/blog/index.php/2025/08/19/how-to-troubleshoot-a-faulty-ethernet-switch/",
+      "https://www.firewalltechnical.com/wi-fi-woes-3-ways-to-fix-unresponsive-router/"
+    ],
     "symptoms": [
       {
         "code": "G19",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Signature differentiator. MovingComm: 'If entire local area network is affected, more likely that router itself is faulty'. Cisco Community: 'Switch and everything behind it gets unresponsive'. CXtec: overheating, power surges, hardware malfunctions. Min 4 sumber."
       },
       {
         "code": "G27",
-        "mb": 0.8,
-        "md": 0.1
+        "cf_pakar": 0.7,
+        "evidence": "Common symptom. MakeUseOf: 'simple reboot allows hardware and software to start again'. HighSpeedInternet: 'Restarting allows device to flush out glitches'. Tidak dinaikkan ke 0.9 karena restart-juga-fix bersifat transient indicator."
       },
       {
         "code": "G34",
-        "mb": 0.9,
-        "md": 0.0
+        "cf_pakar": 0.9,
+        "evidence": "Signature symptom untuk kasus serious. Cisco (Software-forced Crashes): 'severe, unrecoverable error, reloads itself'. GL.iNet: 'router is bricked'. IPToolsPro: '90% of router admin interface crashed issues fixed by power cycle'. Min 5 sumber."
+      },
+      {
+        "code": "G33",
+        "cf_pakar": 0.8,
+        "evidence": "Resolve dari orphan (Fase 1.C). Indicator LED mati di port LAN adalah signature physical hardware issue. Cisco: POST/LED failures adalah primary signs of hardware failure. Naik dari 0.7 ke 0.8 karena differentiator unik antara P15 vs P02 vs P14."
       }
     ]
   }
