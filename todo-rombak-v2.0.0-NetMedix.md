@@ -172,24 +172,24 @@ Tiap penyakit: riset ≥ 3 sumber + tentukan CF_pakar Opsi D + bundling tutorial
 
 ## Phase 4 — Implementasi Backend (app.py)
 
-- [ ] Update clamping CF_user (line ~180):
-  - [ ] Ganti `max(-1.0, min(1.0, cf_val))` → `max(0.1, min(1.0, cf_val))`
-- [ ] Add route `/tutorial/<code>`:
-  - [ ] Normalize code `.upper()`
-  - [ ] Lookup symptom via `kb.get_symptom(code)`
-  - [ ] 404 handler jika tidak ketemu
-  - [ ] Resolve `related_symptoms` untuk link
-  - [ ] Render `tutorial.html`
-- [ ] Update diagnosis route `/diagnose`:
-  - [ ] Ganti pemanggilan `engine.forward_chaining()` → `engine.diagnose()`
-  - [ ] Pass `results` (ALL candidates) ke template, bukan top-3
-  - [ ] Build `kesimpulan` narasi via helper `build_kesimpulan(results)`
-  - [ ] Pass `kesimpulan` ke template
-- [ ] Update SQLite history save:
-  - [ ] Struktur kolom tetap (id, timestamp, selected_symptoms_json, results_json)
-  - [ ] Results sekarang berisi field baru (percentage, label, matched_count)
-  - [ ] Add migration lazy rendering flag (cek field `percentage` existence)
-- [ ] Add helper `build_kesimpulan(results)` di app.py
+- [x] Update clamping CF_user (line ~180):
+  - [x] Ganti `max(-1.0, min(1.0, cf_val))` → `max(0.1, min(1.0, cf_val))`
+- [x] Add route `/tutorial/<code>`:
+  - [x] Normalize code `.upper()`
+  - [x] Lookup symptom via `kb.get_symptom(code)`
+  - [x] 404 handler jika tidak ketemu
+  - [x] Resolve `related_symptoms` untuk link
+  - [x] Render `tutorial.html`
+- [x] Update diagnosis route `/diagnose`:
+  - [x] Ganti pemanggilan `engine.forward_chaining()` → `engine.diagnose()`
+  - [x] Pass `results` (ALL candidates) ke template, bukan top-3
+  - [x] Build `kesimpulan` narasi via helper `build_kesimpulan(results)`
+  - [x] Pass `kesimpulan` ke template
+- [x] Update SQLite history save:
+  - [x] Struktur kolom tetap (id, timestamp, selected_symptoms_json, results_json)
+  - [x] Results sekarang berisi field baru (percentage, label, matched_count)
+  - [x] Add migration lazy rendering flag (cek field `percentage` existence)
+- [x] Add helper `build_kesimpulan(results)` di app.py
 
 ---
 
@@ -361,7 +361,7 @@ Update secara berkala:
 | 1 — Riset Knowledge Base | ✅ **Done** | ~65/~65 (1.A + 1.B + 1.C + 1.D + 1.E done) | **Fase 1 LENGKAP. Total 15/15 penyakit + 6/7 orphan resolved (G33→R15, G36→R01, G37→R01, G38→R01, G39→R02) + 2/7 orphan permanen dengan stub (G31/G32 VPN) + peer review konsistensi final LULUS (5/6 PASS, 1/6 COMPLIANT) + tutorial bundling verification LULUS (40/40 gejala: 38 full + 2 stub). Total 42 gejala-rule mappings. 1 issue fixed (G39 YAML structure). Siap Phase 2.** |
 | 2 — Migrasi Data | ✅ **Done** | 10/10 | **Phase 2 SELESAI — 2026-07-16. Commit 45232e6: rules.json v2 (15 rules, 44 mappings, cf_pakar+evidence+sources), symptoms.json v2 (40 gejala dengan short_desc+how_to_check+tutorial, 38 full + 2 stub VPN G31/G32), backup v1 (.v1.0.0.json.bak 3 files), validation PASS (schema+orphan+smoke test).** |
 | 3 — Inference Engine | ✅ **Done** | 15/15 | **Phase 3 SELESAI — 2026-07-16. Commit afdabb6: engine.py v2 (Pure CF, filter ≥2, diagnose(), _combine_cfs_with_trace, interpret_cf update), knowledge_base.py v2 (get_symptom, get_symptoms_with_info, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru, trace structure baru.** |
-| 4 — Backend (app.py) | ⏸ Pending | 0/8 | Setelah Fase 3 |
+| 4 — Backend (app.py) | ✅ **Done** | 8/8 | **Phase 4 SELESAI — 2026-07-16. Commit TBD: app.py v2 (clamping CF [0.1, 1.0], route /tutorial/<code>, diagnose() rename, build_kesimpulan helper, result route update). Breaking changes: CF_user range, result structure baru, kesimpulan narasi.** |
 | 5 — Frontend (Templates) | ⏸ Pending | 0/25 | Setelah Fase 4 |
 | 6 — Integrasi & Polish | ⏸ Pending | 0/15 | Setelah Fase 5 |
 | 7 — Testing & QA | ⏸ Pending | 0/20 | Setelah Fase 6 |
@@ -381,4 +381,4 @@ Update secara berkala:
 
 ---
 
-*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 3 SELESAI** — 2026-07-16 commit afdabb6: **Phase 3 Implementasi Inference Engine v2.0.0 COMPLETED**. engine.py v2 (Pure CF, filter ≥2 gejala relevan, diagnose() rename, _combine_cfs_with_trace, interpret_cf update with "Hampir Tidak Yakin"), knowledge_base.py v2 (get_symptom untuk /tutorial/<code>, get_symptoms_with_info untuk modal, backward compatibility aliases, comprehensive docstrings). Breaking changes: forward_chaining→diagnose, result structure baru (percentage, label, matched_count, rule_sources), trace structure baru (cf_pakar, evidence_note, no mb/md). Next: Phase 4 (Implementasi Backend app.py).*
+*Last update: 2026-07-16 | Owner: AI (Claude) + User | Status: **Phase 4 SELESAI** — 2026-07-16 commit TBD: **Phase 4 Implementasi Backend (app.py) v2.0.0 COMPLETED**. app.py v2 (clamping CF_user [0.1, 1.0], route /tutorial/<code> dengan normalize + related_symptoms, engine.diagnose() ganti forward_chaining(), helper build_kesimpulan() untuk narasi kesimpulan, result route update dengan handle v1/v2 format + pass kesimpulan). Breaking changes: CF_user range [-1, 1] → [0.1, 1.0], result structure baru (percentage, label, matched_count, kesimpulan). Next: Phase 5 (Implementasi Frontend Templates).*

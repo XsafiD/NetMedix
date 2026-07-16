@@ -99,6 +99,40 @@ def delete_session(session_id):
     conn.close()
 
 
+def build_kesimpulan(results):
+    """
+    Build narasi kesimpulan untuk result.html.
+
+    Args:
+        results (list): List of diagnosis results dari engine.diagnose()
+
+    Returns:
+        dict: {
+            "status": "empty" | "found",
+            "message": str (jika empty),
+            "top_problem": dict (jika found),
+            "alternatives": list (jika found),
+            "total_candidates": int (jika found)
+        }
+    """
+    if not results:
+        return {
+            "status": "empty",
+            "message": "Tidak ada diagnosis yang memenuhi syarat (minimal 2 gejala relevan). "
+                       "Coba pilih gejala tambahan yang lebih spesifik."
+        }
+
+    top = results[0]
+    others = results[1:4]  # tampilkan maks 3 alternatif di narasi
+
+    return {
+        "status": "found",
+        "top_problem": top,
+        "alternatives": others,
+        "total_candidates": len(results),
+    }
+
+
 # ── JSON file helpers ────────────────────────────────────
 
 def _load_json(filename):
@@ -177,7 +211,7 @@ def diagnose_process():
             code = key[3:]  # e.g. "G01"
             try:
                 cf_val = float(value)
-                cf_val = max(-1.0, min(1.0, cf_val))
+                cf_val = max(0.1, min(1.0, cf_val))
                 selected_symptoms[code] = cf_val
             except (ValueError, TypeError):
                 continue
@@ -189,7 +223,7 @@ def diagnose_process():
     # Run inference
     kb = KnowledgeBase()
     engine = InferenceEngine(kb)
-    results = engine.forward_chaining(selected_symptoms)
+    results = engine.diagnose(selected_symptoms)
 
     if not results:
         session_id = save_session(selected_symptoms, [])
@@ -233,10 +267,18 @@ def result(session_id):
     for r in results:
         if r.get("problem") is None:
             r["problem"] = kb.get_problem_by_code(r["problem_code"])
+        # Handle v1 vs v2 format
         if "cf_label" not in r:
             r["cf_label"] = InferenceEngine.interpret_cf(r["cf_final"])
-        if "cf_percent" not in r:
+        if "cf_percent" not in r and "percentage" not in r:
             r["cf_percent"] = round(r["cf_final"] * 100, 2)
+        elif "percentage" in r:
+            r["cf_percent"] = r["percentage"]
+        if "label" in r:
+            r["cf_label"] = r["label"]
+
+    # Build kesimpulan narasi
+    kesimpulan = build_kesimpulan(results)
 
     # Load symptom names
     symptom_map = {}
@@ -251,12 +293,41 @@ def result(session_id):
                            results=results,
                            symptoms_selected=symptoms_selected,
                            symptom_map=symptom_map,
+                           kesimpulan=kesimpulan,
                            has_results=len(results) > 0)
 
 
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+
+@app.route("/tutorial/<code>")
+def tutorial_page(code):
+    """Halaman tutorial gejala per kode (G01-G40)."""
+    from inference.knowledge_base import KnowledgeBase
+    from flask import abort
+
+    code = code.upper()
+    kb = KnowledgeBase()
+    symptom = kb.get_symptom(code)
+
+    if not symptom:
+        abort(404)
+
+    # Resolve related_symptoms untuk link
+    related = []
+    tutorial_data = symptom.get("tutorial", {})
+    for r_code in tutorial_data.get("related_symptoms", []):
+        r_symptom = kb.get_symptom(r_code)
+        if r_symptom:
+            related.append({"code": r_code, "name": r_symptom["name"]})
+
+    return render_template(
+        "tutorial.html",
+        symptom=symptom,
+        related=related,
+    )
 
 
 @app.route("/history")
