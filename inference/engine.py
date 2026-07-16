@@ -1,108 +1,154 @@
 class InferenceEngine:
-    """Forward Chaining + Certainty Factor inference engine."""
+    """Pure Certainty Factor inference engine untuk NetMedix v2.0.0."""
 
     def __init__(self, knowledge_base):
         self.kb = knowledge_base
 
     @staticmethod
-    def calculate_cf_rule(mb, md):
-        """Hitung CF rule: CF(H,E) = MB - MD."""
-        return mb - md
+    def calculate_cf_evidence(cf_user, cf_pakar):
+        """
+        Hitung CF evidence: CF_evidence = CF_user x CF_pakar.
 
-    @staticmethod
-    def calculate_cf_evidence(cf_user, cf_rule):
-        """Hitung CF evidence: CF_evidence = CF_user x CF(H,E)."""
-        return cf_user * cf_rule
+        Args:
+            cf_user (float): Certainty factor dari user [0.1, 1.0]
+            cf_pakar (float): Certainty factor dari pakar [0.1, 1.0]
+
+        Returns:
+            float: CF_evidence hasil perkalian
+        """
+        return cf_user * cf_pakar
 
     @staticmethod
     def combine_cf(cf1, cf2):
-        """Kombinasi dua nilai CF: CF_combine = CF1 + CF2 x (1 - CF1)."""
+        """
+        Kombinasi dua nilai CF: CF_combine = CF1 + CF2 x (1 - CF1).
+
+        Args:
+            cf1 (float): CF pertama [0.0, 1.0]
+            cf2 (float): CF kedua [0.0, 1.0]
+
+        Returns:
+            float: CF hasil kombinasi
+        """
         return cf1 + cf2 * (1 - cf1)
 
-    def forward_chaining(self, selected_symptoms):
+    def diagnose(self, selected_symptoms):
         """
-        Run forward chaining on selected symptoms.
+        Jalankan diagnosis dengan pure CF dan filter "≥ 2 gejala relevan".
 
-        selected_symptoms: dict { "G01": cf_user_value, "G02": cf_user_value, ... }
-        Returns: list of {"problem_code": str, "cf_final": float, "details": dict}
-                 sorted by CF descending, top 3.
+        Args:
+            selected_symptoms (dict): {"G01": cf_user_value, "G02": cf_user_value, ...}
+
+        Returns:
+            list: [{
+                "problem_code": str,
+                "problem_name": str,
+                "category": str,
+                "rule_code": str,
+                "rule_sources": list,
+                "cf_final": float,
+                "percentage": float,
+                "label": str,
+                "matched_count": int,
+                "total_symptoms_in_rule": int,
+                "details": {
+                    "evidence_steps": list,
+                    "combine_steps": list
+                }
+            }] sorted by CF descending, ALL candidates (no truncation).
         """
         results = []
 
         for rule in self.kb.rules:
+            # Step 1: Identifikasi gejala relevan yang dipilih user
             rule_symptom_codes = {s["code"] for s in rule["symptoms"]}
+            matched_codes = rule_symptom_codes & set(selected_symptoms.keys())
 
-            # Cek apakah semua gejala rule ada di selected_symptoms
-            if not rule_symptom_codes.issubset(set(selected_symptoms.keys())):
+            # Step 2: FILTER — ≥ 2 gejala relevan dipilih
+            if len(matched_codes) < 2:
                 continue
 
-            # Hitung CF per gejala
-            cf_evidences = []
-            detail_steps = []
-            for rs in rule["symptoms"]:
-                cf_rule = self.calculate_cf_rule(rs["mb"], rs["md"])
-                cf_user = selected_symptoms[rs["code"]]
-                cf_evidence = self.calculate_cf_evidence(cf_user, cf_rule)
-                cf_evidences.append(cf_evidence)
-                detail_steps.append({
-                    "symptom_code": rs["code"],
-                    "mb": rs["mb"],
-                    "md": rs["md"],
-                    "cf_rule": round(cf_rule, 4),
+            # Step 3: Hitung CF_evidence per matched gejala
+            evidences = []
+            for code in matched_codes:
+                symptom_rule = next(s for s in rule["symptoms"] if s["code"] == code)
+                cf_pakar = symptom_rule["cf_pakar"]
+                cf_user = selected_symptoms[code]
+                cf_ev = self.calculate_cf_evidence(cf_user, cf_pakar)
+                evidences.append({
+                    "symptom_code": code,
+                    "cf_pakar": cf_pakar,
+                    "evidence_note": symptom_rule.get("evidence", ""),
                     "cf_user": cf_user,
-                    "cf_evidence": round(cf_evidence, 4),
+                    "cf_evidence": round(cf_ev, 4),
                 })
 
-            # Kombinasi CF secara bertahap
-            cf_combined = self._combine_cfs(cf_evidences)
+            # Step 4: Combine sekuensial (fold left-to-right)
+            cf_final, combine_steps = self._combine_cfs_with_trace(
+                [e["cf_evidence"] for e in evidences]
+            )
 
-            # Detail kombinasi step-by-step
-            combine_steps = []
-            if len(cf_evidences) == 1:
-                combine_steps.append({
-                    "step": 1,
-                    "cf_a": round(cf_evidences[0], 4),
-                    "cf_b": None,
-                    "result": round(cf_evidences[0], 4),
-                })
-            else:
-                running = cf_evidences[0]
-                for i, cf in enumerate(cf_evidences[1:], start=2):
-                    new_running = self.combine_cf(running, cf)
-                    combine_steps.append({
-                        "step": i - 1,
-                        "cf_a": round(running, 4),
-                        "cf_b": round(cf, 4),
-                        "result": round(new_running, 4),
-                    })
-                    running = new_running
+            # Step 5: Ambil problem info
+            problem = self.kb.get_problem(rule["target_problem"])
 
             results.append({
                 "problem_code": rule["target_problem"],
+                "problem_name": problem["name"] if problem else "Unknown",
+                "category": problem.get("category", "") if problem else "",
                 "rule_code": rule["code"],
-                "rule_name": rule.get("name", ""),
-                "cf_final": round(cf_combined, 4),
+                "rule_sources": rule.get("sources", []),
+                "cf_final": round(cf_final, 4),
+                "percentage": round(cf_final * 100, 2),
+                "label": self.interpret_cf(cf_final),
+                "matched_count": len(matched_codes),
+                "total_symptoms_in_rule": len(rule_symptom_codes),
                 "details": {
-                    "evidence_steps": detail_steps,
+                    "evidence_steps": evidences,
                     "combine_steps": combine_steps,
                 },
             })
 
-        results.sort(key=lambda x: x["cf_final"], reverse=True)
-        return results[:3]
+        # Sort desc, return ALL (no top-3 truncation)
+        results.sort(key=lambda r: r["cf_final"], reverse=True)
+        return results
 
-    def _combine_cfs(self, cf_list):
-        """Kombinasikan list CF menggunakan rumus bertahap."""
+    def _combine_cfs_with_trace(self, cf_list):
+        """
+        Kombinasikan list CF sekuensial, return (cf_final, trace_steps).
+
+        Args:
+            cf_list (list): List of CF values to combine
+
+        Returns:
+            tuple: (cf_final, list of combine trace steps)
+        """
         if not cf_list:
-            return 0.0
+            return 0.0, []
+
         combined = cf_list[0]
-        for cf in cf_list[1:]:
+        steps = []
+        for i, cf in enumerate(cf_list[1:], start=1):
+            prev = combined
             combined = self.combine_cf(combined, cf)
-        return combined
+            steps.append({
+                "step": i,
+                "cf_a": round(prev, 4),
+                "cf_b": round(cf, 4),
+                "result": round(combined, 4),
+            })
+        return combined, steps
 
     @staticmethod
     def interpret_cf(cf_value):
-        """Return label string berdasarkan nilai CF."""
+        """
+        Return label string berdasarkan nilai CF.
+
+        Args:
+            cf_value (float): Nilai CF [0.0, 1.0]
+
+        Returns:
+            str: Label interpretasi
+        """
         if cf_value >= 0.80:
             return "Sangat Yakin"
         elif cf_value >= 0.60:
@@ -112,4 +158,4 @@ class InferenceEngine:
         elif cf_value >= 0.20:
             return "Kurang Yakin"
         else:
-            return "Tidak Yakin"
+            return "Hampir Tidak Yakin"
