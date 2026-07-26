@@ -14,8 +14,8 @@
   <p class="text-ink-mute text-lg leading-relaxed max-w-3xl mb-4">
     <strong class="text-ink">NetMedix</strong> adalah sistem pakar berbasis web yang dirancang untuk membantu
     mendiagnosis masalah jaringan komputer secara cepat dan akurat. Sistem ini menggunakan metode
-    <em>Forward Chaining</em> untuk mencocokkan gejala dengan aturan, dikombinasikan dengan metode
-    <em>Certainty Factor</em> untuk menghitung tingkat keyakinan diagnosis.
+    <strong class="text-ink">Certainty Factor (CF)</strong> untuk menghitung tingkat keyakinan diagnosis
+    berdasarkan kecocokan gejala yang dipilih user dengan aturan IF-THEN pada knowledge base.
   </p>
   <p class="text-ink-mute text-base leading-relaxed max-w-3xl mb-6">
     Dibangun sebagai tugas UAS mata kuliah <strong class="text-ink">Sistem Cerdas</strong>, NetMedix mampu
@@ -51,21 +51,21 @@
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════
-     Section: Metode Forward Chaining
+     Section: Metode Certainty Factor
      ═══════════════════════════════════════════════════════════ -->
 <section class="border-t border-hairline bg-canvas-soft">
   <div class="max-w-5xl mx-auto px-6 py-16">
     <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Metode Inferensi</p>
-    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Forward Chaining</h2>
-    <p class="text-ink-mute leading-relaxed max-w-3xl mb-6">
-      <strong class="text-ink">Forward Chaining</strong> adalah metode penalaran maju (<em>data-driven reasoning</em>)
-      yang memulai inferensi dari fakta-fakta yang diketahui (gejala), lalu mencocokkannya dengan aturan-aturan
-      dalam knowledge base untuk menghasilkan kesimpulan (diagnosis masalah jaringan).
+    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Certainty Factor (CF)</h2>
+    <p class="text-ink-mute leading-relaxed max-w-3xl mb-8">
+      Metode <strong class="text-ink">Certainty Factor</strong> diperkenalkan oleh Shortliffe &amp; Buchanan (1975)
+      dalam sistem MYCIN. CF digunakan untuk mengukur tingkat keyakinan terhadap sebuah kesimpulan,
+      memperhitungkan ketidakpastian dalam penalaran ahli manusia.
     </p>
 
     <!-- Diagram Alur -->
     <div class="bg-canvas border border-hairline rounded-card p-6 md:p-8 mb-8 overflow-x-auto">
-      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-4">Alur Inferensi</p>
+      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-4">Alur Perhitungan CF</p>
       <div class="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-0 justify-center min-w-[400px]">
         <div class="flex flex-col items-center text-center px-4">
           <div class="w-12 h-12 border-2 border-primary rounded-lg flex items-center justify-center mb-2">
@@ -96,7 +96,7 @@
             <i data-lucide="check-circle" class="w-5 h-5 text-primary"></i>
           </div>
           <span class="text-xs font-medium text-ink">Diagnosis</span>
-          <span class="text-[10px] text-ink-faint">Top 3 masalah</span>
+          <span class="text-[10px] text-ink-faint">Semua kandidat lolos filter</span>
         </div>
       </div>
     </div>
@@ -115,21 +115,6 @@
       <p class="ml-4"><span class="text-primary">AND</span> G24 (Error "DNS Server Not Responding")</p>
       <p class="mt-1"><span class="text-primary">THEN</span> P03 = DNS Resolution Failure</p>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════
-     Section: Metode Certainty Factor
-     ═══════════════════════════════════════════════════════════ -->
-<section class="border-t border-hairline">
-  <div class="max-w-5xl mx-auto px-6 py-16">
-    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Metode Ketidakpastian</p>
-    <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-ink mb-6">Certainty Factor (CF)</h2>
-    <p class="text-ink-mute leading-relaxed max-w-3xl mb-8">
-      Metode <strong class="text-ink">Certainty Factor</strong> diperkenalkan oleh Shortliffe & Buchanan (1975)
-      dalam sistem MYCIN. CF digunakan untuk mengukur tingkat keyakinan terhadap sebuah kesimpulan,
-      memperhitungkan ketidakpastian dalam penalaran ahli manusia.
-    </p>
 
     <!-- Konsep MB, MD, CF -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -279,7 +264,7 @@
             <i data-lucide="cpu" class="w-4 h-4 text-primary"></i>
             <span class="text-sm font-medium text-ink">Inference Engine</span>
           </div>
-          <p class="text-[10px] text-ink-mute">Forward Chaining + Certainty Factor</p>
+          <p class="text-[10px] text-ink-mute">Certainty Factor (CF)</p>
         </div>
 
         <i data-lucide="arrow-down" class="w-4 h-4 text-ink-faint"></i>
@@ -324,9 +309,9 @@
           Inference Engine
         </h3>
         <p class="text-xs text-ink-mute leading-relaxed">
-          Mesin inferensi yang mengimplementasikan Forward Chaining untuk mencocokkan gejala dengan aturan,
-          dan Certainty Factor untuk menghitung tingkat keyakinan. Menghasilkan top-3 diagnosis yang diurutkan
-          berdasarkan nilai CF tertinggi.
+          Mesin inferensi yang mencocokkan gejala yang dipilih user dengan aturan IF-THEN pada knowledge base,
+          lalu menghitung tingkat keyakinan menggunakan Certainty Factor. Menghasilkan semua kandidat diagnosis
+          yang lolos filter &ge; 2 gejala relevan, diurutkan berdasarkan nilai CF tertinggi.
         </p>
       </div>
       <div class="border border-hairline rounded-card p-5 bg-canvas">
@@ -336,7 +321,7 @@
         </h3>
         <p class="text-xs text-ink-mute leading-relaxed">
           Basis pengetahuan yang tersimpan dalam file JSON: 15 masalah jaringan (P01-P15),
-          40 gejala (G01-G40), dan 15 aturan IF-THEN (R01-R15) dengan nilai MB/MD per gejala.
+          40 gejala (G01-G40), dan 15 aturan IF-THEN (R01-R15) dengan nilai CF pakar per gejala.
           Dapat dikelola melalui Admin Panel.
         </p>
       </div>

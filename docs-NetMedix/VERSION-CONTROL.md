@@ -164,6 +164,35 @@ python app.py              # → http://localhost:5000
 
 ## Changelog
 
+### v2.0.1 — 2026-07-27
+
+**Cosmetic Cleanup: Hilangkan Istilah Forward Chaining dari UI & Dokumen**
+
+**Konteks:** v2.0.0 secara logic sudah pure CF, namun istilah "Forward Chaining" masih tersisa di tampilan dan dokumen sebagai warisan v1.0.0. Cleanup ini bersifat copywriting/consistency fix, BUKAN refactoring logika.
+
+**Changed:**
+- `templates/index.html`: Hero paragraf (line 12) & stat box (line 200-202) — hapus mention "Forward Chaining" dan "FC + CF", ganti dengan "Certainty Factor (CF)". Subtext stat box juga diupdate dari "MB/MD" ke "filter ≥ 2 gejala" (konsisten dengan v2 yang hanya pakai 2 rumus).
+- `templates/index.html`: Step 3 "Lihat Hasil" (line 67) — ganti "top 3 masalah" ke "semua kandidat masalah yang lolos filter" (v2 return ALL candidates).
+- `templates/about.html`: Intro paragraf (line 15-18) — hapus mention Forward Chaining.
+- `templates/about.html`: Section penuh "Metode Forward Chaining" (line 53-119) — dihapus sebagai section tersendiri. Diagram alur 4-step dan contoh aturan IF-THEN R01/R03 di-merge ke dalam section "Metode Certainty Factor" sebagai ilustrasi cara kerja CF end-to-end (pendekatan repurpose). Caption diagram "Alur Inferensi" → "Alur Perhitungan CF". Subtext "Top 3 masalah" → "Semua kandidat lolos filter".
+- `templates/about.html`: Caption diagram arsitektur (line 282) — "Forward Chaining + Certainty Factor" → "Certainty Factor (CF)".
+- `templates/about.html`: Penjelasan Inference Engine (line 326-330) — hapus mention Forward Chaining, ganti "top-3" ke "semua kandidat lolos filter".
+- `templates/about.html`: Knowledge Base description (line 324) — "nilai MB/MD per gejala" → "nilai CF pakar per gejala" (konsisten v2).
+- `tests/snapshots/E2E-1-home-snapshot.txt`: Update 4 baris snapshot (line 16, 30, 61-63) agar match dengan perubahan index.html.
+- `README.md`: Struktur folder comment (line 366) — "Forward Chaining + Certainty Factor" → "Pure Certainty Factor engine".
+- `docs-NetMedix/SRS.md`: Update 10 lokasi (Metode Inferensi, intro paragraf, hapus akronim FC, FR-03 proses inferensi, FR-04 hasil diagnosis, FR-10 halaman tentang, 4.5 halaman tentang, hapus section 8.1 Forward Chaining + pseudo-code v1, ganti pseudo-code 8.1 ke Pure CF v2, AC-08 acceptance criteria).
+- `docs-NetMedix/PRD.md`: Update 4 lokasi (Product Vision, struktur folder comment, About Page sections, Step 3 hasil diagnosis, admin rules table description).
+
+**Tidak berubah (sengaja dipertahankan):**
+- `inference/engine.py`, `inference/knowledge_base.py`, `app.py` — logic sudah pure CF sejak v2.0.0, tidak perlu perubahan.
+- `README.md` line 509, 516 (tabel perbandingan v1↔v2) — dipertahankan sebagai historical comparison.
+- `docs-NetMedix/VERSION-CONTROL.md` entry sebelumnya — tidak rewrite history.
+- `docs-NetMedix/2026-06-06_riset-troubleshooting-jaringan-komputer.md` & file riset historical lainnya — dipertahankan apa adanya.
+- `templates/admin/rules.html` — label "MB/MD" di form admin belum di-update (out of scope, untuk cleanup terpisah).
+- `templates/base.html` line 80 — `forwards` keyword di CSS animation (bukan Forward Chaining).
+
+**Rencana:** Lihat `docs-NetMedix/2026-07-27_rencana-cleanup-forward-chain.md` untuk detail lengkap perencanaan.
+
 ### v0.1.0-dev — 2026-06-06
 
 **Added:**

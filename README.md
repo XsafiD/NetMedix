@@ -363,7 +363,7 @@ NetMedix/
 ├── app.py                    # Flask entry point (routes, DB, auth)
 ├── inference/
 │   ├── __init__.py
-│   ├── engine.py             # Forward Chaining + Certainty Factor
+│   ├── engine.py             # Pure Certainty Factor engine
 │   └── knowledge_base.py     # JSON loader & query methods
 ├── data/
 │   ├── problems.json          # 15 masalah jaringan (P01-P15)

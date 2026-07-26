@@ -5,7 +5,7 @@
 **Versi:** 1.0
 **Tanggal:** 2026-06-06
 **Platform:** Web Application
-**Metode Inferensi:** Forward Chaining + Certainty Factor
+**Metode Inferensi:** Certainty Factor (CF)
 
 ---
 
@@ -13,7 +13,7 @@
 
 ### 1.1 Tujuan
 
-Dokumen ini mendefinisikan kebutuhan fungsional dan non-fungsional untuk **NetMedix**, sebuah sistem pakar berbasis web yang mendiagnosis masalah jaringan komputer menggunakan metode Forward Chaining dan Certainty Factor. Sistem ditujukan untuk pengguna awam hingga teknisi junior yang membutuhkan diagnosis awal masalah jaringan.
+Dokumen ini mendefinisikan kebutuhan fungsional dan non-fungsional untuk **NetMedix**, sebuah sistem pakar berbasis web yang mendiagnosis masalah jaringan komputer menggunakan metode Certainty Factor (CF). Sistem ditujukan untuk pengguna awam hingga teknisi junior yang membutuhkan diagnosis awal masalah jaringan.
 
 ### 1.2 Ruang Lingkup
 
@@ -23,7 +23,6 @@ NetMedix mendiagnosis **15 masalah jaringan** berdasarkan **40 gejala** yang dip
 
 | Istilah | Definisi |
 |---------|----------|
-| FC | Forward Chaining — metode inferensi data-driven |
 | CF | Certainty Factor — ukuran keyakinan net (MB - MD) |
 | MB | Measure of Belief — derajat keyakinan positif (0-1) |
 | MD | Measure of Disbelief — derajat keyakinan negatif (0-1) |
@@ -92,14 +91,14 @@ NetMedix adalah aplikasi web mandiri (standalone) yang berjalan di browser. Sist
 | Pasti Tidak | -1.0 |
 
 #### FR-03: Proses Inferensi
-- Sistem menjalankan **Forward Chaining**: mencocokkan gejala yang dipilih dengan aturan IF-THEN di knowledge base.
-- Setiap aturan yang terpicu menghasilkan kandidat diagnosis.
-- Sistem menghitung **CF evidence** untuk setiap gejala: `CF_evidence = CF_user × CF(H,E)`.
+- Sistem mencocokkan gejala yang dipilih user dengan aturan IF-THEN di knowledge base.
+- Aturan dengan **≥ 2 gejala relevan** yang dipilih user dianggap kandidat diagnosis (filter false positive).
+- Sistem menghitung **CF evidence** untuk setiap gejala: `CF_evidence = CF_user × CF_pakar`.
 - Sistem menggabungkan CF menggunakan rumus kombinasi: `CF_combine = CF1 + CF2 × (1 - CF1)`.
-- Hasil akhir berupa daftar diagnosis yang diurutkan berdasarkan nilai CF tertinggi.
+- Hasil akhir berupa daftar semua kandidat diagnosis yang diurutkan berdasarkan nilai CF tertinggi.
 
 #### FR-04: Hasil Diagnosis
-- Sistem menampilkan **1-3 diagnosis teratas** dengan:
+- Sistem menampilkan **semua kandidat diagnosis yang lolos filter ≥ 2 gejala relevan** dengan:
   - Nama masalah jaringan
   - Persentase keyakinan (CF × 100%)
   - Deskripsi masalah
@@ -148,7 +147,7 @@ NetMedix adalah aplikasi web mandiri (standalone) yang berjalan di browser. Sist
 ### 3.4 Modul Informasi
 
 #### FR-10: Halaman Tentang
-- Menjelaskan metode Forward Chaining dan Certainty Factor.
+- Menjelaskan metode Certainty Factor (CF) secara lengkap (rumus, MB/MD, contoh perhitungan, diagram alur, contoh aturan IF-THEN).
 - Menampilkan arsitektur sistem secara visual.
 - Menampilkan profil pengembang dan referensi.
 
@@ -165,7 +164,7 @@ NetMedix adalah aplikasi web mandiri (standalone) yang berjalan di browser. Sist
 ### 4.2 Halaman Diagnosis
 - **Step 1 — Pilih Gejala:** Daftar 40 gejala dalam bentuk card-based checklist. Gejala dikelompokkan per kategori (Konektivitas, DNS, DHCP, WiFi, Performa, Keamanan, Hardware). Pengguna memilih gejala yang dialami.
 - **Step 2 — Tentukan Keyakinan:** Untuk setiap gejala terpilih, pengguna memilih tingkat keyakinan dari 9 opsi (slider atau radio button group).
-- **Step 3 — Hasil Diagnosis:** Menampilkan 1-3 diagnosis teratas dengan persentase, deskripsi, dan solusi. Tombol "Diagnosis Lagi" untuk memulai sesi baru.
+- **Step 3 — Hasil Diagnosis:** Menampilkan semua kandidat diagnosis yang lolos filter dengan persentase, deskripsi, dan solusi. Tombol "Diagnosis Lagi" untuk memulai sesi baru.
 
 ### 4.3 Halaman Riwayat
 - Daftar riwayat diagnosis dalam format tabel/card.
@@ -178,8 +177,7 @@ NetMedix adalah aplikasi web mandiri (standalone) yang berjalan di browser. Sist
 - Setiap entri bisa ditambah, diedit, dan dihapus.
 
 ### 4.5 Halaman Tentang
-- Penjelasan metode Forward Chaining.
-- Penjelasan metode Certainty Factor dengan contoh perhitungan.
+- Penjelasan metode Certainty Factor (CF) dengan diagram alur perhitungan, contoh aturan IF-THEN, dan contoh perhitungan.
 - Arsitektur sistem.
 - Daftar referensi.
 
@@ -295,33 +293,26 @@ NetMedix adalah aplikasi web mandiri (standalone) yang berjalan di browser. Sist
 
 ## 8. Algoritma Inferensi
 
-### 8.1 Forward Chaining
+### 8.1 Certainty Factor
 
 ```
-1. Inisialisasi working memory = {}
-2. Untuk setiap gejala yang dipilih user:
-   a. Tambahkan ke working memory beserta CF_user
-3. Untuk setiap aturan R dalam knowledge base:
-   a. Cek apakah SEMUA gejala di antecedent R ada di working memory
-   b. Jika ya, aturan terpicu → hitung CF diagnosis
-4. Urutkan hasil diagnosis berdasarkan CF tertinggi
-5. Kembalikan 1-3 diagnosis teratas
-```
+Untuk setiap aturan R di knowledge base:
+1. matched = irisan(gejala pada R, gejala yang dipilih user)
+2. Jika |matched| < 2 → skip aturan R (filter false positive)
 
-### 8.2 Certainty Factor Calculation
+3. Untuk setiap gejala G_i dalam matched:
+   CF_evidence_i = CF_user_i × CF_pakar_i   (CF_pakar dari knowledge base)
 
-```
-Untuk setiap aturan R yang terpicu:
-1. Untuk setiap gejala G_i dalam aturan R:
-   a. CF(H,E)_i = MB_i - MD_i
-   b. CF_evidence_i = CF_user_i × CF(H,E)_i
+4. Kombinasikan CF_evidence secara sekuensial (fold left-to-right):
+   CF_combine[1] = CF_evidence_1
+   CF_combine[i] = CF_combine[i-1] + CF_evidence_i × (1 - CF_combine[i-1])
 
-2. Kombinasikan semua CF_evidence:
-   CF_combine[1,2] = CF_evidence_1 + CF_evidence_2 × (1 - CF_evidence_1)
-   CF_combine[2,3] = CF_combine[1,2] + CF_evidence_3 × (1 - CF_combine[1,2])
-   ... dst
+5. CF_final_R = CF_combine terakhir untuk aturan R
+   Persentase keyakinan = CF_final_R × 100%
 
-3. CF_final = CF_combine terakhir
+Setelah semua aturan diproses:
+6. Urutkan kandidat diagnosis berdasarkan CF_final descending.
+7. Kembalikan SEMUA kandidat yang lolos filter (no top-3 truncation).
 ```
 
 ---
@@ -337,4 +328,4 @@ Untuk setiap aturan R yang terpicu:
 | AC-05 | Riwayat diagnosis tersimpan dan dapat dilihat | [ ] |
 | AC-06 | UI responsif di mobile dan desktop | [ ] |
 | AC-07 | Perhitungan CF akurat sesuai rumus (dapat diverifikasi manual) | [ ] |
-| AC-08 | Forward chaining berjalan dengan benar (rule terpicu sesuai gejala) | [ ] |
+| AC-08 | Aturan terpicu dengan benar (≥ 2 gejala relevan terpenuhi) | [ ] |

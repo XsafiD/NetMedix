@@ -10,7 +10,7 @@
 
 ## 1. Product Vision
 
-NetMedix adalah aplikasi web yang membantu pengguna mendiagnosis masalah jaringan komputer secara mandiri menggunakan sistem pakar berbasis aturan (rule-based expert system). Aplikasi ini menerapkan metode **Forward Chaining** untuk pencocokan gejala dan **Certainty Factor** untuk menghitung tingkat keyakinan diagnosis.
+NetMedix adalah aplikasi web yang membantu pengguna mendiagnosis masalah jaringan komputer secara mandiri menggunakan sistem pakar berbasis aturan (rule-based expert system). Aplikasi ini menerapkan metode **Certainty Factor (CF)** untuk menghitung tingkat keyakinan diagnosis berdasarkan kecocokan gejala yang dipilih user dengan aturan IF-THEN pada knowledge base.
 
 ### Value Proposition
 
@@ -59,12 +59,12 @@ NetMedix adalah aplikasi web yang membantu pengguna mendiagnosis masalah jaringa
 NetMedix/
 ├── app.py                  # Flask application entry point
 ├── inference/
-│   ├── engine.py           # Forward Chaining + CF calculation
+│   ├── engine.py           # Pure CF engine
 │   └── knowledge_base.py   # KB loader & manager
 ├── data/
 │   ├── problems.json       # 15 masalah jaringan
 │   ├── symptoms.json       # 40 gejala
-│   └── rules.json          # 15 aturan IF-THEN + MB/MD
+│   └── rules.json          # 15 aturan IF-THEN + cf_pakar + evidence
 ├── templates/
 │   ├── base.html           # Base layout (Tailwind + CDN)
 │   ├── index.html          # Landing page
@@ -248,7 +248,7 @@ tailwind.config = {
 - Button "Proses Diagnosis" untuk submit.
 
 **Step 3 — Hasil Diagnosis:**
-- Tampilkan 1-3 diagnosis teratas, diurutkan berdasarkan CF tertinggi.
+- Tampilkan semua kandidat diagnosis yang lolos filter ≥ 2 gejala relevan, diurutkan berdasarkan CF tertinggi.
 - Setiap result card menampilkan:
   - Persentase CF (dengan progress bar)
   - Label keyakinan (Sangat Yakin / Cukup Yakin / Kemungkinan / dll.)
@@ -273,10 +273,9 @@ tailwind.config = {
 
 **Sections:**
 1. **Tentang NetMedix** — deskripsi aplikasi
-2. **Forward Chaining** — penjelasan dengan diagram sederhana
-3. **Certainty Factor** — penjelasan rumus CF, MB, MD
-4. **Arsitektur Sistem** — diagram blok komponen
-5. **Referensi** — daftar jurnal dan textbook
+2. **Certainty Factor** — penjelasan rumus CF, MB, MD, diagram alur perhitungan, contoh aturan IF-THEN
+3. **Arsitektur Sistem** — diagram blok komponen
+4. **Referensi** — daftar jurnal dan textbook
 
 ### 4.5 Admin Panel (`/admin`)
 
@@ -293,7 +292,7 @@ tailwind.config = {
 **CRUD Tables:**
 - **Problems** — tabel dengan kolom: kode, nama, kategori. Klik row untuk edit.
 - **Symptoms** — tabel dengan kolom: kode, deskripsi, kategori. Klik row untuk edit.
-- **Rules** — tabel dengan kolom: kode, gejala (list), target masalah, MB/MD. Form multi-row untuk input gejala + MB/MD per aturan.
+- **Rules** — tabel dengan kolom: kode, gejala (list), target masalah, cf_pakar. Form multi-row untuk input gejala + cf_pakar per aturan.
 
 ---
 
