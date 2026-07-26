@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+flask.log
+flask_manual.log
+
+# Database (di-production, gunakan volume)
+database/*.db
+database/*.db-journal
+
+# Testing
+.pytest_cache/
+tests/
+.coverage
+htmlcov/
+
+# Documentation
+*.md
+docs-NetMedix/
+00_INBOX/
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Backup
+*.bak
+*.backup
+
+# OS
+.DS_Store
+Thumbs.db

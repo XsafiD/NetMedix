@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  netmedix-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: netmedix-app-prod
+    restart: always
+    expose:
+      - "5000"
+    volumes:
+      # Read-only mounts untuk production
+      - ./data:/app/data:ro
+      - ./static:/app/static:ro
+      - ./templates:/app/templates:ro
+      # Persistent database (read-write)
+      - netmedix-db:/app/database
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - netmedix-network
+    depends_on:
+      - netmedix-nginx
+
+  netmedix-nginx:
+    image: nginx:alpine
+    container_name: netmedix-nginx-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./static:/usr/share/nginx/html/static:ro
+    networks:
+      - netmedix-network
+    depends_on:
+      - netmedix-app
+
+volumes:
+  netmedix-db:
+    driver: local
+
+networks:
+  netmedix-network:
+    driver: bridge

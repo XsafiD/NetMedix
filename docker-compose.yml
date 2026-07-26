@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  netmedix-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: netmedix-app-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount source code untuk hot reload
+      - ./inference:/app/inference
+      - ./data:/app/data
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - ./app.py:/app/app.py
+      # Persistent database
+      - ./database:/app/database
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - SECRET_KEY=${SECRET_KEY:-netmedix-dev-key-change-in-prod}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  netmedix-data:
+    driver: local
+
+networks:
+  default:
+    name: netmedix-network
