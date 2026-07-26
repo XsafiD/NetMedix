@@ -24,6 +24,8 @@ def inject_active_page():
         active = "home"
     elif endpoint and endpoint.startswith("admin"):
         active = "admin"
+    elif endpoint == "cf_table":
+        active = "cf_table"
     else:
         active = endpoint or ""
     return {"active_page": active}
@@ -376,6 +378,68 @@ def history_delete(session_id):
     delete_session(session_id)
     flash("Riwayat diagnosis berhasil dihapus.", "success")
     return redirect(url_for("history"))
+
+
+# ── CF Table (Transparency Page) ───────────────────────────
+
+@app.route("/cf-table")
+def cf_table():
+    """
+    Halaman transparansi nilai CFpakar.
+    Menampilkan tabel lengkap CFpakar per gejala untuk setiap penyakit,
+    beserta evidence dan source links.
+    """
+    from inference.knowledge_base import KnowledgeBase
+
+    kb = KnowledgeBase()
+    rules = kb.load_rules()
+    problems = kb.load_problems()
+    symptoms = kb.load_symptoms()
+
+    # Build enriched data per problem
+    problems_with_cf = []
+    for problem in problems:
+        # Find rule for this problem
+        rule = None
+        for r in rules:
+            if r.get("target_problem") == problem["code"]:
+                rule = r
+                break
+
+        # Extract CFpakar data per symptom
+        cf_symptoms = []
+        if rule:
+            for sym in rule.get("symptoms", []):
+                symptom_code = sym.get("code")
+                cf_pakar = sym.get("cf_pakar", 0.0)
+                evidence = sym.get("evidence", "")
+
+                # Get symptom details
+                symptom_detail = None
+                for s in symptoms:
+                    if s.get("code") == symptom_code:
+                        symptom_detail = s
+                        break
+
+                if symptom_detail:
+                    cf_symptoms.append({
+                        "code": symptom_code,
+                        "name": symptom_detail.get("name", ""),
+                        "cf_pakar": cf_pakar,
+                        "evidence": evidence
+                    })
+
+        # Get source links from rule
+        sources = rule.get("sources", []) if rule else []
+
+        problems_with_cf.append({
+            "problem": problem,
+            "cf_symptoms": cf_symptoms,
+            "sources": sources
+        })
+
+    return render_template("cf_table.html",
+                           problems_with_cf=problems_with_cf)
 
 
 # ── Admin Auth Routes ─────────────────────────────────────

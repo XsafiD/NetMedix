@@ -198,6 +198,11 @@
           <i data-lucide="clock" class="w-4 h-4" aria-hidden="true"></i>
           Riwayat
         </a>
+        <a href="/cf-table"
+           class="flex items-center gap-1.5 hover:text-ink transition-colors {{ 'text-ink' if active_page == 'cf_table' }}">
+          <i data-lucide="table" class="w-4 h-4" aria-hidden="true"></i>
+          Tabel CF
+        </a>
         <a href="/about"
            class="flex items-center gap-1.5 hover:text-ink transition-colors {{ 'text-ink' if active_page == 'about' }}">
           <i data-lucide="info" class="w-4 h-4" aria-hidden="true"></i>
@@ -234,6 +239,13 @@
                   {{ 'bg-canvas-soft text-ink' if active_page == 'history' }}">
           <i data-lucide="clock" class="w-4 h-4" aria-hidden="true"></i>
           Riwayat
+        </a>
+        <a href="/cf-table"
+           class="flex items-center gap-2 px-3 py-2.5 rounded-btn text-sm font-medium text-ink-mute
+                  hover:bg-canvas-soft hover:text-ink transition-colors
+                  {{ 'bg-canvas-soft text-ink' if active_page == 'cf_table' }}">
+          <i data-lucide="table" class="w-4 h-4" aria-hidden="true"></i>
+          Tabel CF
         </a>
         <a href="/about"
            class="flex items-center gap-2 px-3 py-2.5 rounded-btn text-sm font-medium text-ink-mute

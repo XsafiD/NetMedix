@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+{% block title %}Tabel CFpakar — NetMedix{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Header Tabel CFpakar
+     ═══════════════════════════════════════════════════════════ -->
+<section class="bg-primary/5 border-b border-hairline">
+  <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-3">Transparansi Knowledge Base</p>
+    <h1 class="text-2xl md:text-4xl font-medium tracking-tight text-ink leading-tight mb-4">
+      Tabel <span class="text-primary">CFpakar</span> NetMedix
+    </h1>
+    <p class="text-ink-mute text-sm md:text-base leading-relaxed max-w-3xl mb-6">
+      Dokumen transparansi nilai <strong class="text-ink">CFpakar</strong> (Certainty Factor Pakar)
+      untuk setiap gejala terhadap penyakit. Nilai ini diturunkan dari riset multi-source artikel
+      jaringan komputer kredibel menggunakan metodologi <em>Skala Ordinal Frekuensi + Engineering Judgment</em>.
+    </p>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+      <div class="bg-white border border-hairline rounded-card p-4 text-center">
+        <p class="text-2xl font-semibold text-primary">{{ problems_with_cf|length }}</p>
+        <p class="text-xs text-ink-mute mt-1">Penyakit</p>
+      </div>
+      <div class="bg-white border border-hairline rounded-card p-4 text-center">
+        <p class="text-2xl font-semibold text-primary">
+          {% set total_mappings = 0 %}
+          {% for item in problems_with_cf %}
+            {% set total_mappings = total_mappings + item.cf_symptoms|length %}
+          {% endfor %}
+          {{ total_mappings }}
+        </p>
+        <p class="text-xs text-ink-mute mt-1">Rule Mappings</p>
+      </div>
+      <div class="bg-white border border-hairline rounded-card p-4 text-center">
+        <p class="text-2xl font-semibold text-primary">15+</p>
+        <p class="text-xs text-ink-mute mt-1">Sumber/Penyakit</p>
+      </div>
+      <div class="bg-white border border-hairline rounded-card p-4 text-center">
+        <p class="text-2xl font-semibold text-primary">3</p>
+        <p class="text-xs text-ink-mute mt-1">Kategori Sumber</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Search & Filter
+     ═══════════════════════════════════════════════════════════ -->
+<section class="bg-white border-b border-hairline sticky top-0 z-10">
+  <div class="max-w-5xl mx-auto px-6 py-4">
+    <div class="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
+      <!-- Search -->
+      <div class="flex-1 w-full md:w-auto">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-ink-mute absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text"
+                 id="cf-search"
+                 placeholder="Cari penyakit atau gejala..."
+                 class="w-full pl-10 pr-4 py-2.5 text-sm border border-hairline rounded-btn focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+        <button onclick="filterByCF('all')" class="filter-btn active px-4 py-2.5 text-xs font-medium border border-hairline rounded-btn hover:bg-canvas-soft transition-colors whitespace-nowrap" data-filter="all">
+          Semua
+        </button>
+        <button onclick="filterByCF('high')" class="filter-btn px-4 py-2.5 text-xs font-medium border border-hairline rounded-btn hover:bg-canvas-soft transition-colors whitespace-nowrap" data-filter="high">
+          CF Tinggi (≥0.8)
+        </button>
+        <button onclick="filterByCF('medium')" class="filter-btn px-4 py-2.5 text-xs font-medium border border-hairline rounded-btn hover:bg-canvas-soft transition-colors whitespace-nowrap" data-filter="medium">
+          CF Sedang (0.6-0.79)
+        </button>
+        <button onclick="filterByCF('low')" class="filter-btn px-4 py-2.5 text-xs font-medium border border-hairline rounded-btn hover:bg-canvas-soft transition-colors whitespace-nowrap" data-filter="low">
+          CF Rendah (<0.6)
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Daftar Penyakit (Accordion)
+     ═══════════════════════════════════════════════════════════ -->
+<section class="max-w-5xl mx-auto px-6 py-8 md:py-12">
+  <div id="cf-accordion" class="space-y-4">
+    {% for item in problems_with_cf %}
+    <div class="cf-accordion-item border border-hairline rounded-card overflow-hidden"
+         data-problem-name="{{ item.problem.name|lower }}"
+         data-category="{{ item.problem.category|lower }}"
+         data-symptoms="{{ item.cf_symptoms|map(attribute='name')|map('lower')|join(' ') }}">
+
+      <!-- Accordion Header -->
+      <button onclick="toggleAccordion('{{ item.problem.code }}')"
+              class="w-full flex items-center justify-between p-4 md:p-5 bg-white hover:bg-canvas-soft transition-colors text-left"
+              aria-expanded="false"
+              aria-controls="content-{{ item.problem.code }}">
+        <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+          <!-- Problem Code Badge -->
+          <span class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <span class="text-sm md:text-base font-semibold text-primary">{{ item.problem.code }}</span>
+          </span>
+
+          <!-- Problem Info -->
+          <div class="flex-1 min-w-0">
+            <h3 class="text-sm md:text-base font-medium text-ink truncate">{{ item.problem.name }}</h3>
+            <p class="text-xs text-ink-mute mt-0.5">{{ item.problem.category }}</p>
+          </div>
+
+          <!-- Symptom Count -->
+          <span class="flex-shrink-0 px-2.5 py-1 bg-canvas-soft rounded-full text-xs font-medium text-ink-mute">
+            {{ item.cf_symptoms|length }} gejala
+          </span>
+        </div>
+
+        <!-- Chevron Icon -->
+        <i data-lucide="chevron-down"
+           class="w-5 h-5 text-ink-mute transition-transform duration-200 flex-shrink-0 ml-3"
+           id="chevron-{{ item.problem.code }}"></i>
+      </button>
+
+      <!-- Accordion Content -->
+      <div id="content-{{ item.problem.code }}"
+           class="hidden border-t border-hairline bg-canvas-soft">
+        <div class="p-4 md:p-6 space-y-6">
+
+          <!-- Problem Description -->
+          <div>
+            <h4 class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-2">Deskripsi</h4>
+            <p class="text-sm text-ink leading-relaxed">{{ item.problem.description }}</p>
+          </div>
+
+          <!-- CFpakar Table -->
+          <div>
+            <h4 class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Tabel CFpakar per Gejala</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm border border-hairline rounded-card overflow-hidden">
+                <thead class="bg-canvas-night text-white">
+                  <tr>
+                    <th class="text-left px-3 py-2.5 font-medium text-xs border-b border-hairline">Kode</th>
+                    <th class="text-left px-3 py-2.5 font-medium text-xs border-b border-hairline">Gejala</th>
+                    <th class="text-center px-3 py-2.5 font-medium text-xs border-b border-hairline">CFpakar</th>
+                    <th class="text-left px-3 py-2.5 font-medium text-xs border-b border-hairline w-1/3">Evidence</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white">
+                  {% for sym in item.cf_symptoms %}
+                  <tr class="border-b border-hairline last:border-b-0 hover:bg-canvas-soft transition-colors">
+                    <td class="px-3 py-2.5 font-mono text-xs text-ink-mute">{{ sym.code }}</td>
+                    <td class="px-3 py-2.5 font-medium text-ink text-xs md:text-sm">{{ sym.name }}</td>
+                    <td class="px-3 py-2.5 text-center">
+                      <span class="cf-badge inline-block px-2 py-1 rounded-full text-xs font-medium
+                                     {{ 'bg-green-100 text-green-700' if sym.cf_pakar >= 0.8 else
+                                        'bg-yellow-100 text-yellow-700' if sym.cf_pakar >= 0.6 else
+                                        'bg-orange-100 text-orange-700' if sym.cf_pakar >= 0.4 else
+                                        'bg-red-100 text-red-700' }}">
+                        {{ sym.cf_pakar }}
+                      </span>
+                    </td>
+                    <td class="px-3 py-2.5 text-xs text-ink-mute">{{ sym.evidence }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sources -->
+          {% if item.sources %}
+          <div>
+            <h4 class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Sumber Referensi</h4>
+            <div class="flex flex-wrap gap-2">
+              {% for source in item.sources[:8] %}
+              <a href="{{ source }}" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-hairline rounded-btn text-xs text-ink-mute hover:text-primary hover:border-primary/30 transition-colors max-w-full">
+                <i data-lucide="external-link" class="w-3 h-3 flex-shrink-0"></i>
+                <span class="truncate">{{ source|truncate(40, True, '...')|replace('https://', '')|replace('http://', '')|replace('www.', '') }}</span>
+              </a>
+              {% endfor %}
+              {% if item.sources|length > 8 %}
+              <span class="text-xs text-ink-faint px-2 py-1.5">+{{ item.sources|length - 8 }} sumber lainnya</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Problem Solutions (Optional) -->
+          {% if item.problem.solutions %}
+          <div>
+            <h4 class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-2">Solusi Umum</h4>
+            <ul class="space-y-1.5">
+              {% for solution in item.problem.solutions[:3] %}
+              <li class="flex items-start gap-2 text-xs text-ink-mute">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5"></i>
+                <span>{{ solution }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Empty State (hidden by default) -->
+  <div id="cf-empty-state" class="hidden text-center py-16">
+    <i data-lucide="search-x" class="w-12 h-12 text-ink-mute mx-auto mb-4"></i>
+    <p class="text-ink-muate text-sm">Tidak ada penyakit yang cocok dengan pencarian.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     Section: Metodologi
+     ═══════════════════════════════════════════════════════════ -->
+<section class="bg-canvas-soft border-t border-hairline">
+  <div class="max-w-5xl mx-auto px-6 py-12">
+    <p class="text-xs font-medium uppercase tracking-widest text-primary mb-4">Metodologi Penentuan CFpakar</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Step 1 -->
+      <div class="bg-white border border-hairline rounded-card p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm font-semibold text-primary">1</span>
+          <h4 class="text-sm font-medium text-ink">Skala Ordinal Frekuensi</h4>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Setiap gejala dievaluasi berdasarkan berapa banyak sumber kredible yang menyebutkannya sebagai indikator problem.
+          Semua sumber sebut = 0.9, mayoritas = 0.7, sebagian = 0.5, minor = 0.3.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white border border-hairline rounded-card p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm font-semibold text-primary">2</span>
+          <h4 class="text-sm font-medium text-ink">Engineering Judgment Override</h4>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Domain knowledge dapat meng-override nilai default: naik untuk differentiator unik, turun untuk gejala cross-cutting.
+          Override dicatat di kolom evidence.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white border border-hairline rounded-card p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm font-semibold text-primary">3</span>
+          <h4 class="text-sm font-medium text-ink">Triangulasi Sumber</h4>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Setiap nilai CFpakar didukung minimal 2 sumber independen. Jika hanya 1 sumber → nilai maksimal dibatasi 0.5
+          (penalti lemah).
+        </p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="bg-white border border-hairline rounded-card p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-sm font-semibold text-primary">4</span>
+          <h4 class="text-sm font-medium text-ink">Peer Review Konsistensi</h4>
+        </div>
+        <p class="text-xs text-ink-mute leading-relaxed">
+          Review silang untuk gejala cross-cutting (G14, G23, G24, dst.) apakah konsisten di semua kemunculan.
+          Dieksekusi di Fase 1.D.
+        </p>
+      </div>
+    </div>
+
+    <!-- Source Categories -->
+    <div class="mt-8">
+      <p class="text-xs font-medium uppercase tracking-widest text-ink-mute mb-3">Kategori Sumber</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink mb-1">Vendor Documentation</p>
+          <p class="text-[10px] text-ink-faint">cisco.com, microsoft.com, netgear.com</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink mb-1">Network Monitoring</p>
+          <p class="text-[10px] text-ink-faint">pingplotter.com, auvik.com, netbeez.net</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink mb-1">Tech Community</p>
+          <p class="text-[10px] text-ink-faint">geeksforgeeks.org, superuser.com</p>
+        </div>
+        <div class="border border-hairline rounded-card p-3 text-center">
+          <p class="text-xs font-medium text-ink mb-1">Diagnostic Tools</p>
+          <p class="text-[10px] text-ink-faint">speedtesthq.com, ipfyi.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Accordion functionality
+function toggleAccordion(code) {
+  const content = document.getElementById(`content-${code}`);
+  const chevron = document.getElementById(`chevron-${code}`);
+
+  if (content.classList.contains('hidden')) {
+    // Open
+    content.classList.remove('hidden');
+    chevron.style.transform = 'rotate(180deg)';
+  } else {
+    // Close
+    content.classList.add('hidden');
+    chevron.style.transform = 'rotate(0deg)';
+  }
+}
+
+// Filter functionality
+let currentFilter = 'all';
+
+function filterByCF(filter) {
+  currentFilter = filter;
+
+  // Update button states
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active', 'bg-primary/10', 'border-primary', 'text-primary');
+    if (btn.dataset.filter === filter) {
+      btn.classList.add('active', 'bg-primary/10', 'border-primary', 'text-primary');
+    }
+  });
+
+  applyFilters();
+}
+
+function applyFilters() {
+  const searchTerm = document.getElementById('cf-search').value.toLowerCase();
+  let visibleCount = 0;
+
+  document.querySelectorAll('.cf-accordion-item').forEach(item => {
+    const problemName = item.dataset.problemName || '';
+    const symptomsText = item.dataset.symptoms || '';
+    const category = item.dataset.category || '';
+
+    // Search filter
+    const matchesSearch = searchTerm === '' ||
+      problemName.includes(searchTerm) ||
+      symptomsText.includes(searchTerm) ||
+      category.includes(searchTerm);
+
+    // CF filter
+    let matchesCF = true;
+    if (currentFilter !== 'all') {
+      const badges = item.querySelectorAll('.cf-badge');
+      let hasHighCF = false;
+      let hasMediumCF = false;
+      let hasLowCF = false;
+
+      badges.forEach(badge => {
+        const cf = parseFloat(badge.textContent.trim());
+        if (cf >= 0.8) hasHighCF = true;
+        else if (cf >= 0.6) hasMediumCF = true;
+        else hasLowCF = true;
+      });
+
+      if (currentFilter === 'high') matchesCF = hasHighCF;
+      else if (currentFilter === 'medium') matchesCF = hasMediumCF && !hasHighCF;
+      else if (currentFilter === 'low') matchesCF = hasLowCF && !hasMediumCF && !hasHighCF;
+    }
+
+    if (matchesSearch && matchesCF) {
+      item.classList.remove('hidden');
+      visibleCount++;
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+
+  // Show/hide empty state
+  const emptyState = document.getElementById('cf-empty-state');
+  if (visibleCount === 0) {
+    emptyState.classList.remove('hidden');
+  } else {
+    emptyState.classList.add('hidden');
+  }
+}
+
+// Search input listener
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('cf-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce(applyFilters, 300));
+  }
+
+  // Initialize icons
+  lucide.createIcons();
+});
+
+// Debounce helper
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+</script>
+
+{% endblock %}

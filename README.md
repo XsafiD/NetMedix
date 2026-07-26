@@ -73,6 +73,289 @@ Buka browser ke **http://localhost:5000**
 
 ---
 
+## Deployment ke Server
+
+### Opsi 1: Docker Compose (Recommended)
+
+Docker Compose adalah cara termudah untuk deployment ke server.
+
+#### A. Siapkan File untuk Deployment
+
+**Files yang WAJIB diikutkan:**
+
+```bash
+# Core Application
+app.py
+requirements.txt
+
+# Inference Engine
+inference/__init__.py
+inference/engine.py
+inference/knowledge_base.py
+
+# Knowledge Base (JSON files)
+data/problems.json
+data/symptoms.json
+data/rules.json
+
+# Templates (HTML files)
+templates/*.html
+templates/admin/*.html
+
+# Static Assets
+static/js/app.js
+static/css/ (jika ada custom CSS selain Tailwind CDN)
+
+# Docker Files
+Dockerfile                    # Production image
+Dockerfile.dev                # Development image (opsional)
+docker-compose.yml            # Development compose
+docker-compose.prod.yml       # Production compose (REQUIRED)
+.dockerignore
+
+# Configuration
+.env.example                  # Template environment variables
+nginx/nginx.conf              # Nginx configuration
+```
+
+**Files yang TIDAK PERLU diikutkan:**
+
+```bash
+# Git files
+.git/
+.gitignore
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Database (akan dibuat otomatis di server)
+database/*.db
+database/*.db-journal
+
+# Logs
+*.log
+flask.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Documentation (opsional)
+*.md
+docs-NetMedix/
+
+# Docker development files (opsional)
+Dockerfile.dev
+docker-compose.yml
+```
+
+#### B. Buat Deployment Zip
+
+**Cara 1: Menggunakan Script (Recommended)**
+
+```bash
+# Di local machine, di root project NetMedix
+cd /path/to/NetMedix
+
+# Buat folder temporary untuk deployment
+mkdir -p netmedix-deploy
+
+# Copy essential files
+cp app.py requirements.txt netmedix-deploy/
+cp -r inference/ netmedix-deploy/
+cp -r data/ netmedix-deploy/
+cp -r templates/ netmedix-deploy/
+cp -r static/ netmedix-deploy/
+cp Dockerfile docker-compose.prod.yml .dockerignore .env.example netmedix-deploy/
+mkdir -p netmedix-deploy/nginx
+cp nginx/nginx.conf netmedix-deploy/nginx/
+
+# Buat zip
+zip -r netmedix-v2.0.0-deploy.zip netmedix-deploy/
+
+# Cleanup temporary folder
+rm -rf netmedix-deploy/
+```
+
+**Cara 2: Manual Selection**
+
+Select dan zip files berikut:
+- `app.py`
+- `requirements.txt`
+- Folder `inference/`
+- Folder `data/` (hanya .json files)
+- Folder `templates/`
+- Folder `static/`
+- `Dockerfile`
+- `docker-compose.prod.yml`
+- `.dockerignore`
+- `.env.example`
+- Folder `nginx/` dengan `nginx.conf`
+
+#### C. Upload ke Server
+
+```bash
+# Upload zip ke server (ganti user@host dengan server Anda)
+scp netmedix-v2.0.0-deploy.zip user@yourserver.com:/home/user/
+
+# Atau menggunakan SFTP/FTP client
+# - FileZilla
+# - WinSCP
+# - Cyberduck
+```
+
+#### D. Setup di Server
+
+```bash
+# 1. Login ke server
+ssh user@yourserver.com
+
+# 2. Extract zip
+cd ~
+unzip netmedix-v2.0.0-deploy.zip
+cd netmedix-deploy
+
+# 3. Setup environment variables
+cp .env.example .env
+nano .env  # Edit SECRET_KEY, ADMIN_USERNAME, ADMIN_PASSWORD
+
+# 4. (Opsional) Setup SSL certificates
+mkdir -p nginx/ssl
+# Letakkan cert.pem dan key.pem di nginx/ssl/
+
+# 5. Build dan start containers
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 6. Cek status
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+**Aplikasi akan berjalan di:**
+- HTTP: `http://your-server-ip`
+- HTTPS: `https://your-server-ip` (jika SSL configured)
+
+#### E. Management Commands
+
+```bash
+# View logs
+docker compose -f docker-compose.prod.yml logs -f
+
+# Restart containers
+docker compose -f docker-compose.prod.yml restart
+
+# Stop containers
+docker compose -f docker-compose.prod.yml down
+
+# Update aplikasi (setelah upload zip baru)
+docker compose -f docker-compose.prod.yml down
+unzip -o netmedix-v2.0.0-deploy.zip
+docker compose -f docker-compose.prod.yml up -d --build
+
+# Backup database
+docker cp netmedix-app-prod:/app/database/history.db ./backups/
+```
+
+---
+
+### Opsi 2: Traditional Deployment (Tanpa Docker)
+
+Jika server tidak mendukung Docker.
+
+#### Prasyarat di Server
+
+```bash
+# Install dependencies
+sudo apt update
+sudo apt install -y python3 python3-pip nginx
+
+# Install Python dependencies
+pip3 install flask gunicorn
+```
+
+#### Setup Application
+
+```bash
+# 1. Upload dan extract file sama seperti di atas
+unzip netmedix-v2.0.0-deploy.zip
+cd netmedix-deploy
+
+# 2. Setup environment
+cp .env.example .env
+nano .env
+
+# 3. Install dependencies
+pip3 install -r requirements.txt
+
+# 4. Run dengan Gunicorn
+gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4 app:app
+```
+
+#### Nginx Reverse Proxy
+
+```bash
+# Edit nginx config
+sudo nano /etc/nginx/sites-available/netmedix
+
+# Tambahkan konfigurasi:
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://127.0.0.0:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /path/to/netmedix-deploy/static/;
+        expires 30d;
+    }
+}
+
+# Enable site
+sudo ln -s /etc/nginx/sites-available/netmedix /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+---
+
+### Troubleshooting Deployment
+
+| Issue | Solution |
+|-------|----------|
+| Container tidak start | `docker compose logs netmedix-app` |
+| Permission denied | `chmod +x database/` atau check file permissions |
+| Port 80 already in use | Stop apache2: `sudo systemctl stop apache2` |
+| Database locked | Restart container: `docker compose restart netmedix-app` |
+| Nginx 502 Bad Gateway | Check jika app container running: `docker compose ps` |
+
+---
+
+### Security Checklist
+
+Sebelum production:
+
+- [ ] `.env` file ada di `.gitignore`
+- [ ] Default admin password diubah
+- [ ] SSL certificates configured (untuk HTTPS)
+- [ ] Firewall configured: `sudo ufw allow 80/tcp && sudo ufw allow 443/tcp`
+- [ ] Regular backup setup untuk database
+- [ ] Monitor disk space dan logs
+
+---
+
 ## Struktur Proyek
 
 ```
